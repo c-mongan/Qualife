@@ -24,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Color maleBoxColor = activeColor;
   Color femaleBoxColor = inActiveColor;
+  int height = 180;
 
   void updateBoxColor(int gender) {
     if (gender == 1) {
@@ -96,33 +97,45 @@ class _MainScreenState extends State<MainScreen> {
           )),
           Expanded(
             child: ContainerBox(
-              boxColor: Color(0xFFffffff),
-              childWidget: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                children: <Widget>[
-
-                  Text('HEIGHT',
-                  style: textStyle1,),
-                Row(
+                boxColor: Color(0xFFffffff),
+                childWidget: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-
-                  children: <Widget>[   
-                  Text('180',
-                  style: textStyle2,),
-                  Text('cm',
-                  style: textStyle1,)
-
+                  children: <Widget>[
+                    Text(
+                      'HEIGHT',
+                      style: textStyle1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        Text(
+                          height.toString(),
+                          style: textStyle2,
+                        ),
+                        Text(
+                          'cm',
+                          style: textStyle1,
+                        )
+                      ],
+                    ),
+                    Slider(
+                      value: height.toDouble(),
+                      min: 120,
+                      max: 220,
+                      activeColor: activeColor,
+                      inactiveColor: inActiveColor,
+                      onChanged: (double newValue) {
+                        //Dont forget to setState so it changes
+                        setState(() {
+                          height = newValue.round();
+                        });
+                        
+                      },
+                    )
                   ],
-                )
-
-                ],
-
-              )
-              
-            ),
+                )),
           ),
           Expanded(
               child: Row(
@@ -165,14 +178,14 @@ class _MainScreenState extends State<MainScreen> {
               )
             ],
           )),
-      
-      //Added Bottom border
-        Container(
-width: double.infinity,
-height: 80.0,
-color: activeColor,
-margin: EdgeInsets.only(top:10.0),
-        )
+
+          //Added Bottom border
+          Container(
+            width: double.infinity,
+            height: 80.0,
+            color: activeColor,
+            margin: EdgeInsets.only(top: 10.0),
+          )
         ],
       ),
     );
