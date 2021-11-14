@@ -97,21 +97,82 @@ class _MainScreenState extends State<MainScreen> {
           Expanded(
             child: ContainerBox(
               boxColor: Color(0xFFffffff),
-              childWidget: DataContainer(
-                icon: FontAwesomeIcons.question,
-                title: 'TBC',
-              ),
+              childWidget: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+
+                children: <Widget>[
+
+                  Text('HEIGHT',
+                  style: textStyle1,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+
+                  children: <Widget>[   
+                  Text('180',
+                  style: textStyle2,),
+                  Text('cm',
+                  style: textStyle1,)
+
+                  ],
+                )
+
+                ],
+
+              )
+              
             ),
           ),
           Expanded(
-            child: ContainerBox(
-              boxColor: Color(0xFFffffff),
-              childWidget: DataContainer(
-                icon: FontAwesomeIcons.question,
-                title: 'TBC',
+              child: Row(
+            children: <Widget>[
+              Expanded(
+                //Add gesture detector and call updateBoxColor inside gesture onpressed
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      updateBoxColor(1);
+                    });
+                  },
+                  //Dont forget add set state fun inside onpressed
+                  child: ContainerBox(
+                    boxColor: maleBoxColor,
+                    childWidget: DataContainer(
+                      icon: FontAwesomeIcons.mars,
+                      title: 'MALE',
+                    ),
+                  ),
+                ),
               ),
-            ),
-          )
+              Expanded(
+                //Add gesture detector and call updateBoxColor inside gesture onpressed
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      updateBoxColor(2);
+                    });
+                  },
+                  //Dont forget add set state fun inside onpressed
+                  child: ContainerBox(
+                    boxColor: femaleBoxColor,
+                    childWidget: DataContainer(
+                      icon: FontAwesomeIcons.venus,
+                      title: 'FEMALE',
+                    ),
+                  ),
+                ),
+              )
+            ],
+          )),
+      
+      //Added Bottom border
+        Container(
+width: double.infinity,
+height: 80.0,
+color: activeColor,
+margin: EdgeInsets.only(top:10.0),
+        )
         ],
       ),
     );
