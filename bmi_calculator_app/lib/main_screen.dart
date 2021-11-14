@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-
-
-
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'container_box.dart';
+import 'data_container.dart';
 
 //Create MainScreen class by typing stful
+
+const activeColor = Colors.blue;
+const inActiveColor = Color(0XFFffffff);
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -17,6 +19,32 @@ class MainScreen extends StatefulWidget {
 //inside MainScreen below
 class _MainScreenState extends State<MainScreen> {
   @override
+
+  //Method to change color of container box on tap
+
+  Color maleBoxColor = activeColor;
+  Color femaleBoxColor = inActiveColor;
+
+  void updateBoxColor(int gender) {
+    if (gender == 1) {
+      if (maleBoxColor == inActiveColor) {
+        maleBoxColor = activeColor;
+        femaleBoxColor = inActiveColor;
+      } else {
+        maleBoxColor = inActiveColor;
+        femaleBoxColor = activeColor;
+      }
+    } else {
+      if (femaleBoxColor == inActiveColor) {
+        femaleBoxColor = activeColor;
+        maleBoxColor = inActiveColor;
+      } else {
+        femaleBoxColor = inActiveColor;
+        maleBoxColor = activeColor;
+      }
+    }
+  }
+
   //Set app bar and body
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,62 +53,75 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: Column(
         children: <Widget>[
-           Expanded(
-            child:Row(
-              children: <Widget>[
-                 Expanded(child: ContainerBox()
-                   ),
-                   Expanded(child: ContainerBox(),
-                   )
-                    ],
-                    ) 
+          Expanded(
+              child: Row(
+            children: <Widget>[
+              Expanded(
+                //Add gesture detector and call updateBoxColor inside gesture onpressed
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      updateBoxColor(1);
+                    });
+                  },
+                  //Dont forget add set state fun inside onpressed
+                  child: ContainerBox(
+                    boxColor: maleBoxColor,
+                    childWidget: DataContainer(
+                      icon: FontAwesomeIcons.mars,
+                      title: 'MALE',
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                //Add gesture detector and call updateBoxColor inside gesture onpressed
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      updateBoxColor(2);
+                    });
+                  },
+                  //Dont forget add set state fun inside onpressed
+                  child: ContainerBox(
+                    boxColor: femaleBoxColor,
+                    childWidget: DataContainer(
+                      icon: FontAwesomeIcons.venus,
+                      title: 'FEMALE',
+                    ),
+                  ),
+                ),
+              )
+            ],
+          )),
+          Expanded(
+            child: ContainerBox(
+              boxColor: Color(0xFFffffff),
+              childWidget: DataContainer(
+                icon: FontAwesomeIcons.question,
+                title: 'TBC',
+              ),
+            ),
           ),
-          Expanded(child: ContainerBox()
-                   ),         
-Expanded(
-            child:Row(
-              children: <Widget>[
-              Expanded(child:ContainerBox()
-                   ),
-                   Expanded(child: ContainerBox()
-                   )
-                    ],
-                    )     
-)
-        ]
+          Expanded(
+            child: ContainerBox(
+              boxColor: Color(0xFFffffff),
+              childWidget: DataContainer(
+                icon: FontAwesomeIcons.question,
+                title: 'TBC',
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 }
 
 
-//Ctrl + . while hovering over widget lets us extract 
+//Ctrl + . while hovering over widget lets us extract
 //the widget and name it , in this case it was named
 //ContainerBox. Its implementation is below.
 
 //This allows us to remove duplicate code
-class ContainerBox extends StatelessWidget {
-  const ContainerBox({
-    Key? key,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(15.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: Color(0xFFffffff),
-        boxShadow: 
-          [BoxShadow( color: Colors.grey.withOpacity(0.5),
-          spreadRadius: 5.0,
-          blurRadius: 7.0,
-          offset: Offset(0,3),
-          ),
-          ],
-          
- ),
- );
-         
-  }
-}

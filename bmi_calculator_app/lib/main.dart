@@ -15,11 +15,13 @@ class MyApp extends StatelessWidget {
 
 //Changed them color with "theme"
     return MaterialApp(
+        debugShowCheckedModeBanner:
+            false, //Gets rid of debug mode icon in top right
         theme: ThemeData(
-            primaryColor: const Color(0xFFf6f8ff),
+            primaryColor: Colors.white,
             //Specify theme color above (White)
 
-            scaffoldBackgroundColor: Color(0xFFf6f8ff)
+            scaffoldBackgroundColor: Colors.white
             //Specify Scaffold color (White)
 
             //Set home screen to MainScreen class
