@@ -25,6 +25,12 @@ class _MainScreenState extends State<MainScreen> {
   Color maleBoxColor = activeColor;
   Color femaleBoxColor = inActiveColor;
   int height = 180;
+  int weight = 70;
+  int age = 25;
+
+  //void updateWeight{
+
+  // }
 
   void updateBoxColor(int gender) {
     if (gender == 1) {
@@ -131,7 +137,6 @@ class _MainScreenState extends State<MainScreen> {
                         setState(() {
                           height = newValue.round();
                         });
-                        
                       },
                     )
                   ],
@@ -141,56 +146,137 @@ class _MainScreenState extends State<MainScreen> {
               child: Row(
             children: <Widget>[
               Expanded(
-                //Add gesture detector and call updateBoxColor inside gesture onpressed
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      updateBoxColor(1);
-                    });
-                  },
-                  //Dont forget add set state fun inside onpressed
-                  child: ContainerBox(
-                    boxColor: maleBoxColor,
-                    childWidget: DataContainer(
-                      icon: FontAwesomeIcons.mars,
-                      title: 'MALE',
-                    ),
+                child: ContainerBox(
+                  boxColor: Colors.white,
+                  childWidget: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'WEIGHT',
+                        style: textStyle1,
+                      ),
+                      Text(
+                        weight.toString(),
+                        style: textStyle2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FloatingActionButton(
+                            backgroundColor: activeColor,
+                            onPressed: () {
+                              setState(() {
+                                weight++;
+                              });
+                            },
+                            child: Icon(
+                              FontAwesomeIcons.plus,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          FloatingActionButton(
+                            backgroundColor: activeColor,
+                            onPressed: () {
+                              setState(() {
+                                if (weight > 0) {
+                                  weight--;
+                                }
+                              });
+                            },
+                            child: Icon(
+                              FontAwesomeIcons.minus,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
               ),
-              Expanded(
-                //Add gesture detector and call updateBoxColor inside gesture onpressed
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      updateBoxColor(2);
-                    });
-                  },
-                  //Dont forget add set state fun inside onpressed
-                  child: ContainerBox(
-                    boxColor: femaleBoxColor,
-                    childWidget: DataContainer(
-                      icon: FontAwesomeIcons.venus,
-                      title: 'FEMALE',
-                    ),
-                  ),
-                ),
-              )
+              // Expanded(
+              // child: ContainerBox(boxColor: Colors.black),
+              //  )
             ],
           )),
-
+          Expanded(
+              child: Row(
+            children: <Widget>[
+              Expanded(
+                child: ContainerBox(
+                  boxColor: Colors.white,
+                  childWidget: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'AGE',
+                        style: textStyle1,
+                      ),
+                      Text(
+                        age.toString(),
+                        style: textStyle2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FloatingActionButton(
+                            backgroundColor: activeColor,
+                            onPressed: () {
+                              setState(() {
+                                age++;
+                              });
+                            },
+                            child: Icon(
+                              FontAwesomeIcons.plus,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          FloatingActionButton(
+                            backgroundColor: activeColor,
+                            onPressed: () {
+                              setState(() {
+                                if (age > 0) {
+                                  age--;
+                                }
+                              });
+                            },
+                            child: Icon(
+                              FontAwesomeIcons.minus,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          )),
           //Added Bottom border
           Container(
-            width: double.infinity,
-            height: 80.0,
-            color: activeColor,
-            margin: EdgeInsets.only(top: 10.0),
-          )
+              child: Center(
+                child: Text(
+                  'Calculate',
+                  style: textStyle3,
+                ),
+              ),
+              width: double.infinity,
+              height: 70.0,
+              color: activeColor,
+              margin: EdgeInsets.only(top: 10.0))
         ],
       ),
     );
   }
 }
+            
 
 
 //Ctrl + . while hovering over widget lets us extract
