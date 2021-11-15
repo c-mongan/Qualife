@@ -27,6 +27,8 @@ class _MainScreenState extends State<MainScreen> {
   int height = 180;
   int weight = 70;
   int age = 25;
+  int result =80;
+  String resultDetail = "result here";
 
   //void updateWeight{
 
@@ -260,7 +262,35 @@ class _MainScreenState extends State<MainScreen> {
             ],
           )),
           //Added Bottom border
-          Container(
+          GestureDetector(
+            onTap: (){
+
+              showDialog(context: context, 
+              builder : (BuildContext context)
+              { return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)
+              ),
+              child: Container(height: 200,
+              margin: EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                Text('Result',
+                style: textStyle1,
+                ),
+                 Text(result.toString(),
+                style: textStyle2,
+                ),
+                 Text(resultDetail,
+                style: textStyle1,
+                )
+              ],
+              ),
+              ),
+              );
+            }
+              );
+            },
+         child:  Container(
               child: Center(
                 child: Text(
                   'Calculate',
@@ -270,7 +300,9 @@ class _MainScreenState extends State<MainScreen> {
               width: double.infinity,
               height: 70.0,
               color: activeColor,
-              margin: EdgeInsets.only(top: 10.0))
+              margin: EdgeInsets.only(top: 10.0)),
+          )
+
         ],
       ),
     );
