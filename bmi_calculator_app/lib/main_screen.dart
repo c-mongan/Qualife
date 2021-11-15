@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'container_box.dart';
@@ -6,7 +8,7 @@ import 'data_container.dart';
 //Create MainScreen class by typing stful
 
 const activeColor = Colors.blue;
-const inActiveColor = Color(0XFFffffff);
+const inActiveColor = Colors.grey;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -18,8 +20,6 @@ class MainScreen extends StatefulWidget {
 //Scaffold copied from Material App above and pasted
 //inside MainScreen below
 class _MainScreenState extends State<MainScreen> {
-  @override
-
   //Method to change color of container box on tap
 
   Color maleBoxColor = activeColor;
@@ -27,12 +27,14 @@ class _MainScreenState extends State<MainScreen> {
   int height = 180;
   int weight = 70;
   int age = 25;
-  int result =80;
+  String result = "";
   String resultDetail = "result here";
+  double bmi = 0;
 
-  //void updateWeight{
-
-  // }
+  String calculateBmi(int weight, int height) {
+    bmi = weight / pow(height / 100, 2);
+    return bmi.toStringAsFixed(1);
+  }
 
   void updateBoxColor(int gender) {
     if (gender == 1) {
@@ -105,7 +107,7 @@ class _MainScreenState extends State<MainScreen> {
           )),
           Expanded(
             child: ContainerBox(
-                boxColor: Color(0xFFffffff),
+                boxColor: inActiveColor,
                 childWidget: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -149,7 +151,7 @@ class _MainScreenState extends State<MainScreen> {
             children: <Widget>[
               Expanded(
                 child: ContainerBox(
-                  boxColor: Colors.white,
+                  boxColor: inActiveColor,
                   childWidget: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -200,7 +202,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
               // Expanded(
-              // child: ContainerBox(boxColor: Colors.black),
+              // child: ContainerBox(boxColor: Colors.white),
               //  )
             ],
           )),
@@ -209,7 +211,7 @@ class _MainScreenState extends State<MainScreen> {
             children: <Widget>[
               Expanded(
                 child: ContainerBox(
-                  boxColor: Colors.white,
+                  boxColor: inActiveColor,
                   childWidget: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -263,57 +265,76 @@ class _MainScreenState extends State<MainScreen> {
           )),
           //Added Bottom border
           GestureDetector(
-            onTap: (){
-
-              showDialog(context: context, 
-              builder : (BuildContext context)
-              { return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)
-              ),
-              child: Container(height: 200,
-              margin: EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                Text('Result',
-                style: textStyle1,
-                ),
-                 Text(result.toString(),
-                style: textStyle2,
-                ),
-                 Text(resultDetail,
-                style: textStyle1,
-                )
-              ],
-              ),
-              ),
-              );
-            }
-              );
+            onTap: () {
+              setState(() {
+                result = calculateBmi(weight, height);
+                resultDetail = getInterprentation(bmi);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: inActiveColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        child: Container(
+                          color: inActiveColor,
+                          height: 200,
+                          margin: EdgeInsets.all(10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Result',
+                                style: textStyle1,
+                              ),
+                              Text(
+                                result.toString(),
+                                style: textStyle2,
+                              ),
+                              Text(
+                                resultDetail,
+                                style: textStyle1,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              });
             },
-         child:  Container(
-              child: Center(
-                child: Text(
-                  'Calculate',
-                  style: textStyle3,
+            child: Container(
+                child: Center(
+                  child: Text(
+                    'Calculate',
+                    style: textStyle3,
+                  ),
                 ),
-              ),
-              width: double.infinity,
-              height: 70.0,
-              color: activeColor,
-              margin: EdgeInsets.only(top: 10.0)),
+                width: double.infinity,
+                height: 70.0,
+                color: activeColor,
+                margin: EdgeInsets.only(top: 10.0)),
           )
-
         ],
       ),
     );
   }
 }
-            
 
+String getInterprentation(double bmi) {
+  if (bmi >= 25) {
+    return 'Your BMI is above average. Consider eating in a caloric deficit and/or increasing activity level as it will benefit your health';
+  } else if (bmi > 18.5) {
+    return 'Your BMI is in the optimal range. Well Done!';
+  } else if (bmi < 18.5) {
+    return 'Your BMI is below average which means you may be overweight. Consider eating in a caloric surplus and/or reduce activity level';
+  } else {
+    return 'Error';
 
 //Ctrl + . while hovering over widget lets us extract
 //the widget and name it , in this case it was named
 //ContainerBox. Its implementation is below.
 
-//This allows us to remove duplicate code
+//This allows us to remove duplicate cod
 
+  }
+}

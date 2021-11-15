@@ -18,10 +18,10 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner:
             false, //Gets rid of debug mode icon in top right
         theme: ThemeData(
-            primaryColor: Colors.white,
+            primaryColor: Colors.black,
             //Specify theme color above (White)
 
-            scaffoldBackgroundColor: Colors.white
+            scaffoldBackgroundColor: Colors.black
             //Specify Scaffold color (White)
 
             //Set home screen to MainScreen class
