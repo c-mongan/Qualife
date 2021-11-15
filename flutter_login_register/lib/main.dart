@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+       debugShowCheckedModeBanner:
+            false, //Gets rid of debug mode icon in top right
       title: 'Email and Password Login',
       theme: ThemeData(
         // This is the theme of your application.

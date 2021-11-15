@@ -35,6 +35,7 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.0.8
   fl_chart: #Package used for Data Visualisation
+  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:
   flutter_lints: ^1.0.0

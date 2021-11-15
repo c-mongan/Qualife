@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_register/bmi/main_screen.dart';
 import 'package:flutter_login_register/model/user_model.dart';
 import 'package:flutter_login_register/screens/login_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_login_register/screens/profile_page.dart';
 import 'package:flutter_login_register/screens/home_page.dart';
-import 'package:flutter_login_register/screens/exit_page.dart';
 import 'package:flutter_login_register/screens/feed_page.dart';
 import 'package:flutter_login_register/screens/chat_page.dart';
 
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     FeedPage(),
     ChatPage(),
     ProfilePage(),
-    ExitPage()
+    MainScreen(),
   ];
 
   // final screens = [
@@ -56,9 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
 // Use this if you want welcome on the top
-     // appBar: AppBar(title: const Text("Welcome"), centerTitle: true),
+      // appBar: AppBar(title: const Text("Welcome"), centerTitle: true),
 
       //This might work for dynamically chaging title but other way is better
       //appBar: AppBar(title: screens[currentIndex], centerTitle: true,),
@@ -66,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
 // This is the body of the welcome page below
 //from our registration app
 
-     /* body: Center(
+      /* body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -110,17 +109,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       */
 
-       //Use this for stateless Pages
-      body: screens[currentIndex],
+      //Use this for stateless Pages
+      //body: screens[currentIndex],
 
-      /*Use this for stateful Pages
-      
-      body:IndexedStack(
+      //Use this for stateful Pages
+
+      body: IndexedStack(
         index: currentIndex,
         children: screens,
-        ),
-        */
-
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         //type: BottomNavigationBarType.fixed, For less dynamic
@@ -159,8 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.exit_to_app_rounded),
-            label: 'Exit',
+            icon: Icon(Icons.monitor_weight_outlined),
+            label: 'BMI',
             backgroundColor: Colors.red,
           ),
         ],
