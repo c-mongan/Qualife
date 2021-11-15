@@ -10,7 +10,7 @@ class ContainerBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: childWidget,
-      margin: EdgeInsets.all(20.0),
+      margin: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         color: boxColor,

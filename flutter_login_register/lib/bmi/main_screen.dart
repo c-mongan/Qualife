@@ -8,7 +8,7 @@ import 'data_container.dart';
 //Create MainScreen class by typing stful
 
 const activeColor = Colors.blue;
-const inActiveColor = Colors.grey;
+const inActiveColor = Colors.red;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);

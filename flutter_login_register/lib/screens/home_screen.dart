@@ -141,8 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Feed',
+            icon: Icon(Icons.add_chart),
+            label: 'Data',
             backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(

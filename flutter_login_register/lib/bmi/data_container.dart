@@ -7,10 +7,11 @@ const textStyle1 = TextStyle(
 
 const textStyle2 = TextStyle(
   color: Colors.white,
-  fontSize: 45.0,
+  fontSize: 20.0,
   fontWeight: FontWeight.w900
 );
 
+//Calculate Button
 const textStyle3 = TextStyle(
   color: Colors.white,
   fontSize: 30.0,
@@ -34,7 +35,7 @@ class DataContainer extends StatelessWidget {
           size: 50.0,
           color: Colors.white,
         ),
-        SizedBox(height: 5.0),
+        SizedBox(height: 10.0),
         Text(title, style: textStyle1)
       ],
     );
