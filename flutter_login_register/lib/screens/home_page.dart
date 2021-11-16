@@ -46,20 +46,23 @@ class _HomePageState extends State<HomePage> {
                     child: Image.asset("assets/logo.png", fit: BoxFit.contain)),
                 // ignore: prefer_const_constructors
                 Text(
-                  "Welcome To The Home Page",
+                  "Welcome!",
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue),
                 ),
                 // ignore: prefer_const_constructors
                 SizedBox(
                   height: 10,
                 ),
-                Text("${loggedInUser.firstName} ${loggedInUser.secondName}",
+                Text(
+                    "Your Name: ${loggedInUser.firstName} ${loggedInUser.secondName}",
                     style: const TextStyle(
                       color: Colors.black54,
                       fontWeight: FontWeight.w500,
                     )),
-                Text("${loggedInUser.email}",
+                Text("Your E-mail: ${loggedInUser.email}",
                     style: const TextStyle(
                       color: Colors.black54,
                       fontWeight: FontWeight.w500,
@@ -69,6 +72,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ActionChip(
                     label: const Text("Log Out"),
+                    labelStyle: TextStyle(color: Colors.white),
+                    backgroundColor: Colors.blue,
                     onPressed: () {
                       logout(context);
                     }),

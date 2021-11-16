@@ -7,8 +7,8 @@ import 'package:flutter_login_register/screens/login_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_login_register/screens/profile_page.dart';
 import 'package:flutter_login_register/screens/home_page.dart';
-import 'package:flutter_login_register/screens/feed_page.dart';
-import 'package:flutter_login_register/screens/chat_page.dart';
+import 'package:flutter_login_register/screens/data.dart';
+import 'package:flutter_login_register/screens/profile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -26,9 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final screens = [
     HomePage(),
-    FeedPage(),
-    ChatPage(),
-    ProfilePage(),
+    Data(),
+    Profile(),
+    Chat(),
     MainScreen(),
   ];
 
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Chat',
+            label: 'Profile',
             backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(

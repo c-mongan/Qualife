@@ -272,11 +272,11 @@ class _MainScreenState extends State<MainScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       return Dialog(
-                        backgroundColor: inActiveColor,
+                        backgroundColor: activeColor,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         child: Container(
-                          color: inActiveColor,
+                          color: activeColor,
                           height: 150,
                           margin: EdgeInsets.all(10.0),
                           child: Column(
