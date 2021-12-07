@@ -8,6 +8,7 @@ import 'package:health_app_fyp/profile.dart';
 import 'package:health_app_fyp/screens/data.dart';
 import 'package:health_app_fyp/screens/home_screen.dart';
 import 'package:health_app_fyp/screens/login_screen.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -20,6 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   int currentIndex = 0; //index count for nav bar
+
+
+  
 
   //Screens will be replaced by pages, e.g.
 

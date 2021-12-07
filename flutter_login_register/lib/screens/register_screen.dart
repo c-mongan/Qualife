@@ -275,6 +275,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.firstName = firstNameEditingController.text;
     userModel.secondName = secondNameEditingController.text;
 
+
     await firebaseFirestore
         .collection("users")
         .doc(user.uid)

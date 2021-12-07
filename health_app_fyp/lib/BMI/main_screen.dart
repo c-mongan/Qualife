@@ -1,9 +1,13 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'container_box.dart';
 import 'data_container.dart';
+import 'package:health_app_fyp/model/user_model.dart';
 
 //Create BMI class by typing stful
 
@@ -22,6 +26,7 @@ class BMI extends StatefulWidget {
 class _BMIState extends State<BMI> {
   //Method to change color of container box on tap
 
+  // UserData user = UserData();
   Color maleBoxColor = activeColor;
   Color femaleBoxColor = inActiveColor;
   int height = 180;
@@ -30,11 +35,18 @@ class _BMIState extends State<BMI> {
   String result = "";
   String resultDetail = "result here";
   double bmi = 0;
+  //var gender = '';
 
-  var bmr;
+  //This line to link database instance with current user
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   String calculateBmi(int weight, int height) {
     bmi = weight / pow(height / 100, 2);
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'bmi': bmi.toStringAsFixed(1)});
     return bmi.toStringAsFixed(1);
   }
 
@@ -75,6 +87,10 @@ class _BMIState extends State<BMI> {
                   onTap: () {
                     setState(() {
                       updateBoxColor(1);
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(uid)
+                          .update({'gender': 'male'});
                     });
                   },
                   //Dont forget add set state fun inside onpressed
@@ -93,6 +109,10 @@ class _BMIState extends State<BMI> {
                   onTap: () {
                     setState(() {
                       updateBoxColor(2);
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(uid)
+                          .update({'gender': 'female'});
                     });
                   },
                   //Dont forget add set state fun inside onpressed
@@ -142,6 +162,10 @@ class _BMIState extends State<BMI> {
                         //Dont forget to setState so it changes
                         setState(() {
                           height = newValue.round();
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(uid)
+                              .update({'height': height.toInt()});
                         });
                       },
                     )
@@ -174,6 +198,11 @@ class _BMIState extends State<BMI> {
                             onPressed: () {
                               setState(() {
                                 weight++;
+                                weight = weight.toInt();
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(uid)
+                                    .update({'weight': weight});
                               });
                             },
                             child: Icon(
@@ -191,6 +220,11 @@ class _BMIState extends State<BMI> {
                               setState(() {
                                 if (weight > 0) {
                                   weight--;
+                                  weight = weight.toInt();
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(uid)
+                                      .update({'weight': weight});
                                 }
                               });
                             },
@@ -234,6 +268,10 @@ class _BMIState extends State<BMI> {
                           onPressed: () {
                             setState(() {
                               age++;
+                              FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(uid)
+                                  .update({'age': age});
                             });
                           },
                           child: Icon(
@@ -251,6 +289,10 @@ class _BMIState extends State<BMI> {
                             setState(() {
                               if (age > 0) {
                                 age--;
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(uid)
+                                    .update({'age': age});
                               }
                             });
                           },

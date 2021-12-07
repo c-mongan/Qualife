@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:health_app_fyp/model/user_model.dart';
 import 'package:health_app_fyp/screens/landpage.dart';
+import 'package:health_app_fyp/services/database.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -266,6 +267,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
+await DatabaseService(uid: user!.uid).updateUserInfo('0', '0', 2, 3);
     UserModel userModel = UserModel();
 
     //Writing values
@@ -274,6 +276,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user!.uid;
     userModel.firstName = firstNameEditingController.text;
     userModel.secondName = secondNameEditingController.text;
+    userModel.age = 0;
+    userModel.weight = 0;
+    userModel.height = 0;
+    userModel.bmi = 0;
+    userModel.bmr = 0;
+    userModel.activityLevel = 0;
+    userModel.gender = "";
 
     await firebaseFirestore
         .collection("users")
