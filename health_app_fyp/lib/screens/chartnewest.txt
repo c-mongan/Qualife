@@ -1,0 +1,155 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:health_app_fyp/model/user_model.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
+
+class Chart extends StatefulWidget {
+  const Chart({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<Chart> createState() => _ChartState();
+}
+
+class _ChartState extends State<Chart> {
+  var _message;
+
+
+
+//   //  FirebaseFirestore db = FirebaseFirestore.instance;
+
+//   // _fetchData() async {
+
+//   //   db
+//   //       .collection('UserData')
+//   //       .doc(user!.uid)
+//   //       .get()
+//   //       .then((value) {
+//   //     setState(() {
+//   //       _message = value.data()!['bmi'];
+//   //       //_message = String.parse(_message) as double;
+//   //     });
+//   //   });
+//   // }
+
+//   // void _onPressed() async{
+//   //   var userData;
+//   //   var firebaseUser = FirebaseAuth.instance.currentUser;
+//   //   var result = await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).get();
+//   //   setState((){
+//   //     userData = result.data();
+//   //    });
+//   // }
+
+// //   User? user = FirebaseAuth.instance.currentUser;
+// // Measurements loggedInUser = Measurements();
+
+//   User? user = FirebaseAuth.instance.currentUser;
+// //   // Measurements loggedInUser = Measurements();
+
+// _fetchData() async {
+
+// FirebaseFirestore.instance
+//     .collection('UserData')
+//     .doc(user!.uid)
+//     .get()
+//     .then((DocumentSnapshot documentSnapshot) {
+//       if (documentSnapshot.exists) {
+//         print('Document data: ${documentSnapshot.data()}');
+//         //Set the relevant data to variables as needed
+//          // int bmi = users.doc(documentId).get(),
+//       } else {
+//         print('Document does not exist on the database');
+//       }
+//     });
+
+//   // @override
+//   // Future<void> initState() async {
+//   //   super.initState();
+
+// // FirebaseFirestore.instance
+// //     .collection('UserData')
+// //     .doc(user!.uid)
+// //     .get()
+// //     .then((DocumentSnapshot documentSnapshot) {
+// //       if (documentSnapshot.exists) {
+// //         print('Document exists on the database');
+// //       }
+// //     });
+
+// //  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('UserData').snapshots();
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return StreamBuilder<QuerySnapshot>(
+// //       stream: _usersStream,
+// //       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+// //         if (snapshot.hasError) {
+// //           return Text('Something went wrong');
+// //         }
+
+// //         if (snapshot.connectionState == ConnectionState.waiting) {
+// //           return Text("Loading");
+// //         }
+
+// //         return ListView(
+// //           children: snapshot.data!.docs.map((DocumentSnapshot document) {
+// //           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+// //             return ListTile(
+// //               title: Text(data['full_name']),
+// //               subtitle: Text(data['company']),
+// //             );
+// //           }).toList(),
+// //         );
+// //       },
+// //     );
+// //   }
+// // }
+
+  @override
+  Widget build(BuildContext context)
+   => Scaffold(
+     
+  
+      appBar: AppBar(
+        title: Text('BMI'),
+      ),
+      body: Center(
+          child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Your BMI is below",
+                style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue),
+              ),
+              //Text(loggedInUser.bmi.toString()),
+              //Text(_message.toString()),
+
+              
+              SizedBox(
+                height: 10,
+                child: Container(
+                  child: SfSlider(
+                    showLabels: true,
+                    min: 10,
+                    max: 40,
+                    interval: 5,
+                    value: 20,
+                    
+                    showTicks: true,
+                    onChanged: null,
+                  ),
+                ),
+              ),
+            ]),
+      )));
+}
+

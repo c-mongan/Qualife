@@ -1,0 +1,146 @@
+// ignore_for_file: empty_statements
+
+import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
+
+
+
+// class Chart extends StatefulWidget {
+//   @override
+//     _ChartState createState() => _ChartState();
+// }
+
+// class _ChartState extends State<Chart> {
+//   final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('users').snapshots();
+
+class Chart extends StatefulWidget {
+  const Chart({Key? key}) : super(key: key);
+
+  // ignore: use_key_in_widget_constructors
+ 
+  @override
+    _ChartState createState() => _ChartState();
+}
+
+class _ChartState extends State<Chart> {
+   //final Stream<QuerySnapshot> _usersDataStream = FirebaseFirestore.instance.collection('UserData').snapshots();
+   //String uid = FirebaseAuth.instance.currentUser!.uid;
+//Stream documentStream = FirebaseFirestore.instance.collection('UserData').doc().snapshots();
+
+//FirebaseFirestore db = FirebaseFirestore.instance;
+//String uid = FirebaseAuth.instance.currentUser!.uid;
+
+// String bmi ='';
+// Stream<QuerySnapshot>? val;
+
+// Measurements loggedInUser = Measurements();
+
+// class _ChartState extends State<Chart> {
+ 
+ 
+ 
+  // @override
+  // void initState() {
+  //   super.initState();
+
+    // final Stream<DocumentSnapshot<Map<String, dynamic>>> val = FirebaseFirestore.instance
+    //     .collection('UserData')
+    //     .doc(uid)
+    //     //.collection(bmi)
+    //     .snapshots();
+
+    // String parsed =bmi.toString();
+    //double.parse(val);
+
+    // FirebaseFirestore.instance
+    //     .collection("UserData")
+    //     .doc(uid)
+    //     .get()
+    //     .then((value) {
+    //   loggedInUser = Measurements.fromMap(value.data());
+    //   setState(() {});
+
+      //var  bmi = loggedInUser["bmi"];
+
+      
+
+      // @override
+      // void initState() {
+      //   super.initState();
+      //   // final Stream<QuerySnapshot> products = FirebaseFirestore.instance.collection('products').doc('men').collection(val).snapshots();
+      // }
+
+      @override
+      Widget build(BuildContext context) => Scaffold(
+          appBar: AppBar(
+            title: const Text('BMI'),
+          ),
+          body: Center(
+              child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const <Widget>[
+                  Text(
+                    "Your BMI is below",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  ),
+                  SizedBox(
+                    height: 10,
+                    child: SfSlider(
+                      showLabels: true,
+                      min: 10,
+                      max: 40,
+                      interval: 5,
+                      value: 27,
+                      // value: 30,
+
+                      showTicks: true,
+                      onChanged: null,
+                    ),
+                  ),
+                ]),
+          )));
+    }
+//   @override
+//   Widget build(BuildContext context) {
+//     return StreamBuilder<QuerySnapshot>(
+//       stream: _usersStream,
+//       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//         if (snapshot.hasError) {
+//           return const Text('Something went wrong');
+//         }
+
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const Text("Loading");
+//         }
+
+//         return ListView(
+//           children: snapshot.data!.docs.map((DocumentSnapshot document) {
+//             Map<String, dynamic> data =
+//                 document.data()! as Map<String, dynamic>;
+//             return ListTile(
+//               title: Text(data['bmi'].toString()),
+//             );
+//           }).toList(),
+//         );
+//       },
+//     );
+//   }
+// }
+
+//             );
+//     ;
+//     ;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // TODO: implement build
+//     throw UnimplementedError();
+//   }
+// }

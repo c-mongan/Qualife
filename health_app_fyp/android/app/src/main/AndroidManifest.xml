@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.health_app_fyp">
+    <uses-permission android:name="android.permission.CAMERA" />
+<uses-feature android:name="android.hardware.camera" />
    <application
         android:label="health_app_fyp"
         android:icon="@mipmap/ic_launcher">
         <activity
+        
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

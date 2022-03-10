@@ -178,7 +178,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final signUpButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent, //Color of button
+      //color: Colors.redAccent, //Color of button
+      color: Color.fromARGB(255, 212, 11, 62),
       child: MaterialButton(
           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context)
@@ -207,44 +208,72 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 Navigator.of(context).pop();
               }),
         ),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                          height: 200,
-                          child: Image.asset(
-                            "assets/logo.png",
-                            fit: BoxFit.contain,
-                          )),
-                      const SizedBox(height: 45),
-                      firstNameField,
-                      const SizedBox(height: 20),
-                      secondNameField,
-                      const SizedBox(height: 20),
-                      emailField,
-                      const SizedBox(height: 20),
-                      passwordField,
-                      const SizedBox(height: 20),
-                      confirmPasswordField,
-                      const SizedBox(height: 20),
-                      signUpButton,
-                      const SizedBox(height: 15),
-                    ],
+        body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    // colors: [Colors.red, Colors.white, Colors.red],
+                    colors: [
+                  Colors.red,
+                  Colors.blue,
+                  // Colors.red,
+                  //Colors.blue,
+
+                  // Colors.orange,
+                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(36.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Health App FYP",
+                            style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.lightBlue),
+                          ),
+                          SizedBox(
+                              height: 200,
+                              child: Image.asset(
+                                "assets/healthy1.png",
+                                fit: BoxFit.contain,
+                              )),
+                          Text(
+                            "Register",
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.lightBlue),
+                          ),
+                          const SizedBox(height: 45),
+                          firstNameField,
+                          const SizedBox(height: 20),
+                          secondNameField,
+                          const SizedBox(height: 20),
+                          emailField,
+                          const SizedBox(height: 20),
+                          passwordField,
+                          const SizedBox(height: 20),
+                          confirmPasswordField,
+                          const SizedBox(height: 20),
+                          signUpButton,
+                          const SizedBox(height: 15),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ));
+            )));
   }
 
   void signUp(String email, String password) async {
@@ -267,22 +296,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
-await DatabaseService(uid: user!.uid).updateUserInfo('0', '0', 2, 3);
+    await DatabaseService(uid: user!.uid).updateUserData(
+      0,
+      '',
+      0,
+      0,
+      0,
+    );
     UserModel userModel = UserModel();
 
     //Writing values
 
-    userModel.email = user!.email;
-    userModel.uid = user!.uid;
+    userModel.email = user.email;
+    userModel.uid = user.uid;
     userModel.firstName = firstNameEditingController.text;
     userModel.secondName = secondNameEditingController.text;
-    userModel.age = 0;
-    userModel.weight = 0;
-    userModel.height = 0;
-    userModel.bmi = 0;
-    userModel.bmr = 0;
-    userModel.activityLevel = 0;
-    userModel.gender = "";
 
     await firebaseFirestore
         .collection("users")

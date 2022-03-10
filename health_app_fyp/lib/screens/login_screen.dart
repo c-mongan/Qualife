@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent, //Color of button
+      color: Color.fromARGB(255, 212, 11, 62), //Color of button
       child: MaterialButton(
           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context)
@@ -111,7 +111,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: SingleChildScrollView(
+            child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    // colors: [Colors.red, Colors.white, Colors.red],
+                    colors: [
+                  Colors.red,
+                  Colors.blue,
+                  // Colors.red,
+                  //Colors.blue,
+
+                  // Colors.orange,
+                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: Container(
               color: Colors.white,
               child: Padding(
@@ -122,12 +136,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
+                      Text(
+                        "Health App FYP",
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.lightBlue,
+                        ),
+                        // color: Color.fromARGB(255, 74, 134, 204)),
+                      ),
                       SizedBox(
                           height: 200,
                           child: Image.asset(
-                            "assets/logo.png",
+                            "assets/healthy1.png",
                             fit: BoxFit.contain,
                           )),
+                      Text(
+                        "Login",
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.lightBlue),
+                      ),
                       const SizedBox(height: 45),
                       emailField,
                       const SizedBox(height: 25),
@@ -149,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: const Text("Sign Up",
                                 style: TextStyle(
-                                    color: Colors.redAccent,
+                                    color: Color.fromARGB(255, 212, 11, 62),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15)),
                           ),
@@ -161,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-        ));
+        )));
   }
 
 //Login Method

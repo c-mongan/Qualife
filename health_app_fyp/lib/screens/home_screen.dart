@@ -31,10 +31,26 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-        ),
-        body: Center(
+      appBar: AppBar(
+        title: const Text('Home'),
+        backgroundColor: Colors.blue,
+        elevation: 0,
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                // colors: [Colors.red, Colors.white, Colors.red],
+                colors: [
+              Colors.blue,
+              Colors.red,
+              // Colors.red,
+              //Colors.blue,
+
+              // Colors.orange,
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        child: Center(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -42,38 +58,48 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                    height: 150,
-                    child: Image.asset("assets/logo.png", fit: BoxFit.contain)),
-                // ignore: prefer_const_constructors
-                Text(
-                  "Welcome!",
-                  style: const TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue),
+                  height: 55,
+                  child: Text(
+                    "Welcome ${loggedInUser.firstName}!",
+                    // "Welcome ${loggedInUser.firstName} ${loggedInUser.secondName}!",
+                    style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
+                SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                    height: 120,
+                    child: Image.asset("assets/healthy1.png",
+                        fit: BoxFit.contain)),
+                // ignore: prefer_const_constructors
+
                 // ignore: prefer_const_constructors
                 SizedBox(
-                  height: 10,
+                  height: 25,
                 ),
                 Text(
                     "Your Name: ${loggedInUser.firstName} ${loggedInUser.secondName}",
                     style: const TextStyle(
-                      color: Colors.black54,
+                      color: Colors.white,
                       fontWeight: FontWeight.w500,
                     )),
                 Text("Your E-mail: ${loggedInUser.email}",
                     style: const TextStyle(
-                      color: Colors.black54,
+                      color: Colors.white,
                       fontWeight: FontWeight.w500,
                     )),
                 const SizedBox(
-                  height: 15,
+                  height: 25,
                 ),
                 ActionChip(
                     label: const Text("Log Out"),
-                    labelStyle: TextStyle(color: Colors.white),
-                    backgroundColor: Colors.blue,
+                    labelStyle:
+                        const TextStyle(color: Colors.white, fontSize: 15),
+                    backgroundColor: Colors.red,
                     onPressed: () {
                       logout(context);
                     }),
@@ -81,7 +107,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-      );
+      ));
 }
 
 Future<void> logout(BuildContext context) async {

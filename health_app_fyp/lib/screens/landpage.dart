@@ -1,14 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:health_app_fyp/BMI/main_screen.dart';
+import 'package:health_app_fyp/BMR+BMR/screens/main_page.dart';
+import 'package:health_app_fyp/MoodTracker/original/ListOfMoods.dart';
+import 'package:health_app_fyp/OpenFoodFacts/FirstPageBarcodeScanner.dart';
 import 'package:health_app_fyp/model/user_model.dart';
-import 'package:health_app_fyp/profile.dart';
-import 'package:health_app_fyp/screens/data.dart';
+//import 'package:health_app_fyp/screens/chartbackup.txt';
 import 'package:health_app_fyp/screens/home_screen.dart';
 import 'package:health_app_fyp/screens/login_screen.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:health_app_fyp/screens/simplelinechart.dart';
+
+//import '../MoodTracker/MoodHome.dart';
+import '../MoodTracker/original/MoodHome.dart';
+import '../MoodTracker/original/SFexample.dart';
+import 'chart.dart';
+import 'originalchart.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -20,21 +26,36 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+
   int currentIndex = 0; //index count for nav bar
-
-
-  
 
   //Screens will be replaced by pages, e.g.
 
-  final screens = [
-    HomePage(),
-    Data(),
-    Profile(),
+  var screens = [
+    const HomePage(),
+    //Profile(),
+
+    const ChartSlider(),
+
+    const LineChartSample2(),
+
+    //SlidersWithFireBaseDemo(),
+
+    //FoodScreen(),
     // MainScreen(),
     //BMI(),
     //BMR(),
-    BMI(),
+    //BMITDEE(),
+    const BMITDEE(),
+    //SecondPage(resultText: "NICE", interpretation: "YUP", bmiResult: "28", tdeeResult: "tdeeResult"),
+
+    // ScanHomePage(
+    //   title: 'Barcode Scanner',
+    // ),
+
+    MyTest(),
+
+    ListMoods(),
   ];
 
   // final screens = [
@@ -46,20 +67,20 @@ class _HomeScreenState extends State<HomeScreen> {
   //];
 
   @override
-  void initState() {
-    super.initState();
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // return StreamBuilder(
+    //     stream: FirebaseFirestore.instance
+    //         .collection('UserData')
+    //         .doc(user?.uid)
+    //         .snapshots(),
+    //     builder: (BuildContext context, snapshot) {
+    //       if (snapshot.hasData) {
+    //         Measurements measurements =
+    //             Measurements.fromSnapshot(snapshot.data, user?.uid);
+    //         return Chart(measurements: measurements);
+
+    //       }
+
     return Scaffold(
 // Use this if you want welcome on the top
       // appBar: AppBar(title: const Text("Welcome"), centerTitle: true),
@@ -123,23 +144,25 @@ class _HomeScreenState extends State<HomeScreen> {
         index: currentIndex,
         children: screens,
       ),
+//bottomNavigationBar:
 
       bottomNavigationBar: BottomNavigationBar(
         //type: BottomNavigationBarType.fixed, For less dynamic
         currentIndex: currentIndex,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
-        iconSize: 40, //individual icon size
+        iconSize: 30, //individual icon size
         selectedFontSize: 25,
         unselectedFontSize: 15,
         showUnselectedLabels: false,
+        //elevation: 0,
         //showSelectedLabels: false, Use this to get rid of labels
         //Still need to add a label name to avoid errors however
 
         //On tap changes which label text comes up when you click it
         onTap: (index) => setState(() => currentIndex = index),
         //Set state as the class extends stateful widget ^^^ Top of page
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -147,27 +170,46 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_chart),
-            label: 'Data',
+            label: 'Chart',
             backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.add_chart),
+            label: 'Line Chart',
             backgroundColor: Colors.red,
           ),
-          /*  BottomNavigationBarItem(
-            icon: Icon(Icons.chat_outlined),
-            label: 'BMR',
-            backgroundColor: Colors.blue,
-          ),*/
+
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.food_bank_outlined),
+          //   label: 'API',
+          //   backgroundColor: Colors.red,
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.monitor_weight_outlined),
             label: 'BMI',
+            backgroundColor: Colors.blue,
+          ),
+
+          //   BottomNavigationBarItem(
+          //   icon: Icon(Icons.monitor_weight_outlined),
+          //   label: 'TDEE',
+          //   backgroundColor: Colors.blue,
+          // ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.food_bank_outlined),
+            label: 'Barcode',
             backgroundColor: Colors.red,
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mood),
+            label: 'Mood tracker',
+            backgroundColor: Colors.blue,
           ),
         ],
       ),
     );
+    // });
   }
 
   Future<void> logout(BuildContext context) async {
