@@ -7,7 +7,7 @@ import 'package:health_app_fyp/screens/login_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 

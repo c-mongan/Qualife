@@ -175,6 +175,9 @@ class _SecondPageState extends State<SecondPage> {
 
                 // Colors.orange,
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+          // child: SingleChildScrollView(
+          //     // <-- wrap this around
+          //     child: Column(children: <Widget>[
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -190,7 +193,9 @@ class _SecondPageState extends State<SecondPage> {
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: Colors.white)),
-                      Flexible(
+                      // Container(
+                      //   height: 100,
+                      Expanded(
                         child: ContainerCard(
                           color: (widget.resultText == 'Underweight' ||
                                   widget.resultText == 'Overweight')
@@ -203,7 +208,8 @@ class _SecondPageState extends State<SecondPage> {
                                 widget.resultText.toUpperCase(),
                                 style: kResultsTextStyle.copyWith(
                                   color: (widget.resultText == 'Underweight' ||
-                                          widget.resultText == 'Overweight')
+                                          widget.resultText == 'Overweight' ||
+                                          widget.resultText == 'Obese')
                                       ? const Color(0xFFF95F49)
                                       : const Color(0xFF48C67D),
                                 ),
@@ -237,17 +243,17 @@ class _SecondPageState extends State<SecondPage> {
                                           children: const <Widget>[
                                             Text(
                                               '< 18,5 – underweight',
-                                              style: kInfoTextStyle,
+                                              // style: kInfoTextStyle,
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
                                               '18,5 – 24,99 – normal',
-                                              style: kInfoTextStyle,
+                                              // style: kInfoTextStyle,
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
                                               '≥ 25,0 – overweight',
-                                              style: kInfoTextStyle,
+                                              //  style: kInfoTextStyle,
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -274,7 +280,7 @@ class _SecondPageState extends State<SecondPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Flexible(
+                          Expanded(
                             child: Text(
                               widget.interpretation,
                               style: kBodyTextStyle,
@@ -324,7 +330,7 @@ class _SecondPageState extends State<SecondPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'No activity',
                                   textAlign: TextAlign.center,
@@ -362,7 +368,7 @@ class _SecondPageState extends State<SecondPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'Low activity',
                                   textAlign: TextAlign.center,
@@ -400,21 +406,21 @@ class _SecondPageState extends State<SecondPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'Average activity',
                                   textAlign: TextAlign.center,
                                   style: kLabelTextStyle,
                                 ),
                               ),
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   '(3-4 workouts per week,',
                                   textAlign: TextAlign.center,
                                   style: kLabelTextStyle,
                                 ),
                               ),
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'sedentary work)',
                                   textAlign: TextAlign.center,
@@ -447,21 +453,21 @@ class _SecondPageState extends State<SecondPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'High activity',
                                   textAlign: TextAlign.center,
                                   style: kLabelTextStyle,
                                 ),
                               ),
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   '(3-4 workouts per week,',
                                   textAlign: TextAlign.center,
                                   style: kLabelTextStyle,
                                 ),
                               ),
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'physical work)',
                                   textAlign: TextAlign.center,
@@ -494,7 +500,7 @@ class _SecondPageState extends State<SecondPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
-                              Flexible(
+                              Expanded(
                                 child: Text(
                                   'Very high activity',
                                   textAlign: TextAlign.center,
@@ -644,18 +650,19 @@ class _SecondPageState extends State<SecondPage> {
                     ContainerCard(
                       color: const Color(0xFFE4EEFF),
                       childContainer: Container(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 5.0),
                         child: Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             textBaseline: TextBaseline.alphabetic,
                             children: <Widget>[
+                              Text(returnedTDEE.toStringAsFixed(0),
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue)),
                               Text(
-                                returnedTDEE.toStringAsFixed(0),
-                                style: kTDEETextStyle,
-                              ),
-                              const Text(
                                 'kcal',
                                 style: kKcalTextStyle,
                               ),
@@ -712,6 +719,9 @@ class _SecondPageState extends State<SecondPage> {
               ),
             ],
           ),
+          // ]
+          // )
+          // )
         ));
   }
 }

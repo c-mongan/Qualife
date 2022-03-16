@@ -33,7 +33,7 @@ class _BMITDEEState extends State<BMITDEE> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: kAppBarColor,
+          backgroundColor: Colors.red,
           elevation: 0,
           title: const Center(
             child: Text(

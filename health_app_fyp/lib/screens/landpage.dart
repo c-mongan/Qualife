@@ -5,10 +5,12 @@ import 'package:health_app_fyp/BMR+BMR/screens/main_page.dart';
 import 'package:health_app_fyp/MoodTracker/original/ListOfMoods.dart';
 import 'package:health_app_fyp/OpenFoodFacts/FirstPageBarcodeScanner.dart';
 import 'package:health_app_fyp/model/user_model.dart';
+import 'package:health_app_fyp/screens/data.dart';
 //import 'package:health_app_fyp/screens/chartbackup.txt';
 import 'package:health_app_fyp/screens/home_screen.dart';
 import 'package:health_app_fyp/screens/login_screen.dart';
 import 'package:health_app_fyp/screens/simplelinechart.dart';
+import 'package:health_app_fyp/screens/stackOverflowChart.dart';
 
 //import '../MoodTracker/MoodHome.dart';
 import '../MoodTracker/original/MoodHome.dart';
@@ -32,12 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
   //Screens will be replaced by pages, e.g.
 
   var screens = [
-    const HomePage(),
+    // const HomePage(),
     //Profile(),
 
     const ChartSlider(),
 
-    const LineChartSample2(),
+    //Data(),
+    //const LineChartSample2(),
 
     //SlidersWithFireBaseDemo(),
 
@@ -166,18 +169,18 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.grey,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_chart),
-            label: 'Chart',
-            backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_chart),
-            label: 'Line Chart',
-            backgroundColor: Colors.red,
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.pie_chart),
+          //   label: 'Chart',
+          //   backgroundColor: Colors.black,
+          // ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.add_chart),
+          //   label: 'Line Chart',
+          //   backgroundColor: Colors.red,
+          // ),
 
           // BottomNavigationBarItem(
           //   icon: Icon(Icons.food_bank_outlined),
@@ -193,12 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
           //   BottomNavigationBarItem(
           //   icon: Icon(Icons.monitor_weight_outlined),
           //   label: 'TDEE',
-          //   backgroundColor: Colors.blue,
+          //   backgroundColor: Colors.black,
           // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.food_bank_outlined),
             label: 'Barcode',
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.blue,
           ),
 
           BottomNavigationBarItem(

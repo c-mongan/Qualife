@@ -2,11 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/MoodTracker/original/MoodHome.dart';
 import 'package:health_app_fyp/model/user_data.dart';
+import 'package:health_app_fyp/screens/chart.dart';
+import 'package:health_app_fyp/screens/home_screen.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+import '../../BMR+BMR/colors&fonts.dart';
 
 class ListMoods extends StatefulWidget {
   @override
@@ -39,15 +44,16 @@ class _MyTestState extends State<ListMoods> {
 //DISPLAYS ALL SCANNED FOODS FROM TODAY
   final Stream<QuerySnapshot> moodStream = FirebaseFirestore.instance
       .collection('MoodTracking')
-      .orderBy(
-        "DateTime",
-      )
-      .where('DateTime',
-          isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-              DateTime.now().month, DateTime.now().day, 0, 0))
-      .where('DateTime',
-          isLessThanOrEqualTo: DateTime(DateTime.now().year,
-              DateTime.now().month, DateTime.now().day, 23, 59, 59))
+      .orderBy("DateTime", descending: true)
+
+      // Uncomment to show all moods for today
+
+      // .where('DateTime',
+      //     isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
+      //         DateTime.now().month, DateTime.now().day, 0, 0))
+      // .where('DateTime',
+      //     isLessThanOrEqualTo: DateTime(DateTime.now().year,
+      //         DateTime.now().month, DateTime.now().day, 23, 59, 59))
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
 
@@ -151,14 +157,14 @@ class _MyTestState extends State<ListMoods> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: const Text(""),
+            title: const Text("Mood Tracker"),
             elevation: 0,
           ),
           body: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
-                  gradient:  LinearGradient(
+                  gradient: LinearGradient(
                       // colors: [Colors.red, Colors.white, Colors.red],
                       colors: [
                     Colors.red,
@@ -171,16 +177,16 @@ class _MyTestState extends State<ListMoods> {
               child: Column(children: [
                 // Container(
                 //   height: 100.0,
-                 const Text('Mood Tracker',
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                // const Text('Mood Tracker',
+                //     style: TextStyle(
+                //       fontSize: 30.0,
+                //       color: Colors.white,
+                //       fontWeight: FontWeight.w600,
 
-                      // style: TextStyle(
-                      //     fontStyle: FontStyle.normal,
-                      //     fontWeight: FontWeight.bold
-                    )),
+                //       // style: TextStyle(
+                //       //     fontStyle: FontStyle.normal,
+                //       //     fontWeight: FontWeight.bold
+                //     )),
 
                 const SizedBox(
                   width: 5,
@@ -243,7 +249,7 @@ class _MyTestState extends State<ListMoods> {
                                                       .length -
                                                   1) +
                                           "             " +
-                                          data['DateOfMood'] +
+                                          data['DateOfMood'].toString() +
                                           " " +
                                           //" at Time: " +
                                           data['TimeOfMood'].toString(),
@@ -256,8 +262,31 @@ class _MyTestState extends State<ListMoods> {
                               }).toList(),
                             );
                           },
-                        )))
-              ])),
+                        ))),
+                Button(
+                    edges: const EdgeInsets.all(0.0),
+                    color: Colors.blue,
+                    text: const Text(
+                      'Home',
+                      style: textStyle2,
+                      // TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChartSlider(),
+                        ),
+                      );
+                    }
+                    // },
+                    )
+              ]
+                  // Flexible(
+                  //     flex: 1,
+                  //     child:
+
+                  )),
           floatingActionButton: getFloatingActionButton(),
         ));
   }
@@ -283,7 +312,6 @@ class _MyTestState extends State<ListMoods> {
           labelStyle: const TextStyle(fontWeight: FontWeight.w500),
           labelBackgroundColor: Colors.red[500],
         ),
-        
         SpeedDialChild(
           child: const Icon(MdiIcons.minus, color: Colors.white),
           backgroundColor: Colors.red,
@@ -340,7 +368,6 @@ class _MyTestState extends State<ListMoods> {
         print(tdeeval.data());
 
         double tdee = tdeevals.docs[0].get("tdee");
-      
 
         return tdee;
       }

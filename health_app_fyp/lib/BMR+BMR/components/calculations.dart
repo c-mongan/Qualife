@@ -86,10 +86,14 @@ class Calculator {
     // .update({'bmi': _bmi.toStringAsFixed(1)});
 
     setBmiTime(bmiTime);
+    String result = getResult();
 
-    FirebaseFirestore.instance
-        .collection('BMI')
-        .add({'bmiScore': _bmi, 'bmiTime': bmiTime, 'userID': uid});
+    FirebaseFirestore.instance.collection('BMI').add({
+      'bmiScore': _bmi,
+      'bmiTime': bmiTime,
+      'userID': uid,
+      'result': result
+    });
 
     // .doc(uid).collection('bmiData').doc(). set({'bmiTime': bmiTime});
     // , SetOptions(merge : true)
@@ -102,10 +106,12 @@ class Calculator {
   }
 
   String getResult() {
-    if (_bmi >= 25) {
+    if (_bmi >= 30) {
+      return 'Obese';
+    } else if (_bmi >= 25) {
       return 'Overweight';
     } else if (_bmi > 18.0) {
-      return 'Normal';
+      return 'Healthy';
     } else {
       return 'Underweight';
     }

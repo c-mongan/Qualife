@@ -7,7 +7,6 @@ import 'package:health_app_fyp/model/user_data.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-
 class MyTest extends StatefulWidget {
   @override
   _MyTestState createState() => _MyTestState();
@@ -230,7 +229,7 @@ class _MyTestState extends State<MyTest> {
                     )),
                 // Expanded(
                 Container(
-                    height: 400.0,
+                    height: 350.0,
                     child: StreamBuilder<QuerySnapshot>(
                       stream: foodStream,
                       builder: (BuildContext context,
@@ -268,7 +267,9 @@ class _MyTestState extends State<MyTest> {
                                           .toStringAsFixed(2) +
                                       " Calories Per " +
                                       data['NumberOfServings'].toString() +
-                                      " Servings(s) Added",
+                                      " Servings(s) of " +
+                                      data['ServingSize'].toString() +
+                                      "g Added",
                                   style: const TextStyle(
                                     fontSize: 10.0,
                                     color: Colors.white,
@@ -501,10 +502,21 @@ class _MyTestState extends State<MyTest> {
           } else {
             print("No Foods Left In List");
           }
-          FirebaseFirestore.instance.collection('remainingCalories').add({
-            'userID': uid,
-            'Cals': removeLastFoodsCalories,
-            'DateTime': inputTime,
+
+          getTdeeVal().then((tdee) {
+            if (removeLastFoodsCalories > tdee) {
+              FirebaseFirestore.instance.collection('remainingCalories').add({
+                'userID': uid,
+                'Cals': tdee,
+                'DateTime': inputTime,
+              });
+            } else {
+              FirebaseFirestore.instance.collection('remainingCalories').add({
+                'userID': uid,
+                'Cals': removeLastFoodsCalories,
+                'DateTime': inputTime,
+              });
+            }
           });
 
           // getNumOfFoodsToday();

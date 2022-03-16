@@ -44,7 +44,8 @@ class _StartPageState extends State<StartPage> {
     Mood('assets/sad.png', 'Sad', false),
     Mood('assets/angry.png', 'Angry', false),
     Mood('assets/surprised.png', 'Surprised', false),
-    Mood('assets/loving.png', 'Loving', false),
+    // Mood('assets/loving.png', 'Loving', false),
+    Mood('assets/stressed.png', 'Stressed', false),
     Mood('assets/scared.png', 'Panicked', false)
   ];
 
@@ -81,7 +82,7 @@ class _StartPageState extends State<StartPage> {
               children: [
                 Text('Mood Tracker',
                     style: TextStyle(
-                        fontSize: 40,
+                        fontSize: 30,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold)),
                 SizedBox(
@@ -415,7 +416,7 @@ class _StartPageState extends State<StartPage> {
                         'TimeOfMood': time,
                         'Mood': mood,
                         'Activities': list,
-                        'DateTime': inputTime,
+                        'DateTime': DateTime.parse(widget.selectedDate),
                         'Icon': image
                       });
 
