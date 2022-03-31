@@ -7,6 +7,8 @@ import 'package:health_app_fyp/ExampleMood/models/moodcard.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../widgets/customnavbar.dart';
+
 class MoodChart extends StatefulWidget {
   @override
   _MoodChartState createState() => _MoodChartState();
@@ -130,6 +132,7 @@ class _MoodChartState extends State<MoodChart> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Mood Graph'), backgroundColor: Colors.red),
+      bottomNavigationBar: CustomisedNavigationBar(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         children: <Widget>[

@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:health_app_fyp/ExampleMood/models/activity.dart';
 import 'package:health_app_fyp/ExampleMood/models/mood.dart';
 import 'package:health_app_fyp/ExampleMood/models/moodcard.dart';
 import 'package:health_app_fyp/ExampleMood/widgets/activity.dart';
 import 'package:health_app_fyp/ExampleMood/widgets/moodicon.dart';
 import 'package:health_app_fyp/MoodTracker/original/ListOfMoods.dart';
-
+import 'package:health_app_fyp/widgets/customnavbar.dart';
 
 class StartPage extends StatefulWidget {
   final String selectedDate;
@@ -23,14 +24,20 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   String? selectedDate;
   //_StartPageState(this.selectedDate);
-
-  late MoodCard moodCard;
-   String? mood;
-  late String image;
-  late String datepicked;
-  late String timepicked;
-  late String datetime;
-  late int currentindex;
+  MoodCard? moodCard;
+  String? mood;
+  String? image;
+  String? datepicked;
+  String? timepicked;
+  String? datetime;
+  int? currentindex;
+  // late MoodCard moodCard;
+  // late String mood;
+  // late String image;
+  // late String datepicked;
+  // late String timepicked;
+  // late String datetime;
+  // late int currentindex;
   TimeOfDay selectedTime = TimeOfDay.now();
   String uid = FirebaseAuth.instance.currentUser!.uid;
   int servings = 1;
@@ -74,26 +81,24 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            elevation: 0,
-           
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Mood Tracker',
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(
-                  width: 5,
-                ),
-                Icon(Icons.insert_emoticon, color: Colors.white, size: 35)
-              ],
-            ),
-            backgroundColor: Colors.red),
-
-            // bottomNavigationBar: HomeScreen(),
+        // appBar: AppBar(
+        //     elevation: 0,
+        //     title: Row(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Text('Mood Tracker',
+        //             style: TextStyle(
+        //                 fontSize: 30,
+        //                 fontStyle: FontStyle.normal,
+        //                 fontWeight: FontWeight.bold)),
+        //         SizedBox(
+        //           width: 5,
+        //         ),
+        //         Icon(Icons.insert_emoticon, color: Colors.white, size: 35)
+        //       ],
+        //     ),
+        //     backgroundColor: Colors.red),
+        bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -410,62 +415,63 @@ class _StartPageState extends State<StartPage> {
 
                       // DateTime.parse(widget.selectedDate);
 
-                      FirebaseFirestore.instance
-                          .collection('MoodTracking')
-                          .add({
-                        'userID': uid,
-                        'DateOfMood': widget.selectedDate,
-                        'TimeOfMood': time,
-                        'Mood': mood,
-                        'Activities': list,
-                        'DateTime': DateTime.parse(widget.selectedDate),
-                        'Icon': image
-                      });
+                      if (mood != null && list.isNotEmpty) {
+                        FirebaseFirestore.instance
+                            .collection('MoodTracking')
+                            .add({
+                          'userID': uid,
+                          'DateOfMood': widget.selectedDate,
+                          'TimeOfMood': time,
+                          'Mood': mood,
+                          'Activities': list,
+                          'DateTime': DateTime.parse(widget.selectedDate),
+                          'Icon': image
+                        });
+                        Get.to(const ListMoods());
+                      }
+                      //                   Mood('assets/smile.png', 'Happy', false),   6
+                      // Mood('assets/sad.png', 'Sad', false), 1
+                      // Mood('assets/angry.png', 'Angry', false), 4
+                      // Mood('assets/surprised.png', 'Surprised', false), 5
+                      // Mood('assets/stressed.png', 'Stressed', false), 2
+                      // Mood('assets/scared.png', 'Panicked', false) 3
 
-    //                   Mood('assets/smile.png', 'Happy', false),   6
-    // Mood('assets/sad.png', 'Sad', false), 1
-    // Mood('assets/angry.png', 'Angry', false), 4
-    // Mood('assets/surprised.png', 'Surprised', false), 5
-    // Mood('assets/stressed.png', 'Stressed', false), 2
-    // Mood('assets/scared.png', 'Panicked', false) 3
+                      //  switch(mood) {
+                      //     case "Happy": {  print("Happy");
 
-  //  switch(mood) { 
-  //     case "Happy": {  print("Happy");
+                      //      FirebaseFirestore.instance
+                      //                         .collection('MoodCount')
+                      //                         .add({
+                      //                       'userID': uid,
+                      //                       'DateOfMood': widget.selectedDate,
+                      //                       'TimeOfMood': time,
+                      //                       'Mood': mood,
+                      //                       'Activities': list,
+                      //                       'DateTime': DateTime.parse(widget.selectedDate),
+                      //                       'Icon': image
+                      //                     });
 
-  //      FirebaseFirestore.instance
-  //                         .collection('MoodCount')
-  //                         .add({
-  //                       'userID': uid,
-  //                       'DateOfMood': widget.selectedDate,
-  //                       'TimeOfMood': time,
-  //                       'Mood': mood,
-  //                       'Activities': list,
-  //                       'DateTime': DateTime.parse(widget.selectedDate),
-  //                       'Icon': image
-  //                     });
-      
-      
-  //      } 
-  //     break; 
-     
-  //     case "B": {  print("Good"); } 
-  //     break; 
-     
-  //     case "C": {  print("Fair"); } 
-  //     break; 
-     
-  //     case "D": {  print("Poor"); } 
-  //     break; 
-     
-  //     default: { print("Invalid choice"); } 
-  //     break; 
-  //  } 
+                      //      }
+                      //     break;
 
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ListMoods(),
-                          ));
+                      //     case "B": {  print("Good"); }
+                      //     break;
+
+                      //     case "C": {  print("Fair"); }
+                      //     break;
+
+                      //     case "D": {  print("Poor"); }
+                      //     break;
+
+                      //     default: { print("Invalid choice"); }
+                      //     break;
+                      //  }
+
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => ListMoods(),
+                      //     ));
                     }
                         //print(activityname);
                         // print(act[index].name);

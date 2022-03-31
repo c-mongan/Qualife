@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:health_app_fyp/ExampleMood/screens/homepage.dart';
-import 'package:health_app_fyp/MoodTracker/original/MoodHome.dart';
+import 'package:get/get.dart';
+
+import 'package:health_app_fyp/MoodTracker/original/pick_date.dart';
 import 'package:health_app_fyp/MoodTracker/original/start.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-import 'MoodHome.dart';
+import '../../widgets/customnavbar.dart';
+import 'pick_date.dart';
 
 /// My app class to display the date range picker
-class MoodHome extends StatefulWidget {
+class PickDateMoodTracker extends StatefulWidget {
+  const PickDateMoodTracker({Key? key}) : super(key: key);
+
   @override
   MyAppState createState() => MyAppState();
 }
 
 /// State for MoodHome
-class MyAppState extends State<MoodHome> {
+class MyAppState extends State<PickDateMoodTracker> {
   String selectedDate = DateTime.now()
       .toString()
       .substring(0, DateTime.now().toString().length - 15);
@@ -71,6 +75,7 @@ class MyAppState extends State<MoodHome> {
       appBar: AppBar(
         title: const Text('Select Date'),
       ),
+      bottomNavigationBar: CustomisedNavigationBar(),
       //bottomNavigationBar: HomeScreen(),
       body: Stack(
         children: <Widget>[
@@ -111,6 +116,9 @@ class MyAppState extends State<MoodHome> {
             child: SfDateRangePicker(
               onSelectionChanged: _onSelectionChanged,
               selectionMode: DateRangePickerSelectionMode.single,
+              maxDate: DateTime.now(),
+              backgroundColor: Colors.grey,
+              showTodayButton: true,
               initialSelectedRange: PickerDateRange(
                   DateTime.now().subtract(const Duration(days: 4)),
                   DateTime.now().add(const Duration(days: 3))),
@@ -138,13 +146,7 @@ class MyAppState extends State<MoodHome> {
             onTap: () {
               print(selectedDate);
 
-              
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StartPage(selectedDate: selectedDate),
-                  ));
+              Get.to(StartPage(selectedDate: selectedDate));
             },
             label: 'Select Date',
             labelStyle: const TextStyle(fontWeight: FontWeight.w500),

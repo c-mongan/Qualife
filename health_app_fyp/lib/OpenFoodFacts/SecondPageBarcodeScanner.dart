@@ -11,6 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:openfoodfacts/openfoodfacts.dart';
 
 import '../BMR+BMR/colors&fonts.dart';
+import '../widgets/customnavbar.dart';
 
 class BarcodeScanSecond extends StatefulWidget {
   const BarcodeScanSecond({Key? key}) : super(key: key);
@@ -351,6 +352,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           title: const Text('Add Food'),
           elevation: 0,
         ),
+        bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,

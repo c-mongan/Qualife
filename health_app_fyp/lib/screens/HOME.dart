@@ -1,36 +1,35 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
-import 'package:health_app_fyp/screens/home_screen.dart';
+import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
-
-import '../ExampleMood/models/mood.dart';
 import '../model/user_model.dart';
+import 'login_screen.dart';
 
-class ChartSlider extends StatefulWidget {
-  const ChartSlider({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
 //At the moment , error thrown if there is no mood data
 
   static String id = 'chartSlider';
 
   @override
-  _ChartState createState() => _ChartState();
+  _HomePageState createState() => _HomePageState();
 }
 
 User? user = FirebaseAuth.instance.currentUser;
 UserModel loggedInUser = UserModel();
 
-class _ChartState extends State<ChartSlider> {
+class _HomePageState extends State<HomePage> {
   int key = 0;
 
   late List<num> _xValues;
@@ -95,7 +94,7 @@ class _ChartState extends State<ChartSlider> {
 
   var today = DateTime.now();
 
-  late List<Mood> _moods = [];
+  List<Mood> _moods = [];
 
   List<_ChartData> chartData = <_ChartData>[];
   Map<String, double> getMoodData() {
@@ -169,7 +168,7 @@ class _ChartState extends State<ChartSlider> {
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("BMI")
         .orderBy("bmiTime")
-        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get();
     List<_ChartData> list = snapShotsValue.docs
         .map((e) => _ChartData(
@@ -186,20 +185,20 @@ class _ChartState extends State<ChartSlider> {
       .collection('MoodTracking')
       .orderBy("DateTime")
       .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
   final Stream<QuerySnapshot> expStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime")
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
   final Stream<QuerySnapshot> BMIStream = FirebaseFirestore.instance
       .collection('BMI')
       .orderBy("bmiTime")
       .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
   void getMoodsListfromSnapshot(snapshot) {
@@ -233,7 +232,9 @@ class _ChartState extends State<ChartSlider> {
   Future<void> setPage() async {
     await getbmiScore();
     await getBMITextResult();
+
     await getLatestMood();
+
     //await  pieChartExampleOne();
   }
 
@@ -255,7 +256,7 @@ class _ChartState extends State<ChartSlider> {
           .collection('BMI')
           .orderBy("bmiTime")
           .limitToLast(1)
-          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
       for (var name in bmiData.docs) {
         bmiScore = bmiData.docs[0].get("bmiScore");
@@ -280,7 +281,7 @@ class _ChartState extends State<ChartSlider> {
       .collection('BMI')
       .orderBy("bmiTime")
       .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
   //DISPLAYS LATEST Calorie Deductions
@@ -288,7 +289,7 @@ class _ChartState extends State<ChartSlider> {
       .collection('remainingCalories')
       .orderBy("DateTime")
       .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
   Future<String> getBMITextResult() async {
@@ -299,7 +300,7 @@ class _ChartState extends State<ChartSlider> {
           .collection('BMI')
           .orderBy('bmiTime')
           .limitToLast(1)
-          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
       for (var bmiInterpretation in latestBmiResult.docs) {
         bmiResultText = latestBmiResult.docs[0].get("result");
@@ -327,7 +328,7 @@ class _ChartState extends State<ChartSlider> {
           .collection('MoodTracking')
           .orderBy('DateTime')
           .limitToLast(1)
-          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
 
       // if (latestMoodName != null) {
@@ -373,18 +374,28 @@ class _ChartState extends State<ChartSlider> {
       inactiveColor = Colors.yellow;
       result = "Overweight";
     } else if (result == "Underweight") {
-      activeColor = Colors.red;
-      inactiveColor = Colors.red;
+      activeColor = Color(0xffFF2400);
+      inactiveColor = Color(0xffFF2400);
       result = "Underweight";
     } else if (result == "Healthy") {
       activeColor = Colors.green;
       inactiveColor = Colors.green;
       result = "Healthy";
     } else if (result == "Obese") {
-      activeColor = Colors.red;
-      inactiveColor = Colors.red;
+      activeColor = Color(0xffFF2400);
+      inactiveColor = Color(0xffFF2400);
 
       result = "Obese";
+    }
+  }
+
+  isMoodsEmpty(Stream<QuerySnapshot> moodstream) {
+    if (moodStream.isEmpty == true) {
+      print("Empty");
+
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -392,7 +403,7 @@ class _ChartState extends State<ChartSlider> {
   Widget build(BuildContext context) //=> Scaffold( {
   {
     return VisibilityDetector(
-        key: Key(ChartSlider.id),
+        key: Key(HomePage.id),
         onVisibilityChanged: (VisibilityInfo info) {
           bool isVisible = info.visibleFraction != 0;
           asyncMethod(isVisible);
@@ -403,6 +414,7 @@ class _ChartState extends State<ChartSlider> {
               elevation: 0,
               backgroundColor: Colors.black,
             ),
+            bottomNavigationBar: CustomisedNavigationBar(),
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -455,7 +467,7 @@ class _ChartState extends State<ChartSlider> {
                               label: const Text("Log Out"),
                               labelStyle: const TextStyle(
                                   color: Colors.white, fontSize: 15),
-                              backgroundColor: Colors.red,
+                              backgroundColor: Color(0xffFF2400),
                               onPressed: () {
                                 logout(context);
                               }),
@@ -596,11 +608,15 @@ class _ChartState extends State<ChartSlider> {
                               color: Colors.grey,
                               thickness: 2,
                             ),
+                            // isMoodsEmpty(moodStream)[
+
                             const SizedBox(
                                 height: 30,
-                                child: Text("Your last logged mood was:",
+                                child: Text("Last Mood Logged:",
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 20))),
+                                        color: Colors.white, fontSize: 20)))
+                            // ]
+                            ,
                             SizedBox(
                                 height: 60,
                                 child: StreamBuilder<QuerySnapshot>(
@@ -807,19 +823,28 @@ class bmiData {
 }
 
 class Mood {
-  String mood;
+  late String mood;
 
   Mood({
     required this.mood,
   });
 
   factory Mood.fromJson(Map<String, dynamic> json) {
+    //urlToImage: json['urlToImage'] as String, -> urlToImage: json['urlToImage'] ?? "",
     return Mood(
-      mood: json['Mood'],
+      mood: json['Mood'] ?? "",
     );
   }
 }
 
 void callThisMethod(bool isVisible) {
   debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');
+}
+
+Future<void> logout(BuildContext context) async {
+  await FirebaseAuth.instance.signOut();
+  // Navigator.of(context).pushReplacement(
+  //     MaterialPageRoute(builder: (context) => const LoginScreen()));
+  Get.to(const LoginScreen());
+  Fluttertoast.showToast(msg: "Logout Successful! ");
 }

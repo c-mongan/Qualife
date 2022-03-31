@@ -7,13 +7,15 @@ import 'package:health_app_fyp/model/user_data.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class MyTest extends StatefulWidget {
+import '../widgets/customnavbar.dart';
+
+class BarcodeScanner extends StatefulWidget {
   @override
-  _MyTestState createState() => _MyTestState();
+  _BarcodeScannerState createState() => _BarcodeScannerState();
   static String id = 'myTest';
 }
 
-class _MyTestState extends State<MyTest> {
+class _BarcodeScannerState extends State<BarcodeScanner> {
   @override
   void initState() {
     super.initState();
@@ -159,7 +161,7 @@ class _MyTestState extends State<MyTest> {
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
-        key: Key(MyTest.id),
+        key: Key(BarcodeScanner.id),
         onVisibilityChanged: (VisibilityInfo info) {
           bool isVisible = info.visibleFraction != 0;
           asyncMethod(isVisible);
@@ -169,7 +171,9 @@ class _MyTestState extends State<MyTest> {
           appBar: AppBar(
             title: const Text("Calorie Tracker"),
             elevation: 0,
+            backgroundColor: Colors.black,
           ),
+          bottomNavigationBar: CustomisedNavigationBar(),
           body: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -177,8 +181,11 @@ class _MyTestState extends State<MyTest> {
                   gradient: LinearGradient(
                       // colors: [Colors.red, Colors.white, Colors.red],
                       colors: [
-                    Colors.red,
-                    Colors.blue,
+                    // Colors.red,
+                    // Colors.blue,
+
+                    Colors.black,
+                    Colors.grey,
                     // Colors.red,
                     //Colors.blue,
 

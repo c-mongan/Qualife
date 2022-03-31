@@ -7,6 +7,7 @@ import 'package:health_app_fyp/BMR+BMR/components/calculations.dart';
 import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:health_app_fyp/BMR+BMR/components/gender_icon_content.dart';
 import 'package:health_app_fyp/BMR+BMR/screens/second_page.dart';
+import '../../widgets/customnavbar.dart';
 import '../colors&fonts.dart';
 
 enum GenderType {
@@ -33,7 +34,7 @@ class _BMITDEEState extends State<BMITDEE> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.black,
           elevation: 0,
           title: const Center(
             child: Text(
@@ -41,18 +42,19 @@ class _BMITDEEState extends State<BMITDEE> {
             ),
           ),
         ),
+        bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    // colors: [Colors.red, Colors.white, Colors.red],
+                    // colors: [Color(0xffFF2400), Colors.white, Color(0xffFF2400)],
                     colors: [
-                  Colors.red,
-                  Colors.blue,
+                  Colors.black,
+                  Colors.grey,
 
-                  // Colors.red,
-                  //Colors.blue,
+                  // Color(0xffFF2400),
+                  //Color(0xff246EE9),
 
                   // Colors.orange,
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
@@ -95,7 +97,7 @@ class _BMITDEEState extends State<BMITDEE> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   RoundedIconButton(
-                                      color: Colors.blue,
+                                      color: Color(0xff246EE9),
                                       icon: FontAwesomeIcons.minus,
                                       action: () {
                                         setState(() {
@@ -119,7 +121,7 @@ class _BMITDEEState extends State<BMITDEE> {
                                     width: 8.0,
                                   ),
                                   RoundedIconButton(
-                                      color: Colors.blue,
+                                      color: Color(0xff246EE9),
                                       icon: FontAwesomeIcons.plus,
                                       action: () {
                                         setState(() {
@@ -162,7 +164,7 @@ class _BMITDEEState extends State<BMITDEE> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   RoundedIconButton(
-                                      color: Colors.blue,
+                                      color: Color(0xff246EE9),
                                       icon: FontAwesomeIcons.minus,
                                       action: () {
                                         setState(() {
@@ -181,7 +183,7 @@ class _BMITDEEState extends State<BMITDEE> {
                                     width: 8.0,
                                   ),
                                   RoundedIconButton(
-                                      color: Colors.blue,
+                                      color: Color(0xff246EE9),
                                       icon: FontAwesomeIcons.plus,
                                       action: () {
                                         setState(() {
@@ -235,8 +237,8 @@ class _BMITDEEState extends State<BMITDEE> {
                       ),
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.blue,
-                          thumbColor: Colors.blue,
+                          activeTrackColor: Color(0xff246EE9),
+                          thumbColor: Color(0xff246EE9),
                           overlayColor: Colors.indigo.shade300,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 15.0),
@@ -256,7 +258,7 @@ class _BMITDEEState extends State<BMITDEE> {
                           },
                           min: 80.0,
                           max: 240.0,
-                          inactiveColor: Colors.red,
+                          inactiveColor: Color(0xffFF2400),
                         ),
                       )
                     ],
@@ -316,11 +318,10 @@ class _BMITDEEState extends State<BMITDEE> {
                   flex: 1,
                   child: Button(
                       edges: const EdgeInsets.all(0.0),
-                      color: Colors.blue,
+                      color: Color(0xff246EE9),
                       text: const Text(
                         'CALCULATE',
                         style: textStyle2,
-                        // TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onTap: () {
                         Calculator bmi = Calculator(

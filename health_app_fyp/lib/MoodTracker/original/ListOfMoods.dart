@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
-import 'package:health_app_fyp/MoodTracker/original/MoodHome.dart';
+import 'package:health_app_fyp/MoodTracker/original/pick_date.dart';
 import 'package:health_app_fyp/model/user_data.dart';
-import 'package:health_app_fyp/screens/chart.dart';
+import 'package:health_app_fyp/screens/HOME.dart';
+import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -45,8 +46,7 @@ class _MyTestState extends State<ListMoods> {
 //DISPLAYS ALL SCANNED FOODS FROM TODAY
   final Stream<QuerySnapshot> moodStream = FirebaseFirestore.instance
       .collection('MoodTracking')
-      .orderBy("DateTime", descending: true)
-
+      .orderBy("DateTime", descending: false)
       // Uncomment to show all moods for today
 
       // .where('DateTime',
@@ -129,14 +129,14 @@ class _MyTestState extends State<ListMoods> {
 
   Future<void> removeLastFood() async {
     QuerySnapshot querySnap = await FirebaseFirestore.instance
-        .collection('Food')
+        .collection('MoodTracking')
         .orderBy("DateTime")
-        .where('DateTime',
-            isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-                DateTime.now().month, DateTime.now().day, 0, 0))
-        .where('DateTime',
-            isLessThanOrEqualTo: DateTime(DateTime.now().year,
-                DateTime.now().month, DateTime.now().day, 23, 59, 59))
+        // .where('DateTime',
+        //     isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
+        //         DateTime.now().month, DateTime.now().day, 0, 0))
+        // .where('DateTime',
+        //     isLessThanOrEqualTo: DateTime(DateTime.now().year,
+        //         DateTime.now().month, DateTime.now().day, 23, 59, 59))
         .limitToLast(1)
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
 //.collection('medicine').where('userId', isEqualTo: user.uid)
@@ -161,6 +161,7 @@ class _MyTestState extends State<ListMoods> {
             title: const Text("Mood Tracker"),
             elevation: 0,
           ),
+          bottomNavigationBar: CustomisedNavigationBar(),
           body: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -207,7 +208,7 @@ class _MyTestState extends State<ListMoods> {
                                     document.data()! as Map<String, dynamic>;
                                 return ListTile(
                                     leading: DisplayMoodIcon(
-                                      image: data['Icon'],
+                                      image: data['Icon'] ,
                                     ),
                                     isThreeLine: true,
                                     title: Text(
@@ -237,7 +238,7 @@ class _MyTestState extends State<ListMoods> {
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    trailing: Icon(Icons.line_weight));
+                                    trailing: const Icon(Icons.line_weight));
                               }).toList(),
                             );
                           },
@@ -254,7 +255,7 @@ class _MyTestState extends State<ListMoods> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ChartSlider(),
+                          builder: (context) => const HomePage(),
                         ),
                       );
                     }
@@ -284,7 +285,7 @@ class _MyTestState extends State<ListMoods> {
           onTap: () async {
             await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MoodHome()),
+              MaterialPageRoute(builder: (context) => PickDateMoodTracker()),
             );
           },
           label: 'Add an entry',
@@ -295,7 +296,7 @@ class _MyTestState extends State<ListMoods> {
           child: const Icon(MdiIcons.minus, color: Colors.white),
           backgroundColor: Colors.red,
           onTap: () async {
-            // deleteLastFood();
+            removeLastFood();
           },
           label: 'Delete Last Entry',
           labelStyle: const TextStyle(fontWeight: FontWeight.w500),

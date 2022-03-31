@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../colors&fonts.dart';
 
 class GenderIconContent extends StatelessWidget {
-  // ignore: use_key_in_widget_constructors
+ 
   const GenderIconContent(
       {required this.sex,
       required this.label,

@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 
-const Color kAppBarColor = Colors.red;
-const kActiveCardColor = Colors.red;
-const kInactiveCardColor = Colors.blue;
-const kBottomButtonColor = Colors.red;
-const kBottomReturnButtonColor = Colors.blue;
+const Color kAppBarColor = Color(0xffFF2400);
+const kActiveCardColor = Color(0xffFF2400);
+const kInactiveCardColor = Color(0xff246EE9);
+const kBottomButtonColor = Color(0xffFF2400);
+const kBottomReturnButtonColor = Color(0xff246EE9);
 
  const textStyle1 = TextStyle(
   color: Colors.white,

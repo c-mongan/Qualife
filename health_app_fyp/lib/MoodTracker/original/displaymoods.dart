@@ -138,23 +138,6 @@ class _MyTestState extends State<MyTest> {
     DocumentReference docRef = doc.reference;
     await docRef.delete();
   }
-//   CollectionReference food = FirebaseFirestore.instance.collection('Food');
-
-// Future<void> removeLastFood() {
-//   return food
-//     //.doc('ABC123') .orderBy("DateTime")
-//       .where('DateTime',
-//           isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-//               DateTime.now().month, DateTime.now().day, 0, 0))
-//       .where('DateTime',
-//           isLessThanOrEqualTo: DateTime(DateTime.now().year,
-//               DateTime.now().month, DateTime.now().day, 23, 59, 59))
-//       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots().last.
-
-//       .delete()
-//     .then((value) => print("User Deleted"))
-//     .catchError((error) => print("Failed to delete user: $error"));
-// }
 
   @override
   Widget build(BuildContext context) {

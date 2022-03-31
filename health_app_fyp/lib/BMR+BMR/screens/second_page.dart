@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:intl/intl.dart';
-import 'package:health_app_fyp/screens/chart.dart';
+import 'package:health_app_fyp/screens/HOME.dart';
+import '../../widgets/customnavbar.dart';
 import '../colors&fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -161,6 +162,7 @@ class _SecondPageState extends State<SecondPage> {
             ),
           ),
         ),
+        bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -169,9 +171,9 @@ class _SecondPageState extends State<SecondPage> {
                   // colors: [Colors.red, Colors.white, Colors.red],
                   colors: [
                 Colors.red,
-                Colors.blue,
+                Color(0xff246EE9),
                 // Colors.red,
-                //Colors.blue,
+                //Color(0xff246EE9),
 
                 // Colors.orange,
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
@@ -194,31 +196,36 @@ class _SecondPageState extends State<SecondPage> {
                               fontWeight: FontWeight.bold,
                               color: Colors.white)),
                       // Container(
-                      //   height: 100,
-                      Expanded(
-                        child: ContainerCard(
-                          color: (widget.resultText == 'Underweight' ||
-                                  widget.resultText == 'Overweight')
-                              ? const Color(0xFFFEEAEA)
-                              : const Color(0xFFE3FFEE),
-                          childContainer: Container(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Center(
-                              child: Text(
-                                widget.resultText.toUpperCase(),
-                                style: kResultsTextStyle.copyWith(
-                                  color: (widget.resultText == 'Underweight' ||
-                                          widget.resultText == 'Overweight' ||
-                                          widget.resultText == 'Obese')
-                                      ? const Color(0xFFF95F49)
-                                      : const Color(0xFF48C67D),
-                                ),
-                                textAlign: TextAlign.center,
+                      //   height: 150,
+                      //Expanded(
+                      // child:
+                      ContainerCard(
+                        color: (widget.resultText == 'Underweight' ||
+                                widget.resultText == 'Overweight')
+                            ? const Color(0xFFFEEAEA)
+                            : const Color(0xFFE3FFEE),
+                        childContainer: Container(
+                          padding: const EdgeInsets.all(2.0),
+                          height: 100,
+                          child: Center(
+                            child: Text(
+                              widget.resultText.toUpperCase(),
+                              style: kResultsTextStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: (widget.resultText == 'Underweight' ||
+                                        widget.resultText == 'Overweight' ||
+                                        widget.resultText == 'Obese')
+                                    ? const Color(0xFFF95F49)
+                                    : const Color(0xFF48C67D),
                               ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                      // )
+                      // ,
                       IconButton(
                           onPressed: () {
                             showModalBottomSheet(
@@ -242,18 +249,18 @@ class _SecondPageState extends State<SecondPage> {
                                               MainAxisAlignment.center,
                                           children: const <Widget>[
                                             Text(
-                                              '< 18,5 – underweight',
-                                              // style: kInfoTextStyle,
+                                              '< 18,5 – Underweight',
+                                              style: kInfoTextStyle,
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
-                                              '18,5 – 24,99 – normal',
-                                              // style: kInfoTextStyle,
+                                              '18,5 – 24,99 – Healthy weight',
+                                              style: kInfoTextStyle,
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
-                                              '≥ 25,0 – overweight',
-                                              //  style: kInfoTextStyle,
+                                              '≥ 25,0 – Overweight',
+                                              style: kInfoTextStyle,
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -280,13 +287,19 @@ class _SecondPageState extends State<SecondPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Expanded(
+                          //Expanded(
+                          //  child:
+                          SizedBox(
+                            height: 20.0,
                             child: Text(
                               widget.interpretation,
                               style: kBodyTextStyle,
                               textAlign: TextAlign.center,
                             ),
                           ),
+
+                          // )
+                          // ,
                         ],
                       ),
                     ),
@@ -661,7 +674,7 @@ class _SecondPageState extends State<SecondPage> {
                                   style: TextStyle(
                                       fontSize: 25,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.blue)),
+                                      color: Color(0xff246EE9))),
                               Text(
                                 'kcal',
                                 style: kKcalTextStyle,
