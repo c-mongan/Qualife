@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:health_app_fyp/ExampleMood/screens/homepage.dart';
 import 'package:health_app_fyp/MoodTracker/original/MoodHome.dart';
 import 'package:health_app_fyp/MoodTracker/original/start.dart';
 import 'package:intl/intl.dart';
@@ -70,6 +71,7 @@ class MyAppState extends State<MoodHome> {
       appBar: AppBar(
         title: const Text('Select Date'),
       ),
+      //bottomNavigationBar: HomeScreen(),
       body: Stack(
         children: <Widget>[
           Positioned(

@@ -319,6 +319,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Fluttertoast.showToast(msg: "Successfully created an account!");
 
+    // String message = "Please use the mood tracker to see data";
+    // FirebaseFirestore.instance.collection('MoodTracking').add({
+    //   'userID': user.uid,
+    //   'DateOfMood': DateTime.now(),
+    //   'TimeOfMood': DateTime.now(),
+    //   'Mood': message,
+    //   'DateTime': DateTime.now(),
+    // });
+
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),

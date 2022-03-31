@@ -13,6 +13,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
 
+import '../ExampleMood/models/mood.dart';
 import '../model/user_model.dart';
 
 class ChartSlider extends StatefulWidget {
@@ -36,6 +37,14 @@ class _ChartState extends State<ChartSlider> {
   late List<num> _yValues;
   List<double> _xPointValues = <double>[];
   List<double> _yPointValues = <double>[];
+
+  // isMoodsListEmpty(bool empty) {
+  //   if (empty == true) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   TooltipBehavior? _tooltipBehavior;
   @override
@@ -70,9 +79,10 @@ class _ChartState extends State<ChartSlider> {
         .get()
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
+//////////////////////////////////////
 
+      ////////////////////////////////
       if (mounted) {
-
         getDataFromFireStore().then((results) {
           SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
             setState(() {});
@@ -89,8 +99,6 @@ class _ChartState extends State<ChartSlider> {
 
   List<_ChartData> chartData = <_ChartData>[];
   Map<String, double> getMoodData() {
-    
-
     Map<String, double> catMap = {};
 
     for (var item in _moods) {
@@ -136,7 +144,6 @@ class _ChartState extends State<ChartSlider> {
       chartType: ChartType.ring,
       chartRadius: MediaQuery.of(context).size.width / 3.2,
       ringStrokeWidth: 32,
-      
       chartLegendSpacing: 32,
       chartValuesOptions: const ChartValuesOptions(
           decimalPlaces: 0,
@@ -151,7 +158,6 @@ class _ChartState extends State<ChartSlider> {
           showLegendsInRow: false,
           showLegends: true,
           legendShape: BoxShape.rectangle,
-       
           legendTextStyle: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -196,7 +202,8 @@ class _ChartState extends State<ChartSlider> {
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
 
-  void getExpfromSanapshot(snapshot) {
+  void getMoodsListfromSnapshot(snapshot) {
+    // void getMoodsListfromSnapshot(snapshot) {
     if (snapshot.docs.isNotEmpty) {
       _moods = [];
       for (int i = 0; i < snapshot.docs.length; i++) {
@@ -205,6 +212,20 @@ class _ChartState extends State<ChartSlider> {
         Mood emotion = Mood.fromJson(a.data());
         _moods.add(emotion);
 
+        //     return true;
+        //   }
+        // } else if (snapshot.docs.isNotEmpty) {
+        //   _moods = [];
+        //   for (int i = 0; i < snapshot.docs.length; i++) {
+        //     var a = snapshot.docs[i];
+
+        //     Mood emotion = Mood.fromJson(a.data());
+        //     _moods.add(emotion);
+
+        //     return false;
+        //   }
+        // }
+        // return false;
       }
     }
   }
@@ -213,6 +234,7 @@ class _ChartState extends State<ChartSlider> {
     await getbmiScore();
     await getBMITextResult();
     await getLatestMood();
+    //await  pieChartExampleOne();
   }
 
   double gotbmiScore = 0;
@@ -221,7 +243,6 @@ class _ChartState extends State<ChartSlider> {
   Color inactiveColor = Colors.white;
   String bmiResultText = "";
   String moodNameText = "";
-
 
   final double _max = 100.0;
   double _value = 60.0;
@@ -237,11 +258,9 @@ class _ChartState extends State<ChartSlider> {
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
       for (var name in bmiData.docs) {
-       
         bmiScore = bmiData.docs[0].get("bmiScore");
 
         double gotbmiScore = bmiScore;
-     
 
         setState(() {
           gotbmiScore = bmiScore;
@@ -283,13 +302,9 @@ class _ChartState extends State<ChartSlider> {
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
       for (var bmiInterpretation in latestBmiResult.docs) {
-
         bmiResultText = latestBmiResult.docs[0].get("result");
 
-        
-
         String FirestoreBmiTxtResult = bmiResultText;
-  
 
         setBMIResult();
 
@@ -314,18 +329,25 @@ class _ChartState extends State<ChartSlider> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
-     
+
+      // if (latestMoodName != null) {
       for (var moodName in latestMoodName.docs) {
         moodNameText = latestMoodName.docs[0].get("Mood");
 
+        // if (moodNameText == " ") {
+        //   bool empty = true;
+
+        //   isMoodsListEmpty(empty);
+        // }
 
         String FirestoreMoodText = moodNameText;
-      
 
         setMoodResult();
 
         return FirestoreMoodText;
       }
+      // }
+
       return moodNameText;
     } catch (Exc) {
       print(Exc);
@@ -361,7 +383,7 @@ class _ChartState extends State<ChartSlider> {
     } else if (result == "Obese") {
       activeColor = Colors.red;
       inactiveColor = Colors.red;
-   
+
       result = "Obese";
     }
   }
@@ -385,15 +407,10 @@ class _ChartState extends State<ChartSlider> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      
-                        colors: [
-                      Colors.black,
-                      Colors.grey,
-                    
-                    ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter)),
+                    gradient: LinearGradient(colors: [
+                  Colors.black,
+                  Colors.grey,
+                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
                 child: SingleChildScrollView(
                     // <-- wrap this around
                     child: Column(children: <Widget>[
@@ -417,8 +434,6 @@ class _ChartState extends State<ChartSlider> {
                           const SizedBox(
                             height: 15,
                           ),
-                      
-
                           const SizedBox(
                             height: 25,
                           ),
@@ -459,7 +474,6 @@ class _ChartState extends State<ChartSlider> {
                             SizedBox(
                                 height: 80.0,
                                 child: StreamBuilder<QuerySnapshot>(
-                                
                                   stream: CalsStream,
                                   builder: (BuildContext context,
                                       AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -473,14 +487,13 @@ class _ChartState extends State<ChartSlider> {
                                     }
 
                                     return ListView(
-                               
                                       children: snapshot.data!.docs
                                           .map((DocumentSnapshot document) {
                                         Map<String, dynamic> data = document
                                             .data()! as Map<String, dynamic>;
 
                                         return ListTile(
-                                                title: RichText(
+                                            title: RichText(
                                           textAlign: TextAlign.center,
                                           text: TextSpan(children: <TextSpan>[
                                             const TextSpan(
@@ -491,7 +504,6 @@ class _ChartState extends State<ChartSlider> {
                                             TextSpan(
                                                 text: data[('Cals')]
                                                     .toStringAsFixed(0),
-                                               
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 20,
@@ -505,9 +517,7 @@ class _ChartState extends State<ChartSlider> {
                                                   color: Colors.white,
                                                 )),
                                           ]),
-                                        ))
-                                           
-                                            ;
+                                        ));
                                       }).toList(),
                                     );
                                   },
@@ -522,7 +532,7 @@ class _ChartState extends State<ChartSlider> {
                               text: TextSpan(children: <TextSpan>[
                                 const TextSpan(
                                     text: "Your BMI Score of ",
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                         color: Colors.white, fontSize: 20)),
                                 TextSpan(
                                     text: bmiScore.toStringAsFixed(1),
@@ -532,7 +542,7 @@ class _ChartState extends State<ChartSlider> {
                                         fontWeight: FontWeight.bold)),
                                 const TextSpan(
                                     text: " indicates that you are ",
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       fontSize: 20,
                                       color: Colors.white,
                                     )),
@@ -561,10 +571,8 @@ class _ChartState extends State<ChartSlider> {
                                     thumbRadius: 15,
                                     thumbStrokeWidth: 2,
                                     thumbStrokeColor: activeColor,
-
                                     activeTrackColor: activeColor,
                                     inactiveTrackColor: inactiveColor,
-                                  
                                   ),
                                   child: SfSlider(
                                     thumbIcon: Icon(
@@ -574,12 +582,10 @@ class _ChartState extends State<ChartSlider> {
                                     min: 0,
                                     max: 50,
                                     value: bmiScore,
-                                    interval: 20.0,
+                                    interval: 5,
                                     showLabels: true,
                                     showTicks: true,
-                                    onChanged:
-                                    
-                                        (bmiScore) {
+                                    onChanged: (bmiScore) {
                                       setState(() {
                                         bmiScore = bmiScore;
                                       });
@@ -595,9 +601,6 @@ class _ChartState extends State<ChartSlider> {
                                 child: Text("Your last logged mood was:",
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 20))),
-                          
-
-                  
                             SizedBox(
                                 height: 60,
                                 child: StreamBuilder<QuerySnapshot>(
@@ -621,9 +624,7 @@ class _ChartState extends State<ChartSlider> {
                                         Map<String, dynamic> data = document
                                             .data()! as Map<String, dynamic>;
                                         return ListTile(
-                                            leading:
-                                               
-                                                DisplayMoodIcon(
+                                            leading: DisplayMoodIcon(
                                               image: data['Icon'],
                                             ),
                                             isThreeLine: true,
@@ -636,7 +637,6 @@ class _ChartState extends State<ChartSlider> {
                                               ),
                                             ),
                                             subtitle: Text(
-                                            
                                               data['Activities']
                                                       .toString()
                                                       .substring(
@@ -648,7 +648,6 @@ class _ChartState extends State<ChartSlider> {
                                                   "             " +
                                                   data['DateOfMood'] +
                                                   " " +
-                                        
                                                   data['TimeOfMood'],
                                               style: const TextStyle(
                                                 fontSize: 10.0,
@@ -660,7 +659,6 @@ class _ChartState extends State<ChartSlider> {
                                     );
                                   },
                                 )),
-                           
                             const SizedBox(height: 20),
                             const Divider(
                               color: Colors.grey,
@@ -679,7 +677,6 @@ class _ChartState extends State<ChartSlider> {
                                 ]),
                               )),
                             ),
-
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -688,23 +685,35 @@ class _ChartState extends State<ChartSlider> {
                                   height: 30,
                                 ),
                                 StreamBuilder<Object>(
-                                  stream: expStream,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      return const Text("something went wrong");
-                                    }
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    final data = snapshot.requireData;
-                                   
-                                    getExpfromSanapshot(data);
-                                  
-                                    return pieChartExampleOne();
-                              
-                                  },
-                                ),
+                                    stream: expStream,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        return const Text(
+                                            "something went wrong");
+                                      }
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+
+                                      if (snapshot.data == null) {
+                                        return const Text("Empty List Error");
+                                      } else {
+                                        final data = snapshot.requireData;
+
+                                        getMoodsListfromSnapshot(data);
+
+                                        getLatestMood();
+
+                                        print(moodNameText);
+                                        if (moodNameText != "") {
+                                          return pieChartExampleOne();
+                                        } else {
+                                          return const Text(
+                                              "No moods logged yet");
+                                        }
+                                      }
+                                    }),
                               ],
                             ),
                             const SizedBox(
@@ -714,7 +723,6 @@ class _ChartState extends State<ChartSlider> {
                               color: Colors.grey,
                               thickness: 2,
                             ),
-
                             SfCartesianChart(
                                 title: ChartTitle(
                                     text: 'BMI over time',
@@ -724,10 +732,12 @@ class _ChartState extends State<ChartSlider> {
                                     isVisible: true,
                                     overflowMode: LegendItemOverflowMode.wrap),
                                 primaryXAxis: DateTimeAxis(
-
-                                   
-
-                                    ),
+                                  // edgeLabelPlacement: EdgeLabelPlacement.shift,
+                                  // dateFormat: DateFormat.yMMM(),
+                                  dateFormat: DateFormat('dd/MM'),
+                                  intervalType: DateTimeIntervalType.days,
+                                  interval: 14,
+                                ),
                                 primaryYAxis: NumericAxis(),
                                 series: <ChartSeries<_ChartData, DateTime>>[
                                   LineSeries<_ChartData, DateTime>(
@@ -748,8 +758,8 @@ class _ChartState extends State<ChartSlider> {
                     primaryXAxis: DateTimeAxis(
                       edgeLabelPlacement: EdgeLabelPlacement.shift,
                       dateFormat: DateFormat.yMMM(),
-                      intervalType: DateTimeIntervalType.days,
-                      interval: 1,
+                      intervalType: DateTimeIntervalType.months,
+                      interval: 3,
                     ),
                     primaryYAxis: NumericAxis(
                         labelFormat: '{value}',
@@ -767,7 +777,18 @@ class _ChartState extends State<ChartSlider> {
                       ),
                     ],
                     tooltipBehavior: _tooltipBehavior,
-                  )
+                  ),
+                  // SfCircularChart(series: <CircularSeries>[
+                  //   PieSeries<_ChartData, String>(
+                  //       dataSource: chartData,
+                  //       xValueMapper: (_ChartData data, _) => data.y.toString(),
+                  //       yValueMapper: (_ChartData data, _) => data.y,
+                  //       // Radius of pie
+                  //       radius: '50%',
+                  //       dataLabelSettings: const DataLabelSettings(
+                  //           // Renders the data label
+                  //           isVisible: true))
+                  // ])
                 ])))));
   }
 }

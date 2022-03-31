@@ -67,6 +67,8 @@ dependencies:
   syncfusion_flutter_calendar: ^19.1.58
   pie_chart: ^5.1.0
   flutter_xlider: ^3.4.0
+  shared_preferences: ^2.0.13
+  get: ^4.6.1
   
   
  

@@ -149,70 +149,75 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 //bottomNavigationBar:
 
-      bottomNavigationBar: BottomNavigationBar(
-        //type: BottomNavigationBarType.fixed, For less dynamic
-        currentIndex: currentIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        iconSize: 30, //individual icon size
-        selectedFontSize: 25,
-        unselectedFontSize: 15,
-        showUnselectedLabels: false,
-        //elevation: 0,
-        //showSelectedLabels: false, Use this to get rid of labels
-        //Still need to add a label name to avoid errors however
-
-        //On tap changes which label text comes up when you click it
-        onTap: (index) => setState(() => currentIndex = index),
-        //Set state as the class extends stateful widget ^^^ Top of page
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: Colors.grey,
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.pie_chart),
-          //   label: 'Chart',
-          //   backgroundColor: Colors.black,
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.add_chart),
-          //   label: 'Line Chart',
-          //   backgroundColor: Colors.red,
-          // ),
-
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.food_bank_outlined),
-          //   label: 'API',
-          //   backgroundColor: Colors.red,
-          // ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.monitor_weight_outlined),
-            label: 'BMI',
-            backgroundColor: Colors.blue,
-          ),
-
-          //   BottomNavigationBarItem(
-          //   icon: Icon(Icons.monitor_weight_outlined),
-          //   label: 'TDEE',
-          //   backgroundColor: Colors.black,
-          // ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.food_bank_outlined),
-            label: 'Barcode',
-            backgroundColor: Colors.blue,
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.mood),
-            label: 'Mood tracker',
-            backgroundColor: Colors.blue,
-          ),
-        ],
-      ),
+      bottomNavigationBar: 
+      CustomNavBar(),
     );
     // });
+  }
+
+  BottomNavigationBar CustomNavBar() {
+    return BottomNavigationBar(
+      //type: BottomNavigationBarType.fixed, For less dynamic
+      currentIndex: currentIndex,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white70,
+      iconSize: 30, //individual icon size
+      selectedFontSize: 25,
+      unselectedFontSize: 15,
+      showUnselectedLabels: false,
+      //elevation: 0,
+      //showSelectedLabels: false, Use this to get rid of labels
+      //Still need to add a label name to avoid errors however
+
+      //On tap changes which label text comes up when you click it
+      onTap: (index) => setState(() => currentIndex = index),
+      //Set state as the class extends stateful widget ^^^ Top of page
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+          backgroundColor: Colors.grey,
+        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.pie_chart),
+        //   label: 'Chart',
+        //   backgroundColor: Colors.black,
+        // ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.add_chart),
+        //   label: 'Line Chart',
+        //   backgroundColor: Colors.red,
+        // ),
+
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.food_bank_outlined),
+        //   label: 'API',
+        //   backgroundColor: Colors.red,
+        // ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.monitor_weight_outlined),
+          label: 'BMI',
+          backgroundColor: Colors.blue,
+        ),
+
+        //   BottomNavigationBarItem(
+        //   icon: Icon(Icons.monitor_weight_outlined),
+        //   label: 'TDEE',
+        //   backgroundColor: Colors.black,
+        // ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.food_bank_outlined),
+          label: 'Barcode',
+          backgroundColor: Colors.blue,
+        ),
+
+        BottomNavigationBarItem(
+          icon: Icon(Icons.mood),
+          label: 'Mood tracker',
+          backgroundColor: Colors.blue,
+        ),
+      ],
+    );
   }
 
   Future<void> logout(BuildContext context) async {

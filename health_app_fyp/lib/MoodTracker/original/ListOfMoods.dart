@@ -7,13 +7,14 @@ import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/MoodTracker/original/MoodHome.dart';
 import 'package:health_app_fyp/model/user_data.dart';
 import 'package:health_app_fyp/screens/chart.dart';
-import 'package:health_app_fyp/screens/home_screen.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../BMR+BMR/colors&fonts.dart';
 
 class ListMoods extends StatefulWidget {
+  const ListMoods({Key? key}) : super(key: key);
+
   @override
   _MyTestState createState() => _MyTestState();
   static String id = 'ListMoods';
@@ -175,32 +176,11 @@ class _MyTestState extends State<ListMoods> {
                     // Colors.orange,
                   ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
               child: Column(children: [
-                // Container(
-                //   height: 100.0,
-                // const Text('Mood Tracker',
-                //     style: TextStyle(
-                //       fontSize: 30.0,
-                //       color: Colors.white,
-                //       fontWeight: FontWeight.w600,
-
-                //       // style: TextStyle(
-                //       //     fontStyle: FontStyle.normal,
-                //       //     fontWeight: FontWeight.bold
-                //     )),
-
                 const SizedBox(
                   width: 5,
                 ),
-                const Icon(Icons.insert_emoticon, color: Colors.white, size: 40)
-
-                // child: Text("Mood Tracker",
-                //     style: const TextStyle(
-                //       fontSize: 30.0,
-                //       color: Colors.white,
-                //       fontWeight: FontWeight.w600,
-                //     )),
-
-                ,
+                const Icon(Icons.insert_emoticon,
+                    color: Colors.white, size: 40),
                 Expanded(
                     child: Container(
                         height: 400.0,
@@ -226,9 +206,7 @@ class _MyTestState extends State<ListMoods> {
                                 Map<String, dynamic> data =
                                     document.data()! as Map<String, dynamic>;
                                 return ListTile(
-                                    leading:
-                                        // const Icon(Icons.mood),
-                                        DisplayMoodIcon(
+                                    leading: DisplayMoodIcon(
                                       image: data['Icon'],
                                     ),
                                     isThreeLine: true,
@@ -258,7 +236,8 @@ class _MyTestState extends State<ListMoods> {
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
-                                    ));
+                                    ),
+                                    trailing: Icon(Icons.line_weight));
                               }).toList(),
                             );
                           },
@@ -275,7 +254,7 @@ class _MyTestState extends State<ListMoods> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChartSlider(),
+                          builder: (context) => const ChartSlider(),
                         ),
                       );
                     }
@@ -487,8 +466,6 @@ class _MyTestState extends State<ListMoods> {
             'Cals': removeLastFoodsCalories,
             'DateTime': inputTime,
           });
-
-          // getNumOfFoodsToday();
         });
       });
     });

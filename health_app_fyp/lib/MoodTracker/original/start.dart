@@ -7,8 +7,7 @@ import 'package:health_app_fyp/ExampleMood/models/moodcard.dart';
 import 'package:health_app_fyp/ExampleMood/widgets/activity.dart';
 import 'package:health_app_fyp/ExampleMood/widgets/moodicon.dart';
 import 'package:health_app_fyp/MoodTracker/original/ListOfMoods.dart';
-import 'package:health_app_fyp/screens/home_screen.dart';
-import 'package:intl/intl.dart';
+
 
 class StartPage extends StatefulWidget {
   final String selectedDate;
@@ -26,7 +25,7 @@ class _StartPageState extends State<StartPage> {
   //_StartPageState(this.selectedDate);
 
   late MoodCard moodCard;
-  late String mood;
+   String? mood;
   late String image;
   late String datepicked;
   late String timepicked;
@@ -77,6 +76,7 @@ class _StartPageState extends State<StartPage> {
     return Scaffold(
         appBar: AppBar(
             elevation: 0,
+           
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -92,6 +92,8 @@ class _StartPageState extends State<StartPage> {
               ],
             ),
             backgroundColor: Colors.red),
+
+            // bottomNavigationBar: HomeScreen(),
         body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -419,6 +421,45 @@ class _StartPageState extends State<StartPage> {
                         'DateTime': DateTime.parse(widget.selectedDate),
                         'Icon': image
                       });
+
+    //                   Mood('assets/smile.png', 'Happy', false),   6
+    // Mood('assets/sad.png', 'Sad', false), 1
+    // Mood('assets/angry.png', 'Angry', false), 4
+    // Mood('assets/surprised.png', 'Surprised', false), 5
+    // Mood('assets/stressed.png', 'Stressed', false), 2
+    // Mood('assets/scared.png', 'Panicked', false) 3
+
+  //  switch(mood) { 
+  //     case "Happy": {  print("Happy");
+
+  //      FirebaseFirestore.instance
+  //                         .collection('MoodCount')
+  //                         .add({
+  //                       'userID': uid,
+  //                       'DateOfMood': widget.selectedDate,
+  //                       'TimeOfMood': time,
+  //                       'Mood': mood,
+  //                       'Activities': list,
+  //                       'DateTime': DateTime.parse(widget.selectedDate),
+  //                       'Icon': image
+  //                     });
+      
+      
+  //      } 
+  //     break; 
+     
+  //     case "B": {  print("Good"); } 
+  //     break; 
+     
+  //     case "C": {  print("Fair"); } 
+  //     break; 
+     
+  //     case "D": {  print("Poor"); } 
+  //     break; 
+     
+  //     default: { print("Invalid choice"); } 
+  //     break; 
+  //  } 
 
                       Navigator.push(
                           context,
