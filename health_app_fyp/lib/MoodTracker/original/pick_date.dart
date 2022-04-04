@@ -3,7 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 
 import 'package:health_app_fyp/MoodTracker/original/pick_date.dart';
-import 'package:health_app_fyp/MoodTracker/original/start.dart';
+import 'package:health_app_fyp/MoodTracker/original/pick_mood.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -118,7 +118,7 @@ class MyAppState extends State<PickDateMoodTracker> {
               selectionMode: DateRangePickerSelectionMode.single,
               maxDate: DateTime.now(),
               backgroundColor: Colors.grey,
-              showTodayButton: true,
+              // showTodayButton: true,
               initialSelectedRange: PickerDateRange(
                   DateTime.now().subtract(const Duration(days: 4)),
                   DateTime.now().add(const Duration(days: 3))),

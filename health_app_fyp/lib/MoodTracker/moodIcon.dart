@@ -37,8 +37,8 @@ class MoodIcon extends StatelessWidget {
         children: <Widget>[
           Image.asset(
             image,
-            height: 45,
-            width: 45,
+            height: 40,
+            width: 40,
           ),
           Text(name)
         ],
@@ -54,9 +54,10 @@ class MoodIcon extends StatelessWidget {
 
 class DisplayMoodIcon extends StatelessWidget {
   String image;
- 
-  DisplayMoodIcon(
-      { required this.image,});
+
+  DisplayMoodIcon({
+    required this.image,
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,10 +68,8 @@ class DisplayMoodIcon extends StatelessWidget {
             height: 45,
             width: 45,
           ),
-         
         ],
       ),
-     
       height: 75,
       width: 55,
     );

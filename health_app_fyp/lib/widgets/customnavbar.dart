@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:health_app_fyp/BMR+BMR/screens/main_page.dart';
-import 'package:health_app_fyp/screens/HOME.dart';
+import 'package:health_app_fyp/BMR+BMR/screens/bmi_main_page.dart';
+import 'package:health_app_fyp/screens/home_page.dart';
 
-import '../MoodTracker/original/ListOfMoods.dart';
-import '../OpenFoodFacts/FirstPageBarcodeScanner.dart';
+import '../MoodTracker/original/list_of_moods.dart';
+import '../OpenFoodFacts/calorie_tracker_list.dart';
 
 class CustomisedNavigationBar extends StatelessWidget {
   const CustomisedNavigationBar({

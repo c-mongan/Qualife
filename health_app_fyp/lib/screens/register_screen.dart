@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/model/user_model.dart';
-import 'package:health_app_fyp/screens/HOME.dart';
-import 'package:health_app_fyp/screens/landpage.dart';
+import 'package:health_app_fyp/screens/home_page.dart';
 import 'package:health_app_fyp/services/database.dart';
 
 class RegistrationScreen extends StatefulWidget {

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'container_card.dart';
 
-
-
 class Button extends StatelessWidget {
   // ignore: use_key_in_widget_constructors
   const Button({this.text, this.onTap, this.color, this.edges});
@@ -19,7 +17,7 @@ class Button extends StatelessWidget {
         padding: edges,
         width: double.infinity,
         child: ContainerCard(
-          color: Colors.blue,
+          color: Colors.black,
           childContainer: Center(
             child: text,
           ),
@@ -31,10 +29,13 @@ class Button extends StatelessWidget {
 
 class RoundedIconButton extends StatelessWidget {
   // ignore: use_key_in_widget_constructors
-  const RoundedIconButton(
-      {required this.icon, required this.action, required this.color,});
+  const RoundedIconButton({
+    required this.icon,
+    required this.action,
+    required this.color,
+  });
   final IconData icon;
-  
+
   //final Function action;
   final void Function()? action;
   final Color color;
@@ -47,7 +48,11 @@ class RoundedIconButton extends StatelessWidget {
         color: color, // button color
         child: InkWell(
             splashColor: Colors.white, // inkwell color
-            child: SizedBox(width: 50, height: 50, child: Icon(icon) ,),
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: Icon(icon),
+            ),
             //onLongPress: action,
             onTap: action),
       ),

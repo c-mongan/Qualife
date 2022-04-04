@@ -350,6 +350,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Add Food'),
+          backgroundColor: Colors.black,
           elevation: 0,
         ),
         bottomNavigationBar: CustomisedNavigationBar(),
@@ -358,14 +359,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    // colors: [Colors.red, Colors.white, Colors.red],
+                    // colors: [Colors.white, Colors.white, Colors.white],
                     colors: [
-                  Colors.red,
-                  Colors.blue,
-                  // Colors.red,
-                  //Colors.blue,
-
-                  // Colors.orange,
+                  Colors.black,
+                  Colors.grey,
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: Builder(builder: (BuildContext context) {
               return SingleChildScrollView(
@@ -379,7 +376,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                         children: <Widget>[
                           Card(
                             child: Material(
-                              color: Colors.red,
+                              color: Colors.white,
                               child: ListTile(
                                 title: found == false
                                     ? const Text("")
@@ -416,7 +413,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                   Map<String, dynamic> data =
                                       document.data()! as Map<String, dynamic>;
                                   return Material(
-                                      color: Colors.red,
+                                      color: Colors.white,
                                       child: ListTile(
                                           leading: const Icon(Icons.fastfood),
                                           isThreeLine: true,
@@ -464,7 +461,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
 
                           Card(
                               child: Material(
-                                  color: Colors.red,
+                                  color: Colors.white,
                                   child: ListTile(
                                       title: Text((() {
                                         var a = 1;
@@ -620,7 +617,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                       })))))),
                           Card(
                               child: Material(
-                                  color: Colors.red,
+                                  color: Colors.white,
                                   child: ListTile(
                                       title: Text((() {
                                         var a = 1;
@@ -788,10 +785,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                       })))))),
                           Button(
                               edges: const EdgeInsets.all(0.0),
-                              color: Colors.red,
+                              color: Colors.white,
                               text: const Text(
                                 'Enter food',
-                                style: textStyle2,
+                                style: textStyle2
+                      
                                 // TextStyle(fontWeight: FontWeight.bold),
                               ),
                               onTap: () {

@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:health_app_fyp/ExampleMood/models/activity.dart';
-import 'package:health_app_fyp/ExampleMood/models/mood.dart';
-import 'package:health_app_fyp/ExampleMood/models/moodcard.dart';
-import 'package:health_app_fyp/ExampleMood/widgets/activity.dart';
-import 'package:health_app_fyp/ExampleMood/widgets/moodicon.dart';
-import 'package:health_app_fyp/MoodTracker/original/ListOfMoods.dart';
+import 'package:health_app_fyp/MoodTracker/models.dart';
+import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
+
+import 'package:health_app_fyp/MoodTracker/original/list_of_moods.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
+
+import '../moodcard.dart';
 
 class StartPage extends StatefulWidget {
   final String selectedDate;
@@ -106,8 +106,8 @@ class _StartPageState extends State<StartPage> {
                 gradient: LinearGradient(
                     // colors: [Colors.red, Colors.white, Colors.red],
                     colors: [
-                  Colors.red,
-                  Colors.blue,
+                  Colors.grey,
+                  Colors.black,
                   // Colors.red,
                   //Colors.blue,
 
@@ -310,8 +310,8 @@ class _StartPageState extends State<StartPage> {
                                     image: moods[index].moodimage,
                                     name: moods[index].name,
                                     colour: moods[index].iselected
-                                        ? Colors.black
-                                        : Colors.white),
+                                        ? Colors.white
+                                        : Colors.black),
                                 onTap: () => {
                                       if (ontapcount == 0)
                                         {
@@ -361,8 +361,8 @@ class _StartPageState extends State<StartPage> {
                                   act[index].image,
                                   act[index].name,
                                   act[index].selected
-                                      ? Colors.black
-                                      : Colors.white),
+                                      ? Colors.white
+                                      : Colors.black),
                               onLongPress: () => {
                                     if (act[index].selected)
                                       {

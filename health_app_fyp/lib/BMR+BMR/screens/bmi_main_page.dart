@@ -6,7 +6,7 @@ import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 import 'package:health_app_fyp/BMR+BMR/components/calculations.dart';
 import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:health_app_fyp/BMR+BMR/components/gender_icon_content.dart';
-import 'package:health_app_fyp/BMR+BMR/screens/second_page.dart';
+import 'package:health_app_fyp/BMR+BMR/screens/bmi_second_page.dart';
 import '../../widgets/customnavbar.dart';
 import '../colors&fonts.dart';
 

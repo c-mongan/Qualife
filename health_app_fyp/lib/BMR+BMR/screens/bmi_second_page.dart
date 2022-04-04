@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:intl/intl.dart';
-import 'package:health_app_fyp/screens/HOME.dart';
+import 'package:health_app_fyp/screens/home_page.dart';
 import '../../widgets/customnavbar.dart';
 import '../colors&fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -150,18 +150,18 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: kAppBarColor,
-          elevation: 0,
-          title: const Center(
-            child: Text(
-              'TDEE Calculator',
-              style: TextStyle(
-                fontFamily: "Jaapokki",
-              ),
-            ),
-          ),
-        ),
+        // appBar: AppBar(
+        //   backgroundColor: kAppBarColor,
+        //   elevation: 0,
+        //   title: const Center(
+        //     child: Text(
+        //       'TDEE Calculator',
+        //       style: TextStyle(
+        //         fontFamily: "Jaapokki",
+        //       ),
+        //     ),
+        //   ),
+        // ),
         bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
           width: MediaQuery.of(context).size.width,
@@ -170,10 +170,11 @@ class _SecondPageState extends State<SecondPage> {
               gradient: LinearGradient(
                   // colors: [Colors.red, Colors.white, Colors.red],
                   colors: [
-                Colors.red,
-                Color(0xff246EE9),
                 // Colors.red,
-                //Color(0xff246EE9),
+                // Color(0xff246EE9),
+
+                Colors.black,
+                Colors.grey
 
                 // Colors.orange,
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
