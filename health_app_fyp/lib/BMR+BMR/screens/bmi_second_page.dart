@@ -6,6 +6,8 @@ import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:intl/intl.dart';
 import 'package:health_app_fyp/screens/home_page.dart';
 import '../../widgets/customnavbar.dart';
+import '../../widgets/glassmorphic_bottomnavbar.dart';
+import '../../widgets/nuemorphic_button.dart';
 import '../colors&fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -46,23 +48,12 @@ class _SecondPageState extends State<SecondPage> {
   double endTDEE = 0;
   DateTime tdeeTime = (DateTime.now());
 
-  //  FirebaseFirestore.instance
-  //       .collection('TDEE').add({'TDEE':  endTDEE.toStringAsFixed(0),
-  //        'tdeeTime' : tdeeTime,
-  //       'userID': uid
-  //       });
   double finalTDEE() {
     endTDEE = 0;
-    // FirebaseFirestore.instance
-    //     .collection('UserData')
-    //     .doc(uid)
-    //     .update({'tdee': endTDEE.toStringAsFixed(0)});
+
     if (selectedLevel == ActivityLevel.level_0) {
       endTDEE = 1.2 * double.parse(widget.tdeeResult);
-      // FirebaseFirestore.instance
-      //     .collection('UserData')
-      //     .doc(uid)
-      //     .update({'tdee': endTDEE.toStringAsFixed(0)});
+
       if (selectedGoal == WeightGoal.lose) {
         endTDEE -= 250;
 
@@ -150,37 +141,16 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        // appBar: AppBar(
-        //   backgroundColor: kAppBarColor,
-        //   elevation: 0,
-        //   title: const Center(
-        //     child: Text(
-        //       'TDEE Calculator',
-        //       style: TextStyle(
-        //         fontFamily: "Jaapokki",
-        //       ),
-        //     ),
-        //   ),
-        // ),
         bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  // colors: [Colors.red, Colors.white, Colors.red],
-                  colors: [
-                // Colors.red,
-                // Color(0xff246EE9),
+                  colors: [Colors.black, Colors.grey],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter)),
 
-                Colors.black,
-                Colors.grey
-
-                // Colors.orange,
-              ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-          // child: SingleChildScrollView(
-          //     // <-- wrap this around
-          //     child: Column(children: <Widget>[
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -203,8 +173,8 @@ class _SecondPageState extends State<SecondPage> {
                       ContainerCard(
                         color: (widget.resultText == 'Underweight' ||
                                 widget.resultText == 'Overweight')
-                            ? const Color(0xFFFEEAEA)
-                            : const Color(0xFFE3FFEE),
+                            ? Color.fromARGB(255, 0, 0, 0)
+                            : Color.fromARGB(255, 0, 0, 0),
                         childContainer: Container(
                           padding: const EdgeInsets.all(2.0),
                           height: 100,
@@ -241,7 +211,7 @@ class _SecondPageState extends State<SecondPage> {
                                         top: 20.0),
                                     child: Container(
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFEDE4FE),
+                                          color: Colors.grey,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(25.0)),
                                         ),
@@ -250,18 +220,27 @@ class _SecondPageState extends State<SecondPage> {
                                               MainAxisAlignment.center,
                                           children: const <Widget>[
                                             Text(
-                                              '< 18,5 – Underweight',
-                                              style: kInfoTextStyle,
+                                              '< 18.5 – Underweight',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
-                                              '18,5 – 24,99 – Healthy weight',
-                                              style: kInfoTextStyle,
+                                              '18.5 – 25 – Healthy weight',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
-                                              '≥ 25,0 – Overweight',
-                                              style: kInfoTextStyle,
+                                              '≥ 25.0 – Overweight',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -271,7 +250,7 @@ class _SecondPageState extends State<SecondPage> {
                           },
                           icon: const Icon(
                             FontAwesomeIcons.infoCircle,
-                            color: Colors.black,
+                            color: Colors.grey,
                           )),
                     ],
                   ),
@@ -281,7 +260,7 @@ class _SecondPageState extends State<SecondPage> {
                 flex: 1,
                 child: ContainerCard(
                   radius: 10.0,
-                  color: const Color(0xFFEDE4FE),
+                  color: Colors.black,
                   childContainer: Container(
                     padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                     child: Center(
@@ -294,7 +273,10 @@ class _SecondPageState extends State<SecondPage> {
                             height: 20.0,
                             child: Text(
                               widget.interpretation,
-                              style: kBodyTextStyle,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -662,7 +644,7 @@ class _SecondPageState extends State<SecondPage> {
                               color: Colors.white)),
                     ),
                     ContainerCard(
-                      color: const Color(0xFFE4EEFF),
+                      color: Colors.black,
                       childContainer: Container(
                         padding: const EdgeInsets.only(left: 25.0, right: 5.0),
                         child: Center(
@@ -675,10 +657,13 @@ class _SecondPageState extends State<SecondPage> {
                                   style: TextStyle(
                                       fontSize: 25,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xff246EE9))),
+                                      color: Colors.white)),
                               Text(
-                                'kcal',
-                                style: kKcalTextStyle,
+                                'kcal ',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                             ],
                           ),
@@ -694,42 +679,50 @@ class _SecondPageState extends State<SecondPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Expanded(
-                      flex: 3,
-                      child: Button(
-                        color: kBottomReturnButtonColor,
-                        text: const Text('RETURN', style: textStyle1
-                            //TextStyle(
-                            // fontFamily: "Jaapokki",
-                            // )
-                            //,
-                            ),
-                        onTap: () {
-                          //CREATING A TDEE ENTRY FOR TIMESTAMP PURPOSES
-                          Navigator.pop(context);
-                          FirebaseFirestore.instance.collection('TDEE').add({
-                            'tdee': endTDEE,
-                            'tdeeTime': tdeeTime,
-                            'userID': uid
-                          });
+                        flex: 3,
+                        child: NeumorphicButton(
+                          onPressed: () {
+                            {
+                              //CREATING A TDEE ENTRY FOR TIMESTAMP PURPOSES
+                              Navigator.pop(context);
+                              FirebaseFirestore.instance
+                                  .collection('TDEE')
+                                  .add({
+                                'tdee': endTDEE,
+                                'tdeeTime': tdeeTime,
+                                'userID': uid
+                              });
 
-                          FirebaseFirestore.instance
-                              .collection('remainingCalories')
-                              .add({
-                            'userID': uid,
-                            'Cals': endTDEE,
-                            'DateTime': tdeeTime,
-                          });
+                              FirebaseFirestore.instance
+                                  .collection('remainingCalories')
+                                  .add({
+                                'userID': uid,
+                                'Cals': endTDEE,
+                                'DateTime': tdeeTime,
+                              });
 
 //UPDATE TDEE VALUE THAT WE WILL USE FOR DEDUCTING FOOD CALORIES
-                          FirebaseFirestore.instance
-                              .collection('UserData')
-                              .doc(uid)
-                              .update({'tdee': endTDEE});
-                        },
-                      ),
-                    ),
+                              FirebaseFirestore.instance
+                                  .collection('UserData')
+                                  .doc(uid)
+                                  .update({'tdee': endTDEE});
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              'Return',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ),
+                        ))
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 20.0,
               ),
             ],
           ),

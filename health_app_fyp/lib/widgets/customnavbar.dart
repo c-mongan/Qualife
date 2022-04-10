@@ -7,7 +7,7 @@ import '../MoodTracker/original/list_of_moods.dart';
 import '../OpenFoodFacts/calorie_tracker_list.dart';
 
 class CustomisedNavigationBar extends StatelessWidget {
-  const CustomisedNavigationBar({
+  CustomisedNavigationBar({
     Key? key,
   }) : super(key: key);
 
@@ -23,7 +23,9 @@ class CustomisedNavigationBar extends StatelessWidget {
               Get.to(const HomePage());
             },
             icon: const Icon(
-              Icons.home,
+              Icons.home_outlined,
+              size: 30,
+
               // color: Colors.red,
             ),
           ),
@@ -33,16 +35,23 @@ class CustomisedNavigationBar extends StatelessWidget {
             },
             icon: const Icon(
               Icons.monitor_weight_outlined,
+              size: 30,
               // color: Colors.blue,
             ),
           ),
           IconButton(
-              icon: Icon(Icons.food_bank_outlined),
+              icon: Icon(
+                Icons.food_bank_outlined,
+                size: 30,
+              ),
               onPressed: () {
                 Get.to(BarcodeScanner());
               }),
           IconButton(
-              icon: Icon(Icons.mood),
+              icon: Icon(
+                Icons.mood,
+                size: 30,
+              ),
               onPressed: () {
                 Get.to(ListMoods());
               }),

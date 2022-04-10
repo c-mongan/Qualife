@@ -46,7 +46,8 @@ class MyAppState extends State<PickDateMoodTracker> {
     /// The argument value will return the changed ranges as
     /// [List<PickerDateRange] when the widget [SfDateRangeSelectionMode] set as
     /// multi range.
-    setState(() {
+    if (!mounted) return;
+    setState() {
       if (args.value is PickerDateRange) {
         _range = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
             // ignore: lines_longer_than_80_chars
@@ -65,7 +66,9 @@ class MyAppState extends State<PickDateMoodTracker> {
       } else {
         _rangeCount = args.value.length.toString();
       }
-    });
+    }
+
+    ;
   }
 
   @override
@@ -74,6 +77,7 @@ class MyAppState extends State<PickDateMoodTracker> {
         home: Scaffold(
       appBar: AppBar(
         title: const Text('Select Date'),
+        backgroundColor: Colors.grey,
       ),
       bottomNavigationBar: CustomisedNavigationBar(),
       //bottomNavigationBar: HomeScreen(),
@@ -93,8 +97,8 @@ class MyAppState extends State<PickDateMoodTracker> {
                   '          Selected date: $selectedDate',
 
                   style: const TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.blue,
+                    fontSize: 25.0,
+                    color: Colors.black,
                     fontWeight: FontWeight.w600,
                   ),
                   //  Text('Selected date: $newString'),
@@ -115,6 +119,7 @@ class MyAppState extends State<PickDateMoodTracker> {
             bottom: 0,
             child: SfDateRangePicker(
               onSelectionChanged: _onSelectionChanged,
+              selectionColor: Colors.black,
               selectionMode: DateRangePickerSelectionMode.single,
               maxDate: DateTime.now(),
               backgroundColor: Colors.grey,
@@ -133,6 +138,8 @@ class MyAppState extends State<PickDateMoodTracker> {
   bool dialVisible = true;
   Widget getFloatingActionButton() {
     return SpeedDial(
+        overlayColor: Colors.black,
+        backgroundColor: Colors.black,
         animatedIcon: AnimatedIcons.add_event,
         animatedIconTheme: const IconThemeData(size: 22.0),
         onOpen: () => print('OPENED DIAL'),
@@ -142,7 +149,7 @@ class MyAppState extends State<PickDateMoodTracker> {
         children: [
           SpeedDialChild(
             child: const Icon(MdiIcons.calendar, color: Colors.white),
-            backgroundColor: Colors.red[600],
+            backgroundColor: Colors.green,
             onTap: () {
               print(selectedDate);
 
@@ -150,7 +157,7 @@ class MyAppState extends State<PickDateMoodTracker> {
             },
             label: 'Select Date',
             labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-            labelBackgroundColor: Colors.red[500],
+            labelBackgroundColor: Colors.green,
           )
         ]);
   }

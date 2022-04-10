@@ -13,6 +13,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../model/user_model.dart';
+import '../widgets/glassmorphic_bottomnavbar.dart';
 import 'login_screen.dart';
 
 class GraphPage extends StatefulWidget {
@@ -217,7 +218,7 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.green,
                                         text: "Normal",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: Colors.white, fontSize: 15),
                                       ),
                                       PlotBand(
                                         isVisible: true,
@@ -226,7 +227,7 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.red,
                                         text: "Underweight",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: Colors.white, fontSize: 15),
                                       ),
                                       PlotBand(
                                         isVisible: true,
@@ -235,16 +236,16 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.yellow,
                                         text: "Overweight",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: Colors.white, fontSize: 15),
                                       ),
                                       PlotBand(
                                         isVisible: true,
                                         start: 30.1,
-                                        end: 100,
+                                        end: 1000,
                                         color: Colors.red,
                                         text: "Obese",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: Colors.white, fontSize: 15),
                                       )
                                     ],
 

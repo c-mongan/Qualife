@@ -1,21 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
-import 'package:pie_chart/pie_chart.dart';
 import '../model/user_model.dart';
-import 'login_screen.dart';
 import 'package:duration_picker/duration_picker.dart';
+
+import '../widgets/widgets.dart';
 
 class DailyCheckInPage extends StatefulWidget {
   const DailyCheckInPage({Key? key}) : super(key: key);
@@ -31,9 +25,9 @@ UserModel loggedInUser = UserModel();
 
 class _DailyCheckInPageState extends State<DailyCheckInPage> {
   late WeightSliderController _controller;
-  double _weight = 30.0;
+  double _weight = 60.0;
 
-  Duration _duration = Duration(hours: 0, minutes: 0);
+  Duration _duration = Duration(hours: 8, minutes: 0);
 
   @override
   void initState() {
@@ -59,6 +53,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
 
   final double _max = 100.0;
   double _value = 8.00;
+  double startMood = 2;
 
   @override
   Widget build(BuildContext context) //=> Scaffold( {
@@ -73,7 +68,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Graphs'),
+              title: const Text(''),
               elevation: 0,
               backgroundColor: Colors.black,
             ),
@@ -92,12 +87,12 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                   children: <Widget>[
                     Center(
                         child: Padding(
-                            padding: EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(20),
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 45,
                                     child: Text(
                                       "Your Daily Check In",
@@ -115,7 +110,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                     color: Colors.grey,
                                     thickness: 2,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 45,
                                     child: Text(
                                       "What is your weight?",
@@ -127,7 +122,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                   ),
                                   Text(
                                     "${_weight.toStringAsFixed(1)} kg",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.white),
@@ -137,17 +132,17 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                     thickness: 2,
                                   ),
                                   weightSlider(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 50,
                                   ),
                                   const Divider(
                                     color: Colors.grey,
                                     thickness: 2,
                                   ),
-                                  SizedBox(
-                                    height: 45,
+                                  const SizedBox(
+                                    height: 55,
                                     child: Text(
-                                      "How much sleep did you get?",
+                                      "How long did you sleep?",
                                       style: TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.bold,
@@ -158,7 +153,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                     color: Colors.grey,
                                     thickness: 2,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 45,
                                   ),
                                   DurationPicker(
@@ -172,14 +167,14 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                   ),
                                   Text((_duration.inHours).toStringAsFixed(2) +
                                       " hours"),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 45,
                                   ),
                                   const Divider(
                                     color: Colors.grey,
                                     thickness: 2,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 45,
                                     child: Text(
                                       "What is your overall Mood?",
@@ -193,41 +188,65 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                     color: Colors.grey,
                                     thickness: 2,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 45,
                                   ),
                                   SfSliderTheme(
                                     data: SfSliderThemeData(
-                                      activeLabelStyle: TextStyle(
-                                          color: activeColor,
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic),
-                                      inactiveLabelStyle: TextStyle(
-                                          color: inactiveColor,
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic),
-                                      thumbColor: Colors.white,
-                                      thumbRadius: 15,
-                                      thumbStrokeWidth: 2,
-                                      thumbStrokeColor: activeColor,
-                                      activeTrackColor: activeColor,
-                                      inactiveTrackColor: inactiveColor,
-                                    ),
+                                        // activeLabelStyle: TextStyle(
+                                        //     color: activeColor,
+                                        //     fontSize: 12,
+                                        //     fontStyle: FontStyle.italic
+                                        //     ),
+                                        // inactiveLabelStyle: TextStyle(
+                                        //     color: inactiveColor,
+                                        //     fontSize: 12,
+                                        //     fontStyle: FontStyle.italic),
+                                        thumbColor: Colors.white,
+                                        thumbRadius: 15,
+                                        thumbStrokeWidth: 2,
+                                        thumbStrokeColor: activeColor,
+                                        // activeTrackColor: activeColor,
+                                        // inactiveTrackColor: inactiveColor,
+                                        activeTrackColor: Colors.green,
+                                        inactiveTrackColor: Colors.red,
+                                        trackCornerRadius: 13),
                                     child: SfSlider(
+                                      thumbIcon: Icon(
+                                          Icons.arrow_downward_sharp,
+                                          color: Colors.black,
+                                          size: 20.0),
                                       min: 0.0,
-                                      max: 24.0,
-                                      value: _value,
-                                      interval: 4,
-                                      showTicks: false,
-                                      showLabels: false,
-                                      enableTooltip: true,
-                                      shouldAlwaysShowTooltip: true,
-                                      minorTicksPerInterval: 1,
-                                      numberFormat:
-                                          NumberFormat("\#0.# hour(s)"),
-                                      onChanged: (dynamic value) {
+                                      max: 4.0,
+                                      value: startMood,
+                                      interval: 1,
+                                      stepSize: 1,
+                                      showTicks: true,
+                                      showLabels: true,
+                                      // enableTooltip: true,
+                                      //shouldAlwaysShowTooltip: true,
+                                      minorTicksPerInterval: 0,
+                                      numberFormat: NumberFormat("\#0"),
+                                      labelFormatterCallback:
+                                          (dynamic actualValue,
+                                              String formattedText) {
+                                        switch (actualValue) {
+                                          case 0:
+                                            return 'Angry';
+                                          case 1:
+                                            return 'Upset';
+                                          case 2:
+                                            return 'Nuetral ';
+                                          case 3:
+                                            return 'Content';
+                                          case 4:
+                                            return 'Optimistic';
+                                        }
+                                        return actualValue.toString();
+                                      },
+                                      onChanged: (dynamic val) {
                                         setState(() {
-                                          _value = value;
+                                          startMood = val;
                                         });
                                       },
                                     ),

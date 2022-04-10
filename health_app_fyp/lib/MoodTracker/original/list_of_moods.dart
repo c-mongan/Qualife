@@ -13,6 +13,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../BMR+BMR/colors&fonts.dart';
+import '../../widgets/glassmorphic_bottomnavbar.dart';
 
 class ListMoods extends StatefulWidget {
   const ListMoods({Key? key}) : super(key: key);
@@ -128,7 +129,7 @@ class _MyTestState extends State<ListMoods> {
     }
   }
 
-  Future<void> removeLastFood() async {
+  Future<void> removeLastEntry() async {
     QuerySnapshot querySnap = await FirebaseFirestore.instance
         .collection('MoodTracking')
         .orderBy("DateTime")
@@ -275,13 +276,15 @@ class _MyTestState extends State<ListMoods> {
   Widget getFloatingActionButton() {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
+      backgroundColor: Colors.black,
+      overlayColor: Colors.black,
       animatedIconTheme: const IconThemeData(size: 22.0),
       visible: dialVisible,
       curve: Curves.bounceIn,
       children: [
         SpeedDialChild(
           child: const Icon(MdiIcons.plus, color: Colors.white),
-          backgroundColor: Colors.red[600],
+          backgroundColor: Colors.green,
           onTap: () async {
             // await Navigator.push(
             //   context,
@@ -290,13 +293,13 @@ class _MyTestState extends State<ListMoods> {
           },
           label: 'Add an entry',
           labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-          labelBackgroundColor: Colors.red[500],
+          labelBackgroundColor: Colors.green,
         ),
         SpeedDialChild(
           child: const Icon(MdiIcons.minus, color: Colors.white),
           backgroundColor: Colors.red,
           onTap: () async {
-            removeLastFood();
+            removeLastEntry();
           },
           label: 'Delete Last Entry',
           labelStyle: const TextStyle(fontWeight: FontWeight.w500),
@@ -458,7 +461,7 @@ class _MyTestState extends State<ListMoods> {
           print(count.toString() + "NUM OF DOCS");
 
           if (count > 0) {
-            removeLastFood();
+            removeLastEntry();
           } else {
             print("No Foods Left In List");
           }

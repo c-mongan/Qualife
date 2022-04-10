@@ -12,6 +12,7 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 
 import '../BMR+BMR/colors&fonts.dart';
 import '../widgets/customnavbar.dart';
+import '../widgets/glassmorphic_bottomnavbar.dart';
 
 class BarcodeScanSecond extends StatefulWidget {
   const BarcodeScanSecond({Key? key}) : super(key: key);

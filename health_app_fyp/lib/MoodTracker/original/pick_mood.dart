@@ -7,7 +7,9 @@ import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 
 import 'package:health_app_fyp/MoodTracker/original/list_of_moods.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
+import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
 
+import '../../widgets/glassmorphic_bottomnavbar.dart';
 import '../moodcard.dart';
 
 class StartPage extends StatefulWidget {
@@ -118,13 +120,17 @@ class _StartPageState extends State<StartPage> {
                 SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
+
+                NeumorphicButton(
+                  child: Text(
+                    "Choose Time",
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
                   onPressed: () {
                     _selectTime(context);
                     print(widget.selectedDate);
                     // print();
                   },
-                  child: Text("Choose Time"),
                 ),
                 SizedBox(
                   height: 20,
@@ -147,10 +153,11 @@ class _StartPageState extends State<StartPage> {
                     CircleAvatar(
                       radius: 25,
                       child: CircleAvatar(
-                          child: Icon(Icons.timer, color: Colors.red, size: 25),
+                          child:
+                              Icon(Icons.timer, color: Colors.black, size: 25),
                           radius: 20,
                           backgroundColor: Colors.white),
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.black,
                     ),
 
                     //  Icon(Icons.timer_outlined, color: Colors.white, size: 25),
@@ -501,10 +508,10 @@ class _StartPageState extends State<StartPage> {
                     ),
                     decoration: BoxDecoration(
                       // color: Color(0xffff3d00),
-                      color: Colors.red,
+                      color: Colors.black,
                       border: Border.all(
-                        width: 1.00,
-                        color: Color(0xffff3d00),
+                        width: 0.00,
+                        color: Colors.grey,
                       ),
                       borderRadius: BorderRadius.circular(19.00),
                     ),

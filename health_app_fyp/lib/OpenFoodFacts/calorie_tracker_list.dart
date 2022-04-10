@@ -8,6 +8,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../widgets/customnavbar.dart';
+import '../widgets/glassmorphic_bottomnavbar.dart';
 
 class BarcodeScanner extends StatefulWidget {
   @override
@@ -294,60 +295,62 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
 
   bool dialVisible = true;
   Widget getFloatingActionButton() {
-    return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
-      animatedIconTheme: const IconThemeData(size: 22.0),
-
-      //  onOpen: () => print('OPENED DIAL'),
-// onClose: () => print('CLOSED'),
-      visible: dialVisible,
-      curve: Curves.bounceIn,
-      children: [
-        SpeedDialChild(
-          child: const Icon(MdiIcons.barcodeScan, color: Colors.white),
-          backgroundColor: Colors.red[600],
-          onTap: () async {
-            // // bool a;
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const BarcodeScanSecond()),
-            );
-          },
-          label: 'Barcode Scan',
-          labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-          labelBackgroundColor: Colors.red[500],
-        ),
-        // SpeedDialChild(
-        //   child: const Icon(MdiIcons.pencilPlusOutline, color: Colors.white),
-        //   backgroundColor: Colors.green,
-        //   onTap: () async {
-        //     // bool a =
-        //     await Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => const ManualAdd()),
-        //       // );
-        //       // if (a == true) {
-        //       //   // updateListView();
-        //       // }
-        //     );
-        //   },
-        //   label: 'Manually Add Item',
-        //   labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-        //   labelBackgroundColor: Colors.green,
-        // ),
-        SpeedDialChild(
-          child: const Icon(MdiIcons.minus, color: Colors.white),
-          backgroundColor: Colors.red,
-          onTap: () async {
-            deleteLastFood();
-          },
-          label: 'Delete Last Entry',
-          labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-          labelBackgroundColor: Colors.red,
-        ),
-      ],
-    );
+    return Theme(
+        data: Theme.of(context).copyWith(highlightColor: Colors.black),
+        child: SpeedDial(
+          overlayColor: Colors.black,
+          backgroundColor: Colors.black,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme:
+              const IconThemeData(size: 22.0, color: Colors.white),
+          visible: dialVisible,
+          curve: Curves.bounceIn,
+          children: [
+            SpeedDialChild(
+              child: const Icon(MdiIcons.barcodeScan, color: Colors.white),
+              backgroundColor: Colors.green,
+              onTap: () async {
+                // // bool a;
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const BarcodeScanSecond()),
+                );
+              },
+              label: 'Barcode Scan',
+              labelStyle: const TextStyle(fontWeight: FontWeight.w500),
+              labelBackgroundColor: Colors.green,
+            ),
+            // SpeedDialChild(
+            //   child: const Icon(MdiIcons.pencilPlusOutline, color: Colors.white),
+            //   backgroundColor: Colors.green,
+            //   onTap: () async {
+            //     // bool a =
+            //     await Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => const ManualAdd()),
+            //       // );
+            //       // if (a == true) {
+            //       //   // updateListView();
+            //       // }
+            //     );
+            //   },
+            //   label: 'Manually Add Item',
+            //   labelStyle: const TextStyle(fontWeight: FontWeight.w500),
+            //   labelBackgroundColor: Colors.green,
+            // ),
+            SpeedDialChild(
+              child: const Icon(MdiIcons.minus, color: Colors.white),
+              backgroundColor: Colors.red,
+              onTap: () async {
+                deleteLastFood();
+              },
+              label: 'Delete Last Entry',
+              labelStyle: const TextStyle(fontWeight: FontWeight.w500),
+              labelBackgroundColor: Colors.red,
+            ),
+          ],
+        ));
   }
 
   Future<Timestamp> getLastCalsRemainingDay() async {

@@ -69,11 +69,11 @@ class Calculator {
 
   String getInterpretation() {
     if (_bmi < 18.5) {
-      return 'Your BMI score is too low. Consider eating in a caloric surplus ';
+      return 'Your BMI score is too low.';
     } else if (_bmi >= 25.0) {
-      return 'You BMI score is too high. Consider eating in a caloric deficit.';
+      return 'You BMI score is too high.';
     } else {
-      return 'Good job  You have a healthy BMI score.';
+      return 'You have a healthy BMI score.';
     }
   }
 }

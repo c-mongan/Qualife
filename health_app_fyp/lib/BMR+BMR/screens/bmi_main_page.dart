@@ -8,6 +8,8 @@ import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:health_app_fyp/BMR+BMR/components/gender_icon_content.dart';
 import 'package:health_app_fyp/BMR+BMR/screens/bmi_second_page.dart';
 import '../../widgets/customnavbar.dart';
+import '../../widgets/glassmorphic_bottomnavbar.dart';
+import '../../widgets/nuemorphic_button.dart';
 import '../colors&fonts.dart';
 
 enum GenderType {
@@ -316,14 +318,15 @@ class _BMITDEEState extends State<BMITDEE> {
               ),
               Flexible(
                   flex: 1,
-                  child: Button(
-                      edges: const EdgeInsets.all(0.0),
-                      color: Color(0xff246EE9),
-                      text: const Text(
-                        'CALCULATE',
-                        style: textStyle2,
+                  child: NeumorphicButton(
+                      child: const Text(
+                        'Calculate BMI',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                        ),
                       ),
-                      onTap: () {
+                      onPressed: () {
                         Calculator bmi = Calculator(
                             height: height,
                             weight: weight,
@@ -342,7 +345,10 @@ class _BMITDEEState extends State<BMITDEE> {
                         );
                       }
                       // },
-                      ))
+                      )),
+              SizedBox(
+                height: 20.0,
+              ),
             ])));
   }
 }
