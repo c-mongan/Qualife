@@ -16,7 +16,10 @@ class ActivityIcon extends StatelessWidget {
               height: 45,
               width: 45,
             ),
-            Text(name)
+            Text(
+              name,
+              style: TextStyle(fontSize: 12, color: Colors.white),
+            )
           ],
         ),
         decoration: BoxDecoration(
@@ -40,7 +43,10 @@ class MoodIcon extends StatelessWidget {
             height: 40,
             width: 40,
           ),
-          Text(name)
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: Colors.white),
+          )
         ],
       ),
       decoration: BoxDecoration(

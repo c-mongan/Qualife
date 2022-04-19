@@ -74,8 +74,7 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.black,
             ),
             bottomNavigationBar: CustomisedNavigationBar(),
-            // extendBody: true,
-            // bottomNavigationBar: ClearCurvedNavBar(),
+           
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,

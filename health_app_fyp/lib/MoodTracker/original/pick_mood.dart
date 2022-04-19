@@ -8,16 +8,14 @@ import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/MoodTracker/original/list_of_moods.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
+import 'package:intl/intl.dart';
 
-import '../../widgets/glassmorphic_bottomnavbar.dart';
 import '../moodcard.dart';
 
 class StartPage extends StatefulWidget {
   final String selectedDate;
 
-  //String? selectedDate;
   const StartPage({Key? key, required this.selectedDate}) : super(key: key);
-  //final String date;
 
   @override
   _StartPageState createState() => _StartPageState();
@@ -25,7 +23,7 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   String? selectedDate;
-  //_StartPageState(this.selectedDate);
+
   MoodCard? moodCard;
   String? mood;
   String? image;
@@ -33,13 +31,6 @@ class _StartPageState extends State<StartPage> {
   String? timepicked;
   String? datetime;
   int? currentindex;
-  // late MoodCard moodCard;
-  // late String mood;
-  // late String image;
-  // late String datepicked;
-  // late String timepicked;
-  // late String datetime;
-  // late int currentindex;
   TimeOfDay selectedTime = TimeOfDay.now();
   String uid = FirebaseAuth.instance.currentUser!.uid;
   int servings = 1;
@@ -52,7 +43,6 @@ class _StartPageState extends State<StartPage> {
     Mood('assets/sad.png', 'Sad', false),
     Mood('assets/angry.png', 'Angry', false),
     Mood('assets/surprised.png', 'Surprised', false),
-    // Mood('assets/loving.png', 'Loving', false),
     Mood('assets/stressed.png', 'Stressed', false),
     Mood('assets/scared.png', 'Panicked', false)
   ];
@@ -69,7 +59,6 @@ class _StartPageState extends State<StartPage> {
     Activity('assets/family.png', 'Family Time', false),
     Activity('assets/excercise.png', 'Excercise', false),
     Activity('assets/eat.png', 'Eating', false),
-    //Activity('assets/date.png', 'Date', false),
     Activity('assets/clean.png', 'Cleaning', false)
   ];
   Color colour = Colors.white;
@@ -83,216 +72,24 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //     elevation: 0,
-        //     title: Row(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       children: [
-        //         Text('Mood Tracker',
-        //             style: TextStyle(
-        //                 fontSize: 30,
-        //                 fontStyle: FontStyle.normal,
-        //                 fontWeight: FontWeight.bold)),
-        //         SizedBox(
-        //           width: 5,
-        //         ),
-        //         Icon(Icons.insert_emoticon, color: Colors.white, size: 35)
-        //       ],
-        //     ),
-        //     backgroundColor: Colors.red),
         bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    // colors: [Colors.red, Colors.white, Colors.red],
-                    colors: [
-                  Colors.grey,
-                  Colors.black,
-                  // Colors.red,
-                  //Colors.blue,
-
-                  // Colors.orange,
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                gradient: LinearGradient(colors: [
+              Colors.grey,
+              Colors.black,
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: Container(
               child: Column(children: <Widget>[
                 SizedBox(
-                  height: 20,
-                ),
-
-                NeumorphicButton(
-                  child: Text(
-                    "Choose Time",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  onPressed: () {
-                    _selectTime(context);
-                    print(widget.selectedDate);
-                    // print();
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                  width: 5,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "               Time selected ${selectedTime.hour}:${selectedTime.minute}",
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-
-                    CircleAvatar(
-                      radius: 25,
-                      child: CircleAvatar(
-                          child:
-                              Icon(Icons.timer, color: Colors.black, size: 25),
-                          radius: 20,
-                          backgroundColor: Colors.white),
-                      backgroundColor: Colors.black,
-                    ),
-
-                    //  Icon(Icons.timer_outlined, color: Colors.white, size: 25),
-
-                    SizedBox(
-                      height: 30,
-                      width: 5,
-                    ),
-                  ],
-                ),
-                SizedBox(
                   height: 30,
-                  width: 5,
                 ),
-
-                //         ],
-                //       ),
-                //     ),
-                //   );
-                // }
-
-                // Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <
-                //     Widget>[
-                //       GestureDetector(
-                //         onTap: () {
-                //           // Navigator.of(context).pushNamed('/home_screen');
-                //         },
-                //         child: Column(
-                //           children: [
-                //             CircleAvatar(
-                //               radius: 27,
-                //               child: CircleAvatar(
-                //                   child: Icon(Icons.dashboard,
-                //                       color: Colors.green, size: 30),
-                //                   radius: 25,
-                //                   backgroundColor: Colors.white),
-                //               backgroundColor: Colors.green,
-                //             ),
-                //             SizedBox(height: 2.5),
-                //             Text('Dashboard',
-                //                 style: TextStyle(
-                //                     fontWeight: FontWeight.w500,
-                //                     color: Colors.green,
-                //                     fontSize: 15))
-                //           ],
-                //         ),
-                //       ),
-                //       GestureDetector(
-                //         onTap: () {
-                //           showDatePicker(
-                //                   context: context,
-                //                   initialDate: DateTime.now(),
-                //                   firstDate: DateTime(2001),
-                //                   lastDate: DateTime(2022))
-                //               .then((date) => {
-                //                     setState(() {
-                //                       datepicked = date!.day.toString() +
-                //                           '-' +
-                //                           date.month.toString() +
-                //                           '-' +
-                //                           date.year.toString();
-                //                       dateonly = date.day.toString() +
-                //                           '/' +
-                //                           date.month.toString();
-                //                     }),
-                //                   });
-                //         },
-                //         child: Column(
-                //           children: [
-                //             CircleAvatar(
-                //               radius: 27,
-                //               child: CircleAvatar(
-                //                   child: Icon(Icons.calendar_today,
-                //                       color: Colors.blue, size: 30),
-                //                   radius: 25,
-                //                   backgroundColor: Colors.white),
-                //               backgroundColor: Colors.blue,
-                //             ),
-                //             SizedBox(
-                //               height: 2.5,
-                //             ),
-                //             Text('Pick a date',
-                //                 style: TextStyle(
-                //                     fontWeight: FontWeight.w500,
-                //                     color: Colors.blue,
-                //                     fontSize: 15))
-                //           ],
-                //         ),
-                //       ),
-                //       GestureDetector(
-                //         onTap: () {
-                //           // showTimePicker(context: context, initialTime: TimeOfDay.now())
-                //           //     .then((time) => {
-                //           //           setState(() {
-                //           //             timepicked = time!.format(context).toString();
-                //           //   })
-                //           // });
-                //         },
-                //         child: Column(
-                //           children: [
-                //             CircleAvatar(
-                //               radius: 27,
-                //               child: CircleAvatar(
-                //                   child: Icon(Icons.timer,
-                //                       color: Colors.red, size: 30),
-                //                   radius: 25,
-                //                   backgroundColor: Colors.white),
-                //               backgroundColor: Colors.red,
-                //             ),
-                //             SizedBox(
-                //               height: 2.5,
-                //             ),
-                //             Text('Pick a time',
-                //                 style: TextStyle(
-                //                     fontWeight: FontWeight.w500,
-                //                     color: Colors.red,
-                //                     fontSize: 15))
-                //           ],
-                //         ),
-                //       ),
-                //     ]),
-                // SizedBox(height: 20),
-                // Container(
-                //   height: 30,
-                //   width: 30,
-                //   child: FloatingActionButton(
-                //     backgroundColor: Colors.red,
-                //     child: Icon(Icons.done),
-                //     onPressed: () => setState(() {
-                //       datetime = datepicked + '   ' + timepicked;
-                //     }),
-                //   ),
-                // ),
-
-                SizedBox(height: 20),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 2,
+                ),
                 const Text('What was your mood at the time?',
                     style: TextStyle(
                         color: Colors.white,
@@ -342,6 +139,10 @@ class _StartPageState extends State<StartPage> {
                         );
                       }),
                 ),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 2,
+                ),
                 const Text('What were you doing that day?',
                     style: TextStyle(
                         color: Colors.white,
@@ -349,7 +150,7 @@ class _StartPageState extends State<StartPage> {
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 const Text(
-                    'Hold on the activity to select,You can choose multiple',
+                    '(Hold on the activity to select,you can choose multiple)',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -394,6 +195,66 @@ class _StartPageState extends State<StartPage> {
                         ]);
                       }),
                 ),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 2,
+                ),
+
+                const Text('What time was this at?',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold)),
+                SizedBox(height: 6),
+                Row(
+                  children: [
+                    Text(
+                      // "               Time selected ${selectedTime.hour}:${selectedTime.minute}",
+
+                      "               Time selected ${selectedTime.format(context)}",
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    CircleAvatar(
+                      radius: 25,
+                      child: CircleAvatar(
+                          child:
+                              Icon(Icons.timer, color: Colors.black, size: 25),
+                          radius: 20,
+                          backgroundColor: Colors.white),
+                      backgroundColor: Colors.black,
+                    ),
+                    SizedBox(
+                      height: 30,
+                      width: 5,
+                    ),
+                  ],
+                ),
+                NeumorphicButton(
+                  child: Text(
+                    "Select Time",
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  onPressed: () {
+                    _selectTime(context);
+                    print(widget.selectedDate);
+                  },
+                ),
+                // SizedBox(
+                //   height: 30,
+                //   width: 5,
+                // ),
+                SizedBox(height: 20),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 2,
+                ),
                 GestureDetector(
                   onTap: () => {
                     setState(() {
@@ -414,8 +275,10 @@ class _StartPageState extends State<StartPage> {
                       // for (var e in list) {
                       //   print(e);
 
-                      String time = ((selectedTime.hour.toString() + ":") +
-                          selectedTime.minute.toString());
+                      NumberFormat formatter = NumberFormat("00");
+                      String formatted = formatter.format(selectedTime.minute);
+                      String time =
+                          ((selectedTime.hour.toString() + ":") + formatted);
 
                       // DateFormat("dd-MM-yyyy")
                       //     .format(DateTime.parse(widget.selectedDate));
@@ -431,59 +294,13 @@ class _StartPageState extends State<StartPage> {
                           'TimeOfMood': time,
                           'Mood': mood,
                           'Activities': list,
-                          'DateTime': DateTime.parse(widget.selectedDate),
+                          'DateTime': DateFormat('yyyy-MM-dd')
+                              .parse(widget.selectedDate),
                           'Icon': image
                         });
                         Get.to(const ListMoods());
                       }
-                      //                   Mood('assets/smile.png', 'Happy', false),   6
-                      // Mood('assets/sad.png', 'Sad', false), 1
-                      // Mood('assets/angry.png', 'Angry', false), 4
-                      // Mood('assets/surprised.png', 'Surprised', false), 5
-                      // Mood('assets/stressed.png', 'Stressed', false), 2
-                      // Mood('assets/scared.png', 'Panicked', false) 3
-
-                      //  switch(mood) {
-                      //     case "Happy": {  print("Happy");
-
-                      //      FirebaseFirestore.instance
-                      //                         .collection('MoodCount')
-                      //                         .add({
-                      //                       'userID': uid,
-                      //                       'DateOfMood': widget.selectedDate,
-                      //                       'TimeOfMood': time,
-                      //                       'Mood': mood,
-                      //                       'Activities': list,
-                      //                       'DateTime': DateTime.parse(widget.selectedDate),
-                      //                       'Icon': image
-                      //                     });
-
-                      //      }
-                      //     break;
-
-                      //     case "B": {  print("Good"); }
-                      //     break;
-
-                      //     case "C": {  print("Fair"); }
-                      //     break;
-
-                      //     case "D": {  print("Poor"); }
-                      //     break;
-
-                      //     default: { print("Invalid choice"); }
-                      //     break;
-                      //  }
-
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => ListMoods(),
-                      //     ));
-                    }
-                        //print(activityname);
-                        // print(act[index].name);
-                        ),
-                    // Navigator.of(context).pushNamed('/home_screen'),
+                    }),
                   },
                   child: Container(
                     height: 38.00,
@@ -491,8 +308,12 @@ class _StartPageState extends State<StartPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
+                        Divider(
+                          color: Colors.grey,
+                          thickness: 2,
+                        ),
                         Text(
-                          'Save',
+                          'Save ',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.white,

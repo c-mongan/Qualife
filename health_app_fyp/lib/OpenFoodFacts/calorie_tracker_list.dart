@@ -484,7 +484,8 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
 
         double latestnetcals = lastLoggedFood.docs[0].get("Cals");
 
-        return latestnetcals;
+          return latestnetcals;
+        
       }
       return t2;
     } catch (Exc) {
@@ -503,7 +504,7 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
         print(latestnetcals.toString() + "result");
 
         double removeLastFoodsCalories = totalcals + latestnetcals;
-        // getNumOfFoodsToday();
+       
         getNumOfFoodsToday().then((count) {
           print(count.toString() + "NUM OF DOCS");
 

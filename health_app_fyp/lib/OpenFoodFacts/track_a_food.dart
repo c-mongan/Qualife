@@ -135,6 +135,8 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
 
   final today = DateTime.now().day;
 
+  List fields = [];
+
   bool found = false;
 
   String tempText1 = ' ';
@@ -167,148 +169,160 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
 
     String barcode = barcodeScanRes;
 
-    ProductQueryConfiguration configurations = ProductQueryConfiguration(
-        barcode,
-        language: OpenFoodFactsLanguage.ENGLISH,
-        fields: [
-          ProductField.NAME,
-          ProductField.NUTRIMENTS,
-          ProductField.INGREDIENTS_TEXT,
-          ProductField.INGREDIENTS,
-          ProductField.ADDITIVES,
-          ProductField.NUTRIENT_LEVELS,
-          ProductField.NUTRIMENT_ENERGY_UNIT,
-          ProductField.SERVING_SIZE,
-          ProductField.SERVING_QUANTITY
-          //ProductField.NUTRIMENT_DATA_PER
-        ]);
+    // request a product from the OpenFoodFacts database
 
-    ProductResult result = await OpenFoodAPIClient.getProduct(
-      configurations,
-    );
+    ProductQueryConfiguration configuration = ProductQueryConfiguration(barcode,
+        language: OpenFoodFactsLanguage.ENGLISH, fields: [ProductField.ALL]);
+    ProductResult result = await OpenFoodAPIClient.getProduct(configuration);
 
-    if (result.status != 1) {
-      print(
-          "Error retreiving the product with barcode : $barcode If the barcode number here matches the one on your food item , the item may not exist in the database. Please visit openfoodfacts.org ");
+    if (result.status == 1) {
+      // return result.product;
+//   } else {
+//     throw Exception('product not found, please insert data for ' + barcode);
+//   }
+// }
 
-      foodNameTxt = 'error';
-      found = false;
-      return;
+//     ProductQueryConfiguration configurations = ProductQueryConfiguration(
+//         barcode,
+//         language: OpenFoodFactsLanguage.ENGLISH,
+//         fields: [
+//           ProductField.NAME,
+//           ProductField.NUTRIMENTS,
+//           ProductField.INGREDIENTS_TEXT,
+//           ProductField.INGREDIENTS,
+//           ProductField.ADDITIVES,
+//           ProductField.NUTRIENT_LEVELS,
+//           ProductField.NUTRIMENT_ENERGY_UNIT,
+//           ProductField.SERVING_SIZE,
+//           ProductField.SERVING_QUANTITY
+//           //ProductField.NUTRIMENT_DATA_PER
+//         ]);
 
-      // ${result.status!.errorVerbose}
-    } else {
-      found = true;
+//     try {
+//       ProductResult? result = await OpenFoodAPIClient.getProduct(
+//         configurations,
+//       ); //.catchError((e) => print(e));
 
-      String? Name;
-      //= result.product!.productName;
+      if (result.status != 1) {
+        print(
+            "Error retreiving the product with barcode : $barcode If the barcode number here matches the one on your food item , the item may not exist in the database. Please visit openfoodfacts.org ");
 
-      if (result.product!.productName != null) {
-        Name = result.product!.productName;
+        foodNameTxt = 'error';
+        found = false;
+        return;
+
+        // ${result.status!.errorVerbose}
       } else {
-        Name = "ERROR: Item Data Exists In Database But Name Not Found!";
-      }
+        found = true;
 
-      // }
+        //String? Name;
+        //= result.product!.productName;
 
-      //String? Calories = result.product!.nutrimentEnergyUnit;
-//foodNameTxt = result.product!.productName!;
-
-      String? ingredientsT = result.product!.ingredientsText;
-      // List<Ingredient>? ingredients = result!.product!.ingredients;
-
-      double? energy_100g = result.product!.nutriments!.energy;
-
-      if (energy_100g == null) {
-        double? energy100gKcal = 1;
-      } else {
-        double? energy100gKcal = energy_100g / 4.184;
-
-        servCalorie = result.product!.nutriments!.energyKcal;
-
-        String? servingSize = result.product!.servingSize;
-        print(servingSize);
-
-        double? servingQuan = result.product!.servingQuantity;
-        print(servingQuan);
-
-        // double? energy_serving = result.product!.nutriments!.energyServing;
-
-        //divide the energy value by 4.184
-
-        // double? energy_100g_kcal = energy_100g! / 4.184;
-        //divide the energy value by 4.184
-        double? fat_100g = result.product!.nutriments!.fat;
-
-        double? salt_serving = result.product!.nutriments!.saltServing;
-        double? fat_serving = result.product!.nutriments!.fatServing;
-
-        String uid = FirebaseAuth.instance.currentUser!.uid;
-        DateTime inputTime = (DateTime.now());
-//Level? sugars_level = result.product!.nutrientLevels!.levels[NutrientLevels.NUTRIENT_SUGARS];
-
-        print(Name);
-        print(ingredientsT);
-        print(energy100gKcal.toStringAsFixed(2));
-
-        // getTdeeVal().then((tdee) {
-        //   String val = tdee;
-        // print("getTdeeVal() method called , val = " + val);
-
-        // getDailyCalsRemaining().then((calsLeft) {
-        //   print(calsLeft + "result");
-        //   // double num = double.parse(calsLeft);
-        //   // String val = calsLeft.toString();
-
-        //   // String decimal = ".00";
-        //   // String val = calsLeft + decimal;
-
-        //   String val = calsLeft;
-
-        //   print(val);
-
-        //   // deductCal(tdee, energy_100g_kcal, uid, inputTime);
-        //  // deductCal(val, energy_100g_kcal, uid, inputTime);
-
-        //   // double result = double.parse(tdee);
-        //   // double calRemaining = result - energy_100g_kcal;
-        //   // print(tdee + " " + "kcal");
-        //   // print(calRemaining.toString() + "kcal");
-        // });
-
-        // FirebaseFirestore.instance.collection('Food').add({
-        //   'Food Name': Name,
-        //   'DateTime': inputTime,
-        //   'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
-        //   'userID': uid
-        // });
-
-        FirebaseFirestore.instance.collection('TempFood').add({
-          'Food Name': Name,
-          'DateTime': inputTime,
-          'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
-          'userID': uid
-        });
-
-        print("Temp food added");
-
-        getFoodName().then((gotFoodName) {
-          // print(foodNameTxt + "result LINE 143");
-          // String val = tdee;
-          foodNameTxt = gotFoodName;
-          //  print(foodNameTxt + " GOT FOOD NAME TXT FROM FIRESTORE LINE 145");
-          print("getFoodName method called");
-        });
-
-        if (foodNameTxt.isNotEmpty) {
-          found = true;
+        if (result.product!.productName != null) {
+          Name = result.product!.productName;
+        } else {
+          Name = "ERROR: Item Data Exists In Database But Name Not Found!";
         }
 
-        //});
+      
+        String? ingredientsT = result.product!.ingredientsText;
+        
 
-        //addToDB(Name, ingredientsT, energy_100g_kcal, inputTime);
+        double? energy_100g = result.product!.nutriments!.energy;
 
+        if (energy_100g == null) {
+          double? energy100gKcal = 1;
+        } else {
+          double? energy100gKcal = energy_100g / 4.184;
+
+          servCalorie = result.product!.nutriments!.energyKcal;
+
+          String? servingSize = result.product!.servingSize;
+          print(servingSize);
+
+          double? servingQuan = result.product!.servingQuantity;
+          print(servingQuan);
+
+         
+          double? fat_100g = result.product!.nutriments!.fat;
+
+          double? saltServing = result.product!.nutriments!.saltServing;
+          double? fatServing = result.product!.nutriments!.fatServing;
+
+          String uid = FirebaseAuth.instance.currentUser!.uid;
+          DateTime inputTime = (DateTime.now());
+
+
+          print(Name);
+          print(ingredientsT);
+          print(energy100gKcal.toStringAsFixed(2));
+
+          // getTdeeVal().then((tdee) {
+          //   String val = tdee;
+          // print("getTdeeVal() method called , val = " + val);
+
+          // getDailyCalsRemaining().then((calsLeft) {
+          //   print(calsLeft + "result");
+          //   // double num = double.parse(calsLeft);
+          //   // String val = calsLeft.toString();
+
+          //   // String decimal = ".00";
+          //   // String val = calsLeft + decimal;
+
+          //   String val = calsLeft;
+
+          //   print(val);
+
+          //   // deductCal(tdee, energy_100g_kcal, uid, inputTime);
+          //  // deductCal(val, energy_100g_kcal, uid, inputTime);
+
+          //   // double result = double.parse(tdee);
+          //   // double calRemaining = result - energy_100g_kcal;
+          //   // print(tdee + " " + "kcal");
+          //   // print(calRemaining.toString() + "kcal");
+          // });
+
+          // FirebaseFirestore.instance.collection('Food').add({
+          //   'Food Name': Name,
+          //   'DateTime': inputTime,
+          //   'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
+          //   'userID': uid
+          // });
+
+          FirebaseFirestore.instance.collection('TempFood').add({
+            'Food Name': Name,
+            'DateTime': inputTime,
+            'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
+            'userID': uid
+          });
+
+          print("Temp food added");
+
+          getFoodName().then((gotFoodName) {
+            // print(foodNameTxt + "result LINE 143");
+            // String val = tdee;
+            foodNameTxt = gotFoodName;
+            //  print(foodNameTxt + " GOT FOOD NAME TXT FROM FIRESTORE LINE 145");
+            print("getFoodName method called");
+          });
+
+          if (foodNameTxt.isNotEmpty) {
+            found = true;
+          }
+
+          //});
+
+          //addToDB(Name, ingredientsT, energy_100g_kcal, inputTime);
+
+        }
+        //  found = true;
       }
-      //  found = true;
+      // } catch (e) {
+      //   print("ERROR: Item Data Exists In Database But Name Not Found!");
+      //   print(e);
+      // }
+      // }
+
     }
   }
 
@@ -787,12 +801,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                           Button(
                               edges: const EdgeInsets.all(0.0),
                               color: Colors.white,
-                              text: const Text(
-                                'Enter food',
-                                style: textStyle2
-                      
-                                // TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              text: const Text('Enter food', style: textStyle2
+
+                                  // TextStyle(fontWeight: FontWeight.bold),
+                                  ),
                               onTap: () {
                                 double totalCals =
                                     servCalorie! / 100 * servingSize * servings;
@@ -925,9 +937,9 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
     }
   }
 
-  void deductCal(String tdee, double energy_100g_kcal, uid, inputTime) {
+  void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
     double result = double.parse(tdee);
-    double calRemaining = result - energy_100g_kcal;
+    double calRemaining = result - energy100gKcal;
     // print(tdee + " " + "kcal");
     // print(calRemaining.toString() + "kcal deductCal method successful ");
 

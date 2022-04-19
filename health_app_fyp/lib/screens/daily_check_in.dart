@@ -9,7 +9,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import '../model/user_model.dart';
 import 'package:duration_picker/duration_picker.dart';
 
-import '../widgets/widgets.dart';
+import '../widgets/nuemorphic_button.dart';
 
 class DailyCheckInPage extends StatefulWidget {
   const DailyCheckInPage({Key? key}) : super(key: key);
@@ -51,8 +51,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
   Color activeColor = Colors.white;
   Color inactiveColor = Colors.white;
 
-  final double _max = 100.0;
-  double _value = 8.00;
   double startMood = 2;
 
   @override
@@ -193,26 +191,15 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                   ),
                                   SfSliderTheme(
                                     data: SfSliderThemeData(
-                                        // activeLabelStyle: TextStyle(
-                                        //     color: activeColor,
-                                        //     fontSize: 12,
-                                        //     fontStyle: FontStyle.italic
-                                        //     ),
-                                        // inactiveLabelStyle: TextStyle(
-                                        //     color: inactiveColor,
-                                        //     fontSize: 12,
-                                        //     fontStyle: FontStyle.italic),
                                         thumbColor: Colors.white,
                                         thumbRadius: 15,
                                         thumbStrokeWidth: 2,
                                         thumbStrokeColor: activeColor,
-                                        // activeTrackColor: activeColor,
-                                        // inactiveTrackColor: inactiveColor,
                                         activeTrackColor: Colors.green,
                                         inactiveTrackColor: Colors.red,
                                         trackCornerRadius: 13),
                                     child: SfSlider(
-                                      thumbIcon: Icon(
+                                      thumbIcon: const Icon(
                                           Icons.arrow_downward_sharp,
                                           color: Colors.black,
                                           size: 20.0),
@@ -223,14 +210,12 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                       stepSize: 1,
                                       showTicks: true,
                                       showLabels: true,
-                                      // enableTooltip: true,
-                                      //shouldAlwaysShowTooltip: true,
                                       minorTicksPerInterval: 0,
                                       numberFormat: NumberFormat("\#0"),
                                       labelFormatterCallback:
-                                          (dynamic actualValue,
+                                          (dynamic moodRating,
                                               String formattedText) {
-                                        switch (actualValue) {
+                                        switch (moodRating) {
                                           case 0:
                                             return 'Angry';
                                           case 1:
@@ -242,7 +227,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                           case 4:
                                             return 'Optimistic';
                                         }
-                                        return actualValue.toString();
+                                        return moodRating.toString();
                                       },
                                       onChanged: (dynamic val) {
                                         setState(() {
@@ -254,6 +239,16 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                   const Divider(
                                     color: Colors.grey,
                                     thickness: 2,
+                                  ),
+                                  NeumorphicButton(
+                                    child: const Text('Check In',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15)),
+                                    onPressed: () {
+                                      print(startMood.toString() + " Mood");
+                                      print(_duration.toString() + " Sleep");
+                                      print(_weight.toString() + " Weight");
+                                    },
                                   ),
                                 ])))
                   ],
