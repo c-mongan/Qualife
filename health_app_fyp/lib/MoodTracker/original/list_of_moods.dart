@@ -7,13 +7,11 @@ import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/MoodTracker/original/pick_date.dart';
 import 'package:health_app_fyp/model/user_data.dart';
-import 'package:health_app_fyp/screens/home_page.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../BMR+BMR/colors&fonts.dart';
-import '../../widgets/glassmorphic_bottomnavbar.dart';
+
 
 class ListMoods extends StatefulWidget {
   const ListMoods({Key? key}) : super(key: key);
@@ -85,7 +83,7 @@ class _MyTestState extends State<ListMoods> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var date in datetime.docs) {
-        print(date.data());
+      
 
         dateTimeText = datetime.docs[0].get("DateTime");
 
@@ -189,17 +187,14 @@ class _MyTestState extends State<ListMoods> {
                   gradient: LinearGradient(colors: [
                 Colors.black,
                 Colors.grey
-                // Colors.red,
-                // Colors.blue,
-
-                // Colors.orange,
+               
+       
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
               child: Column(children: [
                 const SizedBox(
                   width: 5,
                 ),
-                // const Icon(Icons.insert_emoticon,
-                //     color: Colors.white, size: 40),
+               
                 Expanded(
                     child: Container(
                         height: 400.0,
@@ -323,7 +318,7 @@ class _MyTestState extends State<ListMoods> {
                     .then((count) {
                   for (int i = 0; i < count; i++) {
                     removeLastActivityEntry(i);
-                    print("Called this many times" + i.toString());
+                   
                   }
                 });
                 getNumOfMoods().then((count) => count).then((count) {

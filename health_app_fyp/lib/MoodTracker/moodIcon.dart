@@ -4,7 +4,8 @@ class ActivityIcon extends StatelessWidget {
   String image;
   String name;
   Color colour;
-  ActivityIcon(this.image, this.name, this.colour, {Key? key}) : super(key: key);
+  ActivityIcon(this.image, this.name, this.colour, {Key? key})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,9 +44,10 @@ class MoodIcon extends StatelessWidget {
             height: 40,
             width: 40,
           ),
+          SizedBox(height: 5),
           Text(
             name,
-            style: TextStyle(fontSize: 12, color: Colors.white),
+            style: TextStyle(fontSize: 10, color: Colors.white),
           )
         ],
       ),

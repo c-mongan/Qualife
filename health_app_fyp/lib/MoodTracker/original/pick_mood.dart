@@ -12,16 +12,17 @@ import 'package:intl/intl.dart';
 
 import '../moodcard.dart';
 
-class StartPage extends StatefulWidget {
+class MoodActivitySelect extends StatefulWidget {
   final String selectedDate;
 
-  const StartPage({Key? key, required this.selectedDate}) : super(key: key);
+  const MoodActivitySelect({Key? key, required this.selectedDate})
+      : super(key: key);
 
   @override
-  _StartPageState createState() => _StartPageState();
+  _MoodActivitySelectState createState() => _MoodActivitySelectState();
 }
 
-class _StartPageState extends State<StartPage> {
+class _MoodActivitySelectState extends State<MoodActivitySelect> {
   String? selectedDate;
 
   MoodCard? moodCard;
@@ -30,6 +31,7 @@ class _StartPageState extends State<StartPage> {
   String? datepicked;
   String? timepicked;
   String? datetime;
+  num? moodValue;
   int? currentindex;
   TimeOfDay selectedTime = TimeOfDay.now();
   String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -39,12 +41,19 @@ class _StartPageState extends State<StartPage> {
   int ontapcount = 0;
   List list = [];
   List<Mood> moods = [
-    Mood('assets/smile.png', 'Happy', false),
-    Mood('assets/sad.png', 'Sad', false),
-    Mood('assets/angry.png', 'Angry', false),
-    Mood('assets/surprised.png', 'Surprised', false),
-    Mood('assets/stressed.png', 'Stressed', false),
-    Mood('assets/scared.png', 'Panicked', false)
+    Mood("assets/ANGRY3.png", "Angry", false, 1),
+    Mood("assets/UPSET2.png", "Upset", false, 2),
+    Mood("assets/NUETRAL.png", "Nuetral", false, 3),
+    Mood("assets/CONTENT2.png", "Content", false, 4),
+
+    Mood("assets/OPTIMISTIC2.png", "Optimistic", false, 5),
+
+    // Mood('assets/smile.png', 'Happy', false),
+    // Mood('assets/sad.png', 'Sad', false),
+    // Mood('assets/angry.png', 'Angry', false),
+    // Mood('assets/surprised.png', 'Surprised', false),
+    // Mood('assets/stressed.png', 'Stressed', false),
+    // Mood('assets/scared.png', 'Panicked', false)
   ];
 
   List<Activity> act = [
@@ -135,6 +144,7 @@ class _StartPageState extends State<StartPage> {
                                             image = moods[index].moodimage;
                                             moods[index].iselected = true;
                                             ontapcount = ontapcount + 1;
+                                            moodValue = moods[index].moodValue;
                                             print(mood);
                                           }),
                                         }
@@ -282,7 +292,8 @@ class _StartPageState extends State<StartPage> {
                           'Activities': list,
                           'DateTime': DateFormat('yyyy-MM-dd')
                               .parse(widget.selectedDate),
-                          'Icon': image
+                          'Icon': image,
+                          'MoodValue': moodValue
                         });
 
                         for (int i = 0; i < list.length; i++) {

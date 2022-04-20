@@ -111,7 +111,7 @@ class MyAppState extends State<PickDateMoodTracker> {
             child: const Icon(MdiIcons.calendar, color: Colors.white),
             backgroundColor: Colors.green,
             onTap: () {
-              Get.to(StartPage(selectedDate: selectedDate));
+              Get.to(MoodActivitySelect(selectedDate: selectedDate));
             },
             label: 'Select Date',
             labelStyle: const TextStyle(fontWeight: FontWeight.w500),

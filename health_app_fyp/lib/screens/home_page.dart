@@ -123,6 +123,14 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             height: 25,
                           ),
+                          NeumorphicButton(
+                            child: const Text('Check In',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15)),
+                            onPressed: () {
+                              Get.to(const DailyCheckInPage());
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -226,14 +234,6 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(
                               height: 20,
-                            ),
-                            NeumorphicButton(
-                              child: const Text('Check In',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15)),
-                              onPressed: () {
-                                Get.to(const DailyCheckInPage());
-                              },
                             ),
                             const SizedBox(
                               height: 20,
