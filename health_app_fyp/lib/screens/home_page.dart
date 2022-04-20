@@ -136,13 +136,13 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.all(20),
                           child: Column(children: [
                             SizedBox(
-                                height: 80.0, child: CaloriesRemainingTile()),
+                                height: 80.0, child: caloriesRemainingTile()),
                             const Divider(
                               color: Colors.grey,
                               thickness: 2,
                             ),
-                            BMIResultIndication(),
-                            SizedBox(height: 100, child: BMISlider()),
+                            bmiResultIndication(),
+                            SizedBox(height: 100, child: bmiSlider()),
                             const SizedBox(height: 20),
                             const Divider(
                               color: Colors.grey,
@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                                   height: 30,
                                 ),
                                 Center(
-                                  child: MoodPieChart(),
+                                  child: moodPieChart(),
                                 ),
                                 const SizedBox(
                                   height: 30,
@@ -181,7 +181,6 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.grey,
                               thickness: 2,
                             ),
-                       
                             SizedBox(
                               height: 40,
                               child: ListTile(
@@ -203,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                                   height: 30,
                                 ),
                                 Center(
-                                  child: ActivityPieChart(),
+                                  child: activityPieChart(),
                                 ),
                               ],
                             ),
@@ -233,10 +232,10 @@ class _HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
                               onPressed: () {
-                                Get.to(DailyCheckInPage());
+                                Get.to(const DailyCheckInPage());
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             NeumorphicButton(
@@ -244,10 +243,10 @@ class _HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
                               onPressed: () {
-                                Get.to(GraphPage());
+                                Get.to(const GraphPage());
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             LogOutButton(
@@ -289,7 +288,7 @@ class _HomePageState extends State<HomePage> {
         ]);
   }
 
-  StreamBuilder<Object> MoodPieChart() {
+  StreamBuilder<Object> moodPieChart() {
     return StreamBuilder<Object>(
         stream: moodPieChartStream,
         builder: (context, snapshot) {
@@ -309,7 +308,6 @@ class _HomePageState extends State<HomePage> {
 
             getLatestMood();
 
-            print(moodNameText);
             if (moodNameText != "") {
               return pieChartMood();
             } else {
@@ -320,7 +318,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  StreamBuilder<Object> ActivityPieChart() {
+  StreamBuilder<Object> activityPieChart() {
     return StreamBuilder<Object>(
         stream: activityStream,
         builder: (context, snapshot) {
@@ -340,20 +338,19 @@ class _HomePageState extends State<HomePage> {
 
             getActivityListfromSnapshot(data);
 
-            // getLatestMood();
+            getLatestActivity();
 
-            // print(moodNameText);
-            // if (moodNameText != "") {
-            return pieChartActivities();
-            // } else {
-            //   return const Text("No activities logged yet",
-            //       style: TextStyle(fontSize: 15, color: Colors.white));
-            // }
+            if (activityNameText != "") {
+              return pieChartActivity();
+            } else {
+              return const Text("No activities logged yet",
+                  style: TextStyle(fontSize: 15, color: Colors.white));
+            }
           }
         });
   }
 
-  SfSliderTheme BMISlider() {
+  SfSliderTheme bmiSlider() {
     return SfSliderTheme(
       data: SfSliderThemeData(
         activeLabelStyle: TextStyle(
@@ -385,7 +382,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListTile BMIResultIndication() {
+  ListTile bmiResultIndication() {
     return ListTile(
         title: RichText(
       textAlign: TextAlign.center,
@@ -414,9 +411,9 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  StreamBuilder<QuerySnapshot<Object?>> CaloriesRemainingTile() {
+  StreamBuilder<QuerySnapshot<Object?>> caloriesRemainingTile() {
     return StreamBuilder<QuerySnapshot>(
-      stream: CalsStream,
+      stream: calsRemainingStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -613,7 +610,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget pieChartActivities() {
+  Widget pieChartActivity() {
     return PieChart(
       key: ValueKey(key),
       dataMap: getActivityData(),
@@ -714,7 +711,9 @@ class _HomePageState extends State<HomePage> {
     await getbmiScore();
     await getBMITextResult();
     await getLatestMood();
-    await lastMoodCard();
+    await getLatestActivity();
+
+    lastMoodCard();
   }
 
   double gotbmiScore = 0;
@@ -723,6 +722,7 @@ class _HomePageState extends State<HomePage> {
   Color inactiveColor = Colors.white;
   String bmiResultText = "";
   String moodNameText = "";
+  String activityNameText = "";
 
   Future<double> getbmiScore() async {
     String Exc = "Error";
@@ -761,7 +761,7 @@ class _HomePageState extends State<HomePage> {
       .snapshots();
 
   //DISPLAYS LATEST Calorie Deductions
-  final Stream<QuerySnapshot> CalsStream = FirebaseFirestore.instance
+  final Stream<QuerySnapshot> calsRemainingStream = FirebaseFirestore.instance
       .collection('remainingCalories')
       .orderBy("DateTime")
       .limitToLast(1)
@@ -791,7 +791,6 @@ class _HomePageState extends State<HomePage> {
       }
       return bmiResultText;
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -810,11 +809,11 @@ class _HomePageState extends State<HomePage> {
       for (var moodName in latestMoodName.docs) {
         moodNameText = latestMoodName.docs[0].get("Mood");
 
-        String FirestoreMoodText = moodNameText;
+        String firestoreMoodText = moodNameText;
 
         setMoodResult();
 
-        return FirestoreMoodText;
+        return firestoreMoodText;
       }
 
       return moodNameText;
@@ -824,15 +823,49 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<String> getLatestActivity() async {
+    String Exc = "Error";
+
+    try {
+      final latestActivityName = await FirebaseFirestore.instance
+          .collection('ActivityTracking')
+          .orderBy('DateTime')
+          .limitToLast(1)
+          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+          .get();
+
+      for (var actName in latestActivityName.docs) {
+        activityNameText = latestActivityName.docs[0].get("Activity");
+
+        String firestoreActivityText = activityNameText;
+
+        setActivityResult();
+
+        return firestoreActivityText;
+      }
+
+      return activityNameText;
+    } catch (Exc) {
+      print(Exc);
+      rethrow;
+    }
+  }
+
+  void setActivityResult() async {
+    getLatestActivity().then((firestoreActivityText) {
+      activityNameText = firestoreActivityText;
+    });
+  }
+
   void setMoodResult() async {
-    getLatestMood().then((FirestoreMoodText) {
-      moodNameText = FirestoreMoodText;
+    getLatestMood().then((firestoreMoodText) {
+      moodNameText = firestoreMoodText;
     });
   }
 
   void setBMIResult() async {
-    getBMITextResult().then((FirestoreBmiTxtResult) {
-      bmiResultText = FirestoreBmiTxtResult;
+    getBMITextResult().then((firestoreBmiTxtResult) {
+      bmiResultText = firestoreBmiTxtResult;
     });
   }
 
@@ -906,7 +939,7 @@ class Activity {
   factory Activity.fromJson(Map<String, dynamic> json) {
     //urlToImage: json['urlToImage'] as String, -> urlToImage: json['urlToImage'] ?? "",
     return Activity(
-      activity: json['Activities'] ?? "",
+      activity: json['Activity'] ?? "",
     );
   }
 }

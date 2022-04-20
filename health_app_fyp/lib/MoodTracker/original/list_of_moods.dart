@@ -35,11 +35,7 @@ class _MyTestState extends State<ListMoods> {
   User? user = FirebaseAuth.instance.currentUser;
   Measurements loggedInUser = Measurements();
 
-  void asyncMethod(bool isVisible) async {
-    checkDay();
-    // await getbmiScore();
-    // ....
-  }
+  void asyncMethod(bool isVisible) async {}
 
   void callThisMethod(bool isVisible) {
     debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');
@@ -102,19 +98,13 @@ class _MyTestState extends State<ListMoods> {
     }
   }
 
-  Future<int> getNumOfFoodsToday() async {
+  Future<int> getNumOfMoods() async {
     int Exc = 0;
 
     try {
       final documents = await FirebaseFirestore.instance
-          .collection('Food')
+          .collection('MoodTracking')
           .orderBy("DateTime")
-          .where('DateTime',
-              isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 0, 0))
-          .where('DateTime',
-              isLessThanOrEqualTo: DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 23, 59, 59))
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
 
@@ -129,22 +119,49 @@ class _MyTestState extends State<ListMoods> {
     }
   }
 
-  Future<void> removeLastEntry() async {
+  Future<int> getNumOfActivitiesinLastMood() async {
+    int Exc = 0;
+
+    try {
+      final documents = await FirebaseFirestore.instance
+          .collection('MoodTracking')
+          .orderBy("DateTime")
+          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .limitToLast(1)
+          .get();
+
+      int count = documents.docs[0].get("Activities").length;
+
+      print(count.toString() + "Activities length");
+
+      return count;
+    } catch (Exc) {
+      print(Exc);
+      rethrow;
+    }
+  }
+
+  Future<void> removeLastMoodActivityEntry() async {
     QuerySnapshot querySnap = await FirebaseFirestore.instance
         .collection('MoodTracking')
         .orderBy("DateTime")
-        // .where('DateTime',
-        //     isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-        //         DateTime.now().month, DateTime.now().day, 0, 0))
-        // .where('DateTime',
-        //     isLessThanOrEqualTo: DateTime(DateTime.now().year,
-        //         DateTime.now().month, DateTime.now().day, 23, 59, 59))
         .limitToLast(1)
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-//.collection('medicine').where('userId', isEqualTo: user.uid)
         .get();
     QueryDocumentSnapshot doc = querySnap.docs[
         0]; // Assumption: the query returns only one document, THE doc you are looking for.
+    DocumentReference docRef = doc.reference;
+    await docRef.delete();
+  }
+
+  Future<void> removeLastActivityEntry(i) async {
+    QuerySnapshot querySnap = await FirebaseFirestore.instance
+        .collection('ActivityTracking')
+        .orderBy("DateTime")
+        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    QueryDocumentSnapshot doc = querySnap.docs[
+        i]; // Assumption: the query returns only one document, THE doc you are looking for.
     DocumentReference docRef = doc.reference;
     await docRef.delete();
   }
@@ -299,7 +316,23 @@ class _MyTestState extends State<ListMoods> {
           child: const Icon(MdiIcons.minus, color: Colors.white),
           backgroundColor: Colors.red,
           onTap: () async {
-            removeLastEntry();
+            getNumOfMoods().then((count) => count).then((count) {
+              if (count > 0) {
+                getNumOfActivitiesinLastMood()
+                    .then((count) => count)
+                    .then((count) {
+                  for (int i = 0; i < count; i++) {
+                    removeLastActivityEntry(i);
+                    print("Called this many times" + i.toString());
+                  }
+                });
+                getNumOfMoods().then((count) => count).then((count) {
+                  if (count > 0) {
+                    removeLastMoodActivityEntry();
+                  }
+                });
+              }
+            });
           },
           label: 'Delete Last Entry',
           labelStyle: const TextStyle(fontWeight: FontWeight.w500),
@@ -307,171 +340,5 @@ class _MyTestState extends State<ListMoods> {
         ),
       ],
     );
-  }
-
-  Future<Timestamp> getLastCalsRemainingDay() async {
-    String Exc = "Error";
-
-    try {
-      final calsdate = await FirebaseFirestore.instance
-          .collection('remainingCalories')
-          .orderBy('DateTime')
-          .limitToLast(1)
-          .where("userID", isEqualTo: uid)
-          .get();
-      for (var cals in calsdate.docs) {
-        print(cals.data());
-        Timestamp time;
-        time = calsdate.docs[0].get("DateTime");
-
-        String calsLeftDay = dayCals.toString();
-        print(calsLeftDay);
-
-        return time;
-      }
-      return Timestamp(0, 0);
-    } catch (Exc) {
-      print(Exc);
-      rethrow;
-    }
-  }
-
-  Future<double> getTdeeVal() async {
-    double Exc = 0;
-    double t2 = 0;
-
-    try {
-      final tdeevals = await FirebaseFirestore.instance
-          .collection('TDEE')
-          .orderBy('tdeeTime')
-          .limitToLast(1)
-          .where("userID", isEqualTo: uid)
-          .get();
-      for (var tdeeval in tdeevals.docs) {
-        print(tdeeval.data());
-
-        double tdee = tdeevals.docs[0].get("tdee");
-
-        return tdee;
-      }
-      return t2;
-    } catch (Exc) {
-      print(Exc);
-      rethrow;
-    }
-  }
-
-  void checkDay() {
-    DateTime inputTime = DateTime.now();
-    final today = DateTime.now().day;
-
-    getLastCalsRemainingDay().then((time) {
-      print(time.toString() + "result");
-
-      DateTime tempdate =
-          DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch);
-
-      if (tempdate.day != today) {
-        getTdeeVal().then((tdee) {
-          print(tdee);
-
-          double totalDeducts = tdee - 0;
-          //THIS WORKS
-
-          // Date today = inputTime.;
-
-          FirebaseFirestore.instance.collection('remainingCalories').add({
-            'userID': uid,
-            'Cals': totalDeducts,
-            'DateTime': inputTime,
-          });
-        });
-      }
-    });
-  }
-
-  Future<double> getLastLoggedFoodCalories() async {
-    double Exc = 0;
-    double t2 = 0;
-
-    try {
-      final lastLoggedFood = await FirebaseFirestore.instance
-          .collection('Food')
-          .orderBy('DateTime')
-          .where('DateTime',
-              isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 0, 0))
-          .where('DateTime',
-              isLessThanOrEqualTo: DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 23, 59, 59))
-          .limitToLast(1)
-          .where("userID", isEqualTo: uid)
-          .get();
-      for (var totalcalsval in lastLoggedFood.docs) {
-        print(totalcalsval.data());
-
-        double totalcals = lastLoggedFood.docs[0].get("TotalCaloriesAdded");
-
-        return totalcals;
-      }
-      return t2;
-    } catch (Exc) {
-      print(Exc);
-      rethrow;
-    }
-  }
-
-  Future<double> getLatestNetCalories() async {
-    double Exc = 0;
-    double t2 = 0;
-
-    try {
-      final lastLoggedFood = await FirebaseFirestore.instance
-          .collection('remainingCalories')
-          .orderBy('DateTime')
-          .limitToLast(1)
-          .where("userID", isEqualTo: uid)
-          .get();
-      for (var remainingCalsVal in lastLoggedFood.docs) {
-        print(remainingCalsVal.data());
-
-        double latestnetcals = lastLoggedFood.docs[0].get("Cals");
-
-        return latestnetcals;
-      }
-      return t2;
-    } catch (Exc) {
-      print(Exc);
-      rethrow;
-    }
-  }
-
-  void deleteLastFood() {
-    DateTime inputTime = DateTime.now();
-
-    getLastLoggedFoodCalories().then((totalcals) {
-      print(totalcals.toString() + "result");
-
-      getLatestNetCalories().then((latestnetcals) {
-        print(latestnetcals.toString() + "result");
-
-        double removeLastFoodsCalories = totalcals + latestnetcals;
-        // getNumOfFoodsToday();
-        getNumOfFoodsToday().then((count) {
-          print(count.toString() + "NUM OF DOCS");
-
-          if (count > 0) {
-            removeLastEntry();
-          } else {
-            print("No Foods Left In List");
-          }
-          FirebaseFirestore.instance.collection('remainingCalories').add({
-            'userID': uid,
-            'Cals': removeLastFoodsCalories,
-            'DateTime': inputTime,
-          });
-        });
-      });
-    });
   }
 }

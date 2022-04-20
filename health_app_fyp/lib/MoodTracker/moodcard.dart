@@ -18,7 +18,6 @@ class MoodCard extends ChangeNotifier {
       required this.image,
       required this.mood});
   late List items;
-  // List<MoodData> data = [];
   late String date;
   bool isloading = false;
   List<String> actiname = [];

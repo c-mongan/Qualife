@@ -4,7 +4,7 @@ class ActivityIcon extends StatelessWidget {
   String image;
   String name;
   Color colour;
-  ActivityIcon(this.image, this.name, this.colour);
+  ActivityIcon(this.image, this.name, this.colour, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +18,7 @@ class ActivityIcon extends StatelessWidget {
             ),
             Text(
               name,
-              style: TextStyle(fontSize: 12, color: Colors.white),
+              style: const TextStyle(fontSize: 12, color: Colors.white),
             )
           ],
         ),

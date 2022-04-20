@@ -293,7 +293,7 @@ class _StartPageState extends State<StartPage> {
                             'DateOfActivity': widget.selectedDate,
                             'TimeOfActivity': time,
                             'Mood': mood,
-                            'Activities': list[i],
+                            'Activity': list[i],
                             'DateTime': DateFormat('yyyy-MM-dd')
                                 .parse(widget.selectedDate),
                             'Icon': image

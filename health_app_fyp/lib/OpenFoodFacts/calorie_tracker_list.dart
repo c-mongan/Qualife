@@ -341,15 +341,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
     final today = DateTime.now().day;
 
     getLastCalsRemainingDay().then((time) {
-      print(time.toString() + "result");
-
       DateTime tempdate =
           DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch);
 
       if (tempdate.day != today) {
         getTdeeVal().then((tdee) {
           double totalDeducts = tdee - 0;
-          //THIS WORKS
 
           FirebaseFirestore.instance.collection('remainingCalories').add({
             'userID': uid,
