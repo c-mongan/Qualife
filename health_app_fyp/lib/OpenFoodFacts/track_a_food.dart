@@ -460,20 +460,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                             },
                           )),
 
-                          // Column(
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          // crossAxisAlignment: CrossAxisAlignment.center,
-
-                          // Card(
-                          //   child: ListTile(
-                          //     title: Text(foodNameTxt),
-                          //     subtitle: const Text(
-                          //       ' kcal per serving',
-                          //     ),
-                          //     trailing: const Icon(MdiIcons.food, size: 50.0),
-                          //   ),
-                          // ),
-
                           Card(
                               child: Material(
                                   color: Colors.white,
@@ -486,14 +472,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           return 'Servings ';
                                         }
                                       }())
-                                          //+
-                                          //"Quantity)"
-                                          //${(snapshot.data!.servingQty).toStringAsFixed(2)} ${snapshot.data!.servingUnit})
-
+                                        
                                           ),
                                       subtitle: const Text(
                                           "Please select amount of servings"
-                                          //'${(snapshot.data!.calories * snapshot.data!.servingConsumed).toString()} Calories')
+                                         
                                           ),
                                       leading: SizedBox(
                                           width: 40,
@@ -517,117 +500,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                         //Dont forget to setState so it changes
                                                         setState(() {
                                                           servings = servNum;
-                                                          //  String? foodName = Name;
-
-//Commenting below out for the moment
-
-                                                          //     double totalCals =
-                                                          //         servCalorie! * servings;
-
-                                                          //     getFoodName()
-                                                          //         .then((gotFoodName) {
-
-                                                          //       foodNameTxt = gotFoodName;
-
-                                                          //       print(
-                                                          //           "GET FOOD NAME METHOD CALLED TO GET FOOD NAME FROM TEMP TO FOOD TABLE");
-                                                          //     });
-
-                                                          //     FirebaseFirestore.instance
-                                                          //         .collection('Food')
-                                                          //         .add({
-                                                          //       'Food Name': foodNameTxt,
-                                                          //       'userID': uid,
-                                                          //       'NumberOfServings':
-                                                          //           servings,
-                                                          //       'CaloriesPerServing':
-                                                          //           servCalorie
-                                                          //               ?.toStringAsFixed(
-                                                          //                   2),
-                                                          //       'TotalCaloriesAdded':
-                                                          //           totalCals,
-                                                          //       'DateTime': inputTime,
-                                                          //     });
-
-                                                          //     print("FOOD ADDED");
-
-                                                          //     getLastCalsRemainingDay()
-                                                          //         .then((time) {
-                                                          //       print(time.toString() +
-                                                          //           "result");
-
-                                                          //       DateTime tempdate = DateTime
-                                                          //           .fromMicrosecondsSinceEpoch(
-                                                          //               time.microsecondsSinceEpoch);
-
-                                                          //       if (tempdate.day != today) {
-                                                          //         getTdeeVal().then((tdee) {
-                                                          //           print(tdee);
-
-                                                          //           servings - 1;
-                                                          //           double totalCals =
-                                                          //               servings *
-                                                          //                   servCalorie!;
-                                                          //           double totalDeducts =
-                                                          //               tdee - totalCals;
-
-                                                          //           //THIS WORKS
-
-                                                          //           // Date today = inputTime.;
-
-                                                          //           FirebaseFirestore
-                                                          //               .instance
-                                                          //               .collection(
-                                                          //                   'remainingCalories')
-                                                          //               .add({
-                                                          //             'userID': uid,
-                                                          //             'Cals': totalDeducts,
-                                                          //             'DateTime': inputTime,
-                                                          //           });
-                                                          //         });
-                                                          //       } else {
-                                                          //         getDailyCalsRemaining().then(
-                                                          //             (calsLeft) {
-                                                          //           print(calsLeft +
-                                                          //               "result");
-                                                          //           double num =
-                                                          //               double.parse(
-                                                          //                   calsLeft);
-
-                                                          //           print(foodNameTxt +
-                                                          //               " " +
-                                                          //               num.toString() +
-                                                          //               "CALORIES LEFT");
-
-                                                          //           servings - 1;
-                                                          //           double totalCals =
-                                                          //               servings *
-                                                          //                   servCalorie!;
-                                                          //           double totalDeducts =
-                                                          //               num - totalCals;
-
-                                                          //           //THIS WORKS
-
-                                                          //           FirebaseFirestore
-                                                          //               .instance
-                                                          //               .collection(
-                                                          //                   'remainingCalories')
-                                                          //               .add({
-                                                          //             'userID': uid,
-                                                          //             'Cals': totalDeducts,
-                                                          //             'DateTime': inputTime,
-                                                          //           });
-
-                                                          //           print(totalDeducts);
-                                                          //         }
-
-                                                          //             );
-
-                                                          //             }
-                                                          //           });
-                                                          //         });
-                                                          //       }),
-                                                          // )))))
+                                                      
                                                         });
                                                       })))))),
                           Card(
@@ -642,18 +515,15 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           return 'Serving size (g)) ';
                                         }
                                       }())
-                                          //+
-                                          //"Quantity)"
-                                          //${(snapshot.data!.servingQty).toStringAsFixed(2)} ${snapshot.data!.servingUnit})
-
+                                        
                                           ),
                                       subtitle: const Text(
                                           "Please enter the weight in grammes for your serving(s)"
-                                          //'${(snapshot.data!.calories * snapshot.data!.servingConsumed).toString()} Calories')
+                                         
                                           ),
                                       leading: SizedBox(
                                           width: 65,
-                                          // ignore: deprecated_member_use
+                                     
                                           child: OutlineButton(
                                               borderSide: const BorderSide(
                                                   width: 2,
@@ -670,132 +540,14 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                       selectedNumber:
                                                           servingSize,
                                                       step: 5,
-                                                      // onChanged: (double newValue) => setState(() => null
-
+                                                    
                                                       onChanged:
                                                           (int servSize) {
-                                                        //Dont forget to setState so it changes
+                                                        
                                                         setState(() {
                                                           servingSize =
                                                               servSize;
-                                                          //  String? foodName = Name;
-                                                          //     double totalCals =
-                                                          //         servCalorie! /
-                                                          //             100 *
-                                                          //             servingSize *
-                                                          //             servings;
-
-                                                          //     getFoodName()
-                                                          //         .then((gotFoodName) {
-                                                          //       // print(foodNameTxt +
-                                                          //       //     "result LINE 143");
-                                                          //       // String val = tdee;
-                                                          //       foodNameTxt = gotFoodName;
-                                                          //       // print(foodNameTxt +
-                                                          //       //     " GOT FOOD NAME TXT FROM FIRESTORE LINE 145");
-
-                                                          //       print(
-                                                          //           "GET FOOD NAME METHOD CALLED TO GET FOOD NAME FROM TEMP TO FOOD TABLE");
-                                                          //     });
-
-                                                          //     FirebaseFirestore.instance
-                                                          //         .collection('Food')
-                                                          //         .add({
-                                                          //       'Food Name': foodNameTxt,
-                                                          //       'userID': uid,
-                                                          //       'NumberOfServings':
-                                                          //           servings,
-                                                          //       'CaloriesPer100gServing':
-                                                          //           servCalorie
-                                                          //               ?.toStringAsFixed(
-                                                          //                   2),
-                                                          //       'ServingSize': servingSize,
-                                                          //       'TotalCaloriesAdded':
-                                                          //           totalCals,
-                                                          //       'DateTime': inputTime,
-                                                          //     });
-
-                                                          //     print("FOOD ADDED");
-
-                                                          //     getLastCalsRemainingDay()
-                                                          //         .then((time) {
-                                                          //       print(time.toString() +
-                                                          //           "result");
-
-                                                          //       DateTime tempdate = DateTime
-                                                          //           .fromMicrosecondsSinceEpoch(
-                                                          //               time.microsecondsSinceEpoch);
-
-                                                          //       if (tempdate.day != today) {
-                                                          //         getTdeeVal().then((tdee) {
-                                                          //           print(tdee);
-
-                                                          //           servings - 1;
-                                                          //           double totalCals =
-                                                          //               servings *
-                                                          //                   servCalorie! /
-                                                          //                   100 *
-                                                          //                   servingSize;
-                                                          //           double totalDeducts =
-                                                          //               tdee - totalCals;
-
-                                                          //           //THIS WORKS
-
-                                                          //           // Date today = inputTime.;
-
-                                                          //           FirebaseFirestore
-                                                          //               .instance
-                                                          //               .collection(
-                                                          //                   'remainingCalories')
-                                                          //               .add({
-                                                          //             'userID': uid,
-                                                          //             'Cals': totalDeducts,
-                                                          //             'DateTime': inputTime,
-                                                          //           });
-                                                          //         });
-                                                          //       } else {
-                                                          //         getDailyCalsRemaining()
-                                                          //             .then((calsLeft) {
-                                                          //           print(calsLeft +
-                                                          //               "result");
-                                                          //           double num =
-                                                          //               double.parse(
-                                                          //                   calsLeft);
-
-                                                          //           print(foodNameTxt +
-                                                          //               " " +
-                                                          //               num.toString() +
-                                                          //               "CALORIES LEFT");
-
-                                                          //           servings - 1;
-
-                                                          //           double totalCals =
-                                                          //               servings *
-                                                          //                   servCalorie! /
-                                                          //                   100 *
-                                                          //                   servingSize;
-                                                          //           double totalDeducts =
-                                                          //               num - totalCals;
-
-                                                          //           //THIS WORKS
-
-                                                          //           FirebaseFirestore
-                                                          //               .instance
-                                                          //               .collection(
-                                                          //                   'remainingCalories')
-                                                          //               .add({
-                                                          //             'userID': uid,
-                                                          //             'Cals': totalDeducts,
-                                                          //             'DateTime': inputTime,
-                                                          //           });
-
-                                                          //           print(totalDeducts);
-                                                          //         });
-                                                          //       }
-                                                          //     });
-                                                          //   });
-                                                          // }),
-                                                          // ;};))))),
+                                                          
                                                         });
                                                       })))))),
                           Button(
@@ -803,22 +555,17 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                               color: Colors.white,
                               text: const Text('Enter food', style: textStyle2
 
-                                  // TextStyle(fontWeight: FontWeight.bold),
+                                 
                                   ),
                               onTap: () {
                                 double totalCals =
                                     servCalorie! / 100 * servingSize * servings;
 
                                 getFoodName().then((gotFoodName) {
-                                  // print(foodNameTxt +
-                                  //     "result LINE 143");
-                                  // String val = tdee;
+                                 
                                   foodNameTxt = gotFoodName;
-                                  // print(foodNameTxt +
-                                  //     " GOT FOOD NAME TXT FROM FIRESTORE LINE 145");
-
-                                  print(
-                                      "GET FOOD NAME METHOD CALLED TO GET FOOD NAME FROM TEMP TO FOOD TABLE");
+                                  
+                                 
                                 });
 
                                 FirebaseFirestore.instance
@@ -834,10 +581,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                   'DateTime': inputTime,
                                 });
 
-                                print("FOOD ADDED");
+                              
 
                                 getLastCalsRemainingDay().then((time) {
-                                  print(time.toString() + "result");
+                                  
 
                                   DateTime tempdate =
                                       DateTime.fromMicrosecondsSinceEpoch(
@@ -845,7 +592,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
 
                                   if (tempdate.day != today) {
                                     getTdeeVal().then((tdee) {
-                                      print(tdee);
+                                    
 
                                       servings - 1;
                                       double totalCals = servings *
@@ -854,10 +601,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           servingSize;
                                       double totalDeducts = tdee - totalCals;
 
-                                      //THIS WORKS
-
-                                      // Date today = inputTime.;
-
+                                  
                                       FirebaseFirestore.instance
                                           .collection('remainingCalories')
                                           .add({
@@ -868,13 +612,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                     });
                                   } else {
                                     getDailyCalsRemaining().then((calsLeft) {
-                                      print(calsLeft + "result");
+                                    
                                       double num = double.parse(calsLeft);
 
-                                      print(foodNameTxt +
-                                          " " +
-                                          num.toString() +
-                                          "CALORIES LEFT");
+                                    
 
                                       servings - 1;
 
@@ -884,7 +625,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           servingSize;
                                       double totalDeducts = num - totalCals;
 
-                                      //THIS WORKS
+                                   
 
                                       FirebaseFirestore.instance
                                           .collection('remainingCalories')
@@ -894,7 +635,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                         'DateTime': inputTime,
                                       });
 
-                                      print(totalDeducts);
+                              
                                     });
                                   }
                                 });
@@ -905,10 +646,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
               ]));
             })));
   }
-  // },
 
-  // }))
-  // ))))
 
   //THIS METHOD IS FOR GETTING FOOD NAME INTO A STRING , FROM TEMPFOOOD
   Future<String> getFoodName() async {
@@ -922,11 +660,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
       for (var name in foodname.docs) {
-        print(name.data());
+       
         foodNameTxt = foodname.docs[0].get("Food Name");
         //print(tempText1);
         String gotFoodName = foodNameTxt.toString();
-        print(gotFoodName);
+       
 
         return gotFoodName;
       }
@@ -940,13 +678,8 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
   void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
     double result = double.parse(tdee);
     double calRemaining = result - energy100gKcal;
-    // print(tdee + " " + "kcal");
-    // print(calRemaining.toString() + "kcal deductCal method successful ");
+    
 
-    print("deductCal Method called , result : " +
-        result.toString() +
-        "calRemaining : " +
-        calRemaining.toString());
 
     FirebaseFirestore.instance.collection('remainingCalories').add({
       'userID': uid,
@@ -958,17 +691,3 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
   
 
 
-
-//THIS METHOD DOESNT WORK
-  // getTDEE() async {
-  //   final documents = await FirebaseFirestore.instance
-  //       .collection('TDEE')
-  //       .where("userID", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-  //       .get();
-  //   final userTDEE = documents.docs.first.data;
-  //   String sTDEE = userTDEE.toString();
-  //   print(sTDEE);
-  //   return sTDEE;
-  // }
-
-  

@@ -25,50 +25,12 @@ class MyAppState extends State<PickDateMoodTracker> {
       .toString()
       .substring(0, DateTime.now().toString().length - 15);
   DateTime now = DateTime.now();
-  String _dateCount = '';
-  String _range = '';
-  String _rangeCount = '';
+
   DateTime picked = DateTime.now();
   var newString = '';
 
-  /// The method for [DateRangePickerSelectionChanged] callback, which will be
-  /// called whenever a selection changed on the date picker widget.
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    /// The argument value will return the changed date as [DateTime] when the
-    /// widget [SfDateRangeSelectionMode] set as single.
-    ///
-    /// The argument value will return the changed dates as [List<DateTime>]
-    /// when the widget [SfDateRangeSelectionMode] set as multiple.
-    ///
-    /// The argument value will return the changed range as [PickerDateRange]
-    /// when the widget [SfDateRangeSelectionMode] set as range.
-    ///
-    /// The argument value will return the changed ranges as
-    /// [List<PickerDateRange] when the widget [SfDateRangeSelectionMode] set as
-    /// multi range.
     if (!mounted) return;
-    setState() {
-      if (args.value is PickerDateRange) {
-        _range = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
-            // ignore: lines_longer_than_80_chars
-            ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
-      } else if (args.value is DateTime) {
-        selectedDate = args.value.toString();
-
-        if (selectedDate != null && selectedDate.length >= 13) {
-          selectedDate = selectedDate.substring(0, selectedDate.length - 13);
-        }
-
-        //  newString = selectedDate.substring(selectedDate.length - 15);
-        picked = args.value;
-      } else if (args.value is List<DateTime>) {
-        _dateCount = args.value.length.toString();
-      } else {
-        _rangeCount = args.value.length.toString();
-      }
-    }
-
-    ;
   }
 
   @override
@@ -78,6 +40,13 @@ class MyAppState extends State<PickDateMoodTracker> {
       appBar: AppBar(
         title: const Text('Select Date'),
         backgroundColor: Colors.grey,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Get.back();
+          },
+        ),
       ),
       bottomNavigationBar: CustomisedNavigationBar(),
       //bottomNavigationBar: HomeScreen(),
@@ -93,22 +62,15 @@ class MyAppState extends State<PickDateMoodTracker> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  '          Selected date: $selectedDate',
-
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                SizedBox(
+                    child: Center(
+                        child: Text(
+                  'Selected date: $selectedDate',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
                   ),
-                  //  Text('Selected date: $newString'),
-                  //  Text('Date & Time Now: $now'),
-                  //Text('Selected date & time:  $picked'),
-
-                  // Text('Selected date count: $_dateCount'),
-                  //  Text('Selected range: $_range'),
-                  //Text('Selected ranges count: $_rangeCount')
-                )
+                ))),
               ],
             ),
           ),
@@ -122,7 +84,7 @@ class MyAppState extends State<PickDateMoodTracker> {
               selectionColor: Colors.black,
               selectionMode: DateRangePickerSelectionMode.single,
               maxDate: DateTime.now(),
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.white,
               // showTodayButton: true,
               initialSelectedRange: PickerDateRange(
                   DateTime.now().subtract(const Duration(days: 4)),
@@ -142,8 +104,6 @@ class MyAppState extends State<PickDateMoodTracker> {
         backgroundColor: Colors.black,
         animatedIcon: AnimatedIcons.add_event,
         animatedIconTheme: const IconThemeData(size: 22.0),
-        onOpen: () => print('OPENED DIAL'),
-        onClose: () => print('CLOSED'),
         visible: dialVisible,
         curve: Curves.bounceIn,
         children: [
@@ -151,8 +111,6 @@ class MyAppState extends State<PickDateMoodTracker> {
             child: const Icon(MdiIcons.calendar, color: Colors.white),
             backgroundColor: Colors.green,
             onTap: () {
-              print(selectedDate);
-
               Get.to(StartPage(selectedDate: selectedDate));
             },
             label: 'Select Date',

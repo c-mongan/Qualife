@@ -8,19 +8,16 @@ const kInactiveCardColor = Color(0xff246EE9);
 const kBottomButtonColor = Color(0xffFF2400);
 const kBottomReturnButtonColor = Color(0xff246EE9);
 
- const textStyle1 = TextStyle(
+const textStyle1 = TextStyle(
   color: Colors.white,
   fontSize: 15.0,
 );
 
- const textStyle2 = TextStyle(
-  color: Colors.white,
-  fontSize: 20.0,
-  fontWeight: FontWeight.w900
-);
+const textStyle2 =
+    TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.w900);
 
 //Calculate Button
- const textStyle3 = TextStyle(
+const textStyle3 = TextStyle(
   color: Colors.white,
   fontSize: 30.0,
 );

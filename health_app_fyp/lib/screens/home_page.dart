@@ -17,6 +17,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
+import '../MoodTracker/models.dart';
 import '../model/user_model.dart';
 import 'login_screen.dart';
 
@@ -74,7 +75,6 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.black,
             ),
             bottomNavigationBar: CustomisedNavigationBar(),
-           
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -168,7 +168,43 @@ class _HomePageState extends State<HomePage> {
                                 const SizedBox(
                                   height: 30,
                                 ),
-                                MoodPieChart(),
+                                Center(
+                                  child: MoodPieChart(),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 2,
+                            ),
+                       
+                            SizedBox(
+                              height: 40,
+                              child: ListTile(
+                                  title: RichText(
+                                textAlign: TextAlign.center,
+                                text: const TextSpan(children: <TextSpan>[
+                                  TextSpan(
+                                      text: "Activity Tracker",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20)),
+                                ]),
+                              )),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Center(
+                                  child: ActivityPieChart(),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -255,7 +291,7 @@ class _HomePageState extends State<HomePage> {
 
   StreamBuilder<Object> MoodPieChart() {
     return StreamBuilder<Object>(
-        stream: expStream,
+        stream: moodPieChartStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text("something went wrong");
@@ -275,10 +311,44 @@ class _HomePageState extends State<HomePage> {
 
             print(moodNameText);
             if (moodNameText != "") {
-              return pieChart();
+              return pieChartMood();
             } else {
-              return const Text("No moods logged yet");
+              return const Text("No moods logged yet",
+                  style: TextStyle(fontSize: 15, color: Colors.white));
             }
+          }
+        });
+  }
+
+  StreamBuilder<Object> ActivityPieChart() {
+    return StreamBuilder<Object>(
+        stream: activityStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text("something went wrong");
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+
+          if (snapshot.data == null) {
+            return const Text("Empty List Error");
+          } else {
+            final data = snapshot.requireData;
+
+//NEEDS TO BE CHANGED
+
+            getActivityListfromSnapshot(data);
+
+            // getLatestMood();
+
+            // print(moodNameText);
+            // if (moodNameText != "") {
+            return pieChartActivities();
+            // } else {
+            //   return const Text("No activities logged yet",
+            //       style: TextStyle(fontSize: 15, color: Colors.white));
+            // }
           }
         });
   }
@@ -388,19 +458,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ActionChip LogOutButton(BuildContext context) {
-  //   return ActionChip(
-  //       label: const Text("Log Out"),
-  //       labelStyle: const TextStyle(color: Colors.white, fontSize: 15),
-  //       backgroundColor: Color(0xffFF2400),
-  //       onPressed: () {
-  //         logout(context);
-  //       });
-  // }
-
   StreamBuilder<QuerySnapshot<Object?>> lastMoodCard() {
     return StreamBuilder<QuerySnapshot>(
-      stream: moodStream,
+      stream: moodCardStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -469,6 +529,7 @@ class _HomePageState extends State<HomePage> {
   var today = DateTime.now();
 
   List<Mood> _moods = [];
+  List<Activity> _activities = [];
 
   List<_ChartData> chartData = <_ChartData>[];
 
@@ -483,6 +544,19 @@ class _HomePageState extends State<HomePage> {
       }
     }
     return catMap;
+  }
+
+  Map<String, double> getActivityData() {
+    Map<String, double> actMap = {};
+
+    for (var act in _activities) {
+      if (actMap.containsKey(act.activity) == false) {
+        actMap[act.activity] = 1;
+      } else {
+        actMap.update(act.activity, (int) => actMap[act.activity]! + 1);
+      }
+    }
+    return actMap;
   }
 
   final gradientList = <List<Color>>[
@@ -509,7 +583,7 @@ class _HomePageState extends State<HomePage> {
     const Color.fromRGBO(139, 135, 130, 1),
   ];
 
-  Widget pieChart() {
+  Widget pieChartMood() {
     return PieChart(
       key: ValueKey(key),
       dataMap: getMoodData(),
@@ -539,6 +613,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget pieChartActivities() {
+    return PieChart(
+      key: ValueKey(key),
+      dataMap: getActivityData(),
+      initialAngleInDegree: 0,
+      animationDuration: const Duration(milliseconds: 2000),
+      chartType: ChartType.ring,
+      chartRadius: MediaQuery.of(context).size.width / 3.2,
+      ringStrokeWidth: 32,
+      chartLegendSpacing: 32,
+      chartValuesOptions: const ChartValuesOptions(
+          decimalPlaces: 0,
+          showChartValuesOutside: true,
+          showChartValuesInPercentage: true,
+          showChartValueBackground: true,
+          showChartValues: true,
+          chartValueStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+      centerText: 'Activities',
+      legendOptions: const LegendOptions(
+          showLegendsInRow: false,
+          showLegends: true,
+          legendShape: BoxShape.rectangle,
+          legendTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          )),
+    );
+  }
+
   Future<void> getDataFromFireStore() async {
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("BMI")
@@ -556,7 +660,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final Stream<QuerySnapshot> moodStream = FirebaseFirestore.instance
+  final Stream<QuerySnapshot> moodCardStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime", descending: true)
       // .limit(1)
@@ -564,13 +668,18 @@ class _HomePageState extends State<HomePage> {
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
-  final Stream<QuerySnapshot> expStream = FirebaseFirestore.instance
+  final Stream<QuerySnapshot> moodPieChartStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime")
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
-  final Stream<QuerySnapshot> BMIStream = FirebaseFirestore.instance
+  final Stream<QuerySnapshot> activityStream = FirebaseFirestore.instance
+      .collection('ActivityTracking')
+      .orderBy("DateTime")
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .snapshots();
+  final Stream<QuerySnapshot> bmiStream = FirebaseFirestore.instance
       .collection('BMI')
       .orderBy("bmiTime")
       .limitToLast(1)
@@ -578,7 +687,6 @@ class _HomePageState extends State<HomePage> {
       .snapshots();
 
   void getMoodsListfromSnapshot(snapshot) {
-    // void getMoodsListfromSnapshot(snapshot) {
     if (snapshot.docs.isNotEmpty) {
       _moods = [];
       for (int i = 0; i < snapshot.docs.length; i++) {
@@ -586,6 +694,18 @@ class _HomePageState extends State<HomePage> {
 
         Mood emotion = Mood.fromJson(a.data());
         _moods.add(emotion);
+      }
+    }
+  }
+
+  void getActivityListfromSnapshot(snapshot) {
+    if (snapshot.docs.isNotEmpty) {
+      _activities = [];
+      for (int i = 0; i < snapshot.docs.length; i++) {
+        var a = snapshot.docs[i];
+
+        Activity activity = Activity.fromJson(a.data());
+        _activities.add(activity);
       }
     }
   }
@@ -738,7 +858,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   isMoodsEmpty(Stream<QuerySnapshot> moodstream) {
-    if (moodStream.isEmpty == true) {
+    if (moodCardStream.isEmpty == true) {
       print("Empty");
 
       return true;
@@ -772,6 +892,21 @@ class Mood {
     //urlToImage: json['urlToImage'] as String, -> urlToImage: json['urlToImage'] ?? "",
     return Mood(
       mood: json['Mood'] ?? "",
+    );
+  }
+}
+
+class Activity {
+  late String activity;
+
+  Activity({
+    required this.activity,
+  });
+
+  factory Activity.fromJson(Map<String, dynamic> json) {
+    //urlToImage: json['urlToImage'] as String, -> urlToImage: json['urlToImage'] ?? "",
+    return Activity(
+      activity: json['Activities'] ?? "",
     );
   }
 }

@@ -187,7 +187,7 @@ class _GraphPageState extends State<GraphPage> {
                                       textStyle: const TextStyle(
                                           color: Colors.white, fontSize: 20)),
                                   legend: Legend(
-                                      borderColor: Colors.black,
+                                      borderColor: Colors.transparent,
                                       borderWidth: 2,
                                       textStyle: const TextStyle(
                                           color: Colors.white, fontSize: 20),
@@ -218,7 +218,7 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.green,
                                         text: "Normal",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 15),
+                                            color: Colors.black, fontSize: 20),
                                       ),
                                       PlotBand(
                                         isVisible: true,
@@ -227,7 +227,7 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.red,
                                         text: "Underweight",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 15),
+                                            color: Colors.black, fontSize: 20),
                                       ),
                                       PlotBand(
                                         isVisible: true,
@@ -236,7 +236,7 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.yellow,
                                         text: "Overweight",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 15),
+                                            color: Colors.black, fontSize: 20),
                                       ),
                                       PlotBand(
                                         isVisible: true,
@@ -245,7 +245,7 @@ class _GraphPageState extends State<GraphPage> {
                                         color: Colors.red,
                                         text: "Obese",
                                         textStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 15),
+                                            color: Colors.black, fontSize: 20),
                                       )
                                     ],
 
@@ -260,15 +260,15 @@ class _GraphPageState extends State<GraphPage> {
                                     LineSeries<_ChartData, DateTime>(
                                         dataSource: chartData,
                                         // color: Color(0xff246EE9),
-                                        color: Colors.black,
-                                        width: 4,
+                                        color: Colors.purple,
+                                        width: 2,
                                         name: "BMI",
                                         markerSettings: const MarkerSettings(
                                             isVisible: true,
-                                            height: 7,
-                                            width: 7,
+                                            height: 2,
+                                            width: 2,
                                             color: Colors.white,
-                                            borderColor: Colors.black,
+                                            borderColor: Colors.white,
                                             shape: DataMarkerType.circle),
                                         xValueMapper: (_ChartData data, _) =>
                                             data.x,

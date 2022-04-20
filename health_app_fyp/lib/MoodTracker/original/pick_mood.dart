@@ -72,6 +72,17 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: Text('Select Mood'),
+          backgroundColor: Colors.grey,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ),
         bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
             width: MediaQuery.of(context).size.width,
@@ -83,9 +94,9 @@ class _StartPageState extends State<StartPage> {
             ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: Container(
               child: Column(children: <Widget>[
-                SizedBox(
-                  height: 30,
-                ),
+                // SizedBox(
+                //   height: 30,
+                // ),
                 Divider(
                   color: Colors.grey,
                   thickness: 2,
@@ -199,7 +210,6 @@ class _StartPageState extends State<StartPage> {
                   color: Colors.grey,
                   thickness: 2,
                 ),
-
                 const Text('What time was this at?',
                     style: TextStyle(
                         color: Colors.white,
@@ -208,24 +218,25 @@ class _StartPageState extends State<StartPage> {
                 SizedBox(height: 6),
                 Row(
                   children: [
-                    Text(
-                      // "               Time selected ${selectedTime.hour}:${selectedTime.minute}",
+                    Center(
+                      child: Text(
+                        // "               Time selected ${selectedTime.hour}:${selectedTime.minute}",
 
-                      "               Time selected ${selectedTime.format(context)}",
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                        "                          Time selected : ${selectedTime.format(context)}",
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     SizedBox(
                       width: 5,
                     ),
                     CircleAvatar(
-                      radius: 25,
+                      radius: 15,
                       child: CircleAvatar(
                           child:
-                              Icon(Icons.timer, color: Colors.black, size: 25),
+                              Icon(Icons.timer, color: Colors.black, size: 20),
                           radius: 20,
                           backgroundColor: Colors.white),
                       backgroundColor: Colors.black,
@@ -236,7 +247,8 @@ class _StartPageState extends State<StartPage> {
                     ),
                   ],
                 ),
-                NeumorphicButton(
+                RaisedButton(
+                  color: Colors.black,
                   child: Text(
                     "Select Time",
                     style: TextStyle(color: Colors.white, fontSize: 15),
@@ -246,11 +258,7 @@ class _StartPageState extends State<StartPage> {
                     print(widget.selectedDate);
                   },
                 ),
-                // SizedBox(
-                //   height: 30,
-                //   width: 5,
-                // ),
-                SizedBox(height: 20),
+                // SizedBox(height: 20),
                 Divider(
                   color: Colors.grey,
                   thickness: 2,
@@ -258,32 +266,10 @@ class _StartPageState extends State<StartPage> {
                 GestureDetector(
                   onTap: () => {
                     setState(() {
-                      // Provider.of<MoodCard>(context, listen: false).addPlace(
-                      //     datetime,
-                      //     mood,
-                      //     image,
-                      //     Provider.of<MoodCard>(context, listen: false)
-                      //         .activityimage
-                      //         .join('_'),
-                      //     Provider.of<MoodCard>(context, listen: false)
-                      //         .activityname
-                      //         .join('_'),
-                      //     dateonly);
-                      // print("Pressed");
-                      //print(act);
-
-                      // for (var e in list) {
-                      //   print(e);
-
                       NumberFormat formatter = NumberFormat("00");
                       String formatted = formatter.format(selectedTime.minute);
                       String time =
                           ((selectedTime.hour.toString() + ":") + formatted);
-
-                      // DateFormat("dd-MM-yyyy")
-                      //     .format(DateTime.parse(widget.selectedDate));
-
-                      // DateTime.parse(widget.selectedDate);
 
                       if (mood != null && list.isNotEmpty) {
                         FirebaseFirestore.instance
@@ -298,6 +284,21 @@ class _StartPageState extends State<StartPage> {
                               .parse(widget.selectedDate),
                           'Icon': image
                         });
+
+                        for (int i = 0; i < list.length; i++) {
+                          FirebaseFirestore.instance
+                              .collection('ActivityTracking')
+                              .add({
+                            'userID': uid,
+                            'DateOfActivity': widget.selectedDate,
+                            'TimeOfActivity': time,
+                            'Mood': mood,
+                            'Activities': list[i],
+                            'DateTime': DateFormat('yyyy-MM-dd')
+                                .parse(widget.selectedDate),
+                            'Icon': image
+                          });
+                        }
                         Get.to(const ListMoods());
                       }
                     }),

@@ -156,16 +156,18 @@ class _SecondPageState extends State<SecondPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
+                  padding: const EdgeInsets.only(left: 10.0),
+                 
                   child: Row(
                     children: <Widget>[
                       Text('Your BMI: ${widget.bmiResult}',
                           style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.white)),
+
                       // Container(
                       //   height: 150,
                       //Expanded(
@@ -173,11 +175,11 @@ class _SecondPageState extends State<SecondPage> {
                       ContainerCard(
                         color: (widget.resultText == 'Underweight' ||
                                 widget.resultText == 'Overweight')
-                            ? Color.fromARGB(255, 0, 0, 0)
-                            : Color.fromARGB(255, 0, 0, 0),
+                            ? Colors.transparent
+                            : Colors.transparent,
                         childContainer: Container(
                           padding: const EdgeInsets.all(2.0),
-                          height: 100,
+                          height: 30,
                           child: Center(
                             child: Text(
                               widget.resultText.toUpperCase(),
@@ -256,11 +258,13 @@ class _SecondPageState extends State<SecondPage> {
                   ),
                 ),
               ),
+              // ),
+
               Expanded(
-                flex: 1,
+                flex: 0,
                 child: ContainerCard(
                   radius: 10.0,
-                  color: Colors.black,
+                  color: Colors.transparent,
                   childContainer: Container(
                     padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                     child: Center(
@@ -269,17 +273,19 @@ class _SecondPageState extends State<SecondPage> {
                         children: <Widget>[
                           //Expanded(
                           //  child:
-                          SizedBox(
-                            height: 20.0,
-                            child: Text(
-                              widget.interpretation,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
+                          // SizedBox(
+                          //   height: 18.0,
+                          // child:
+
+                          Text(
+                            widget.interpretation,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                            textAlign: TextAlign.center,
                           ),
+                          // ),
 
                           // )
                           // ,
@@ -289,18 +295,25 @@ class _SecondPageState extends State<SecondPage> {
                   ),
                 ),
               ),
+
+              Divider(
+                color: Colors.white,
+                height: 3,
+              ),
               Expanded(
-                  flex: 1,
-                  child: Container(
+                flex: 1,
+                child: Container(
                     padding: const EdgeInsets.only(left: 12.0),
-                    child: Text('Your activity level:',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)
-                        //.copyWith(color: Colors.black87)),
-                        ),
-                  )),
+                    child: Center(
+                      child: Text('Your activity level:',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)
+                          //.copyWith(color: Colors.black87)),
+                          ),
+                    )),
+              ),
               Expanded(
                 flex: 2,
                 child: ListView(
@@ -325,18 +338,18 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Expanded(
                                 child: Text(
                                   'No activity',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Text(
                                 '(sedentary work)',
                                 textAlign: TextAlign.center,
-                                style: kLabelTextStyle,
+                                style: kLabelTextStyle.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
@@ -363,18 +376,18 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Expanded(
                                 child: Text(
                                   'Low activity',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Text(
                                 '(1-2 workouts per week)',
                                 textAlign: TextAlign.center,
-                                style: kLabelTextStyle,
+                                style: kLabelTextStyle.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
@@ -401,26 +414,26 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Expanded(
                                 child: Text(
                                   'Average activity',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   '(3-4 workouts per week,',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   'sedentary work)',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                             ],
@@ -448,26 +461,26 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Expanded(
                                 child: Text(
                                   'High activity',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   '(3-4 workouts per week,',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   'physical work)',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                             ],
@@ -495,18 +508,18 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Expanded(
                                 child: Text(
                                   'Very high activity',
                                   textAlign: TextAlign.center,
-                                  style: kLabelTextStyle,
+                                  style: kLabelTextStyle.copyWith(fontSize: 15),
                                 ),
                               ),
                               Text(
                                 '(daily workouts)',
                                 textAlign: TextAlign.center,
-                                style: kLabelTextStyle,
+                                style: kLabelTextStyle.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
@@ -520,7 +533,7 @@ class _SecondPageState extends State<SecondPage> {
               const Padding(
                 padding: EdgeInsets.only(left: 26.0, right: 26.0),
                 child: Divider(
-                  color: Colors.black,
+                  color: Colors.white,
                   height: 16.0,
                 ),
               ),
@@ -528,13 +541,15 @@ class _SecondPageState extends State<SecondPage> {
                 flex: 1,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 12.0),
-                  child: Text('Your goal:',
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  // .copyWith(
-                  //     color: Colors.black87)
+                  child: Center(
+                    child: Text('Your goal:',
+                        style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
+                    // .copyWith(
+                    //     color: Colors.black87)
+                  ),
                 ),
               ),
               Expanded(
@@ -556,11 +571,11 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Text(
                                 'Lose weight',
                                 textAlign: TextAlign.center,
-                                style: kLabelTextStyle,
+                                style: kLabelTextStyle.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
@@ -582,11 +597,11 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Text(
                                 'Keep weight',
                                 textAlign: TextAlign.center,
-                                style: kLabelTextStyle,
+                                style: kLabelTextStyle.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
@@ -608,11 +623,11 @@ class _SecondPageState extends State<SecondPage> {
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Text(
                                 'Gain weight',
                                 textAlign: TextAlign.center,
-                                style: kLabelTextStyle,
+                                style: kLabelTextStyle.copyWith(fontSize: 15),
                               ),
                             ],
                           ),
@@ -626,104 +641,120 @@ class _SecondPageState extends State<SecondPage> {
               const Padding(
                 padding: EdgeInsets.only(left: 26.0, right: 26.0),
                 child: Divider(
-                  color: Colors.black,
+                  color: Colors.white,
                   height: 16.0,
                 ),
               ),
               Expanded(
                 flex: 1,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(left: 12.0),
-                      child: Text('You should eat:',
+                      child: Text('You should eat: ',
                           style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: Colors.white)),
                     ),
-                    ContainerCard(
-                      color: Colors.black,
-                      childContainer: Container(
-                        padding: const EdgeInsets.only(left: 25.0, right: 5.0),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: <Widget>[
-                              Text(returnedTDEE.toStringAsFixed(0),
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white)),
-                              Text(
-                                'kcal ',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        Text(returnedTDEE.toStringAsFixed(0),
+                            style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                        Text(
+                          'kcal ',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
-                      ),
-                    ),
+                      ],
+                      // ContainerCard(
+                      //   color: Colors.black,
+                      //   childContainer: Container(
+                      //     padding: const EdgeInsets.only(left: 20.0, right: 2.5),
+                      //     child: Center(
+                      //       child: Row(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         crossAxisAlignment: CrossAxisAlignment.baseline,
+                      //         textBaseline: TextBaseline.alphabetic,
+                      //         children: <Widget>[
+                      //           Text(returnedTDEE.toStringAsFixed(0),
+                      //               style: TextStyle(
+                      //                   fontSize: 30,
+                      //                   fontWeight: FontWeight.bold,
+                      //                   color: Colors.white)),
+                      //           Text(
+                      //             'kcal ',
+                      //             style: TextStyle(
+                      //                 fontSize: 15,
+                      //                 fontWeight: FontWeight.bold,
+                      //                 color: Colors.white),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                    )
                   ],
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Expanded(
-                        flex: 3,
-                        child: NeumorphicButton(
-                          onPressed: () {
-                            {
-                              //CREATING A TDEE ENTRY FOR TIMESTAMP PURPOSES
-                              Navigator.pop(context);
-                              FirebaseFirestore.instance
-                                  .collection('TDEE')
-                                  .add({
-                                'tdee': endTDEE,
-                                'tdeeTime': tdeeTime,
-                                'userID': uid
-                              });
+              // Expanded(
+              //   flex: 0,
+              //   child:
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Expanded(
+                      flex: 2,
+                      child: RaisedButton(
+                        color: Colors.grey,
+                        onPressed: () {
+                          {
+                            //CREATING A TDEE ENTRY FOR TIMESTAMP PURPOSES
+                            Navigator.pop(context);
+                            FirebaseFirestore.instance.collection('TDEE').add({
+                              'tdee': endTDEE,
+                              'tdeeTime': tdeeTime,
+                              'userID': uid
+                            });
 
-                              FirebaseFirestore.instance
-                                  .collection('remainingCalories')
-                                  .add({
-                                'userID': uid,
-                                'Cals': endTDEE,
-                                'DateTime': tdeeTime,
-                              });
+                            FirebaseFirestore.instance
+                                .collection('remainingCalories')
+                                .add({
+                              'userID': uid,
+                              'Cals': endTDEE,
+                              'DateTime': tdeeTime,
+                            });
 
 //UPDATE TDEE VALUE THAT WE WILL USE FOR DEDUCTING FOOD CALORIES
-                              FirebaseFirestore.instance
-                                  .collection('UserData')
-                                  .doc(uid)
-                                  .update({'tdee': endTDEE});
-                            }
-                          },
-                          child: Center(
-                            child: Text(
-                              'Return',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                              ),
+                            FirebaseFirestore.instance
+                                .collection('UserData')
+                                .doc(uid)
+                                .update({'tdee': endTDEE});
+                          }
+                        },
+                        child: Center(
+                          child: Text(
+                            'Return',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
                             ),
                           ),
-                        ))
-                  ],
-                ),
+                        ),
+                      ))
+                ],
               ),
-              SizedBox(
-                height: 20.0,
-              ),
+              // ),
             ],
           ),
           // ]

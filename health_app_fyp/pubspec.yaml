@@ -43,11 +43,11 @@ dependencies:
     sdk: flutter
 
   fluttertoast: ^8.0.8
-  fl_chart: ^0.45.0
+  fl_chart: ^0.50.1
    #Package used for Data Visualisation
-  font_awesome_flutter: ^9.2.0
+  font_awesome_flutter: ^10.1.0
   charts_flutter: ^0.12.0 
-  syncfusion_flutter_sliders: ^19.3.57
+  syncfusion_flutter_sliders: ^20.1.50
   http: ^0.13.4
   flutter_barcode_scanner: ^2.0.0
   firebase_database: ^9.0.5
@@ -59,12 +59,12 @@ dependencies:
   flutter_material_pickers: ^3.1.2
   intl: ^0.17.0
   share: ^2.0.4
-  syncfusion_flutter_charts: ^19.4.48+1
+  syncfusion_flutter_charts: ^20.1.50
   openfoodfacts: ^1.12.0
   stack_trace: ^1.10.0
   visibility_detector: ^0.2.2
-  syncfusion_flutter_datepicker: ^19.4.54
-  syncfusion_flutter_calendar: ^19.1.58
+  syncfusion_flutter_datepicker: ^20.1.50
+  syncfusion_flutter_calendar: ^20.1.50
   pie_chart: ^5.1.0
   flutter_xlider: ^3.4.0
   shared_preferences: ^2.0.13
@@ -72,8 +72,8 @@ dependencies:
   vertical_weight_slider: ^2.4.0
   duration_picker: ^1.1.0+1
   curved_navigation_bar: ^1.0.3
-  
-  
+  syncfusion_flutter_gauges: ^20.1.50
+ 
  
  
   

@@ -8,9 +8,10 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../widgets/customnavbar.dart';
-import '../widgets/glassmorphic_bottomnavbar.dart';
 
 class BarcodeScanner extends StatefulWidget {
+  const BarcodeScanner({Key? key}) : super(key: key);
+
   @override
   _BarcodeScannerState createState() => _BarcodeScannerState();
   static String id = 'myTest';
@@ -30,8 +31,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
 
   void asyncMethod(bool isVisible) async {
     checkDay();
-    // await getbmiScore();
-    // ....
   }
 
   void callThisMethod(bool isVisible) {
@@ -80,15 +79,10 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var date in datetime.docs) {
-        print(date.data());
-
         dateTimeText = datetime.docs[0].get("DateTime");
-
-        print(dateTimeText);
       }
       return dateTimeText.toString();
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -108,16 +102,11 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                   DateTime.now().month, DateTime.now().day, 23, 59, 59))
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
-      //.snapshots().get()
-      // .length;
 
       int count = documents.size;
 
-      print(count);
-
       return count;
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -134,30 +123,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                 DateTime.now().month, DateTime.now().day, 23, 59, 59))
         .limitToLast(1)
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-//.collection('medicine').where('userId', isEqualTo: user.uid)
         .get();
     QueryDocumentSnapshot doc = querySnap.docs[
         0]; // Assumption: the query returns only one document, THE doc you are looking for.
     DocumentReference docRef = doc.reference;
     await docRef.delete();
   }
-//   CollectionReference food = FirebaseFirestore.instance.collection('Food');
-
-// Future<void> removeLastFood() {
-//   return food
-//     //.doc('ABC123') .orderBy("DateTime")
-//       .where('DateTime',
-//           isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-//               DateTime.now().month, DateTime.now().day, 0, 0))
-//       .where('DateTime',
-//           isLessThanOrEqualTo: DateTime(DateTime.now().year,
-//               DateTime.now().month, DateTime.now().day, 23, 59, 59))
-//       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots().last.
-
-//       .delete()
-//     .then((value) => print("User Deleted"))
-//     .catchError((error) => print("Failed to delete user: $error"));
-// }
 
   @override
   Widget build(BuildContext context) {
@@ -179,24 +150,14 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      // colors: [Colors.red, Colors.white, Colors.red],
-                      colors: [
-                    // Colors.red,
-                    // Colors.blue,
-
-                    Colors.black,
-                    Colors.grey,
-                    // Colors.red,
-                    //Colors.blue,
-
-                    // Colors.orange,
-                  ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                  gradient: LinearGradient(colors: [
+                Colors.black,
+                Colors.grey,
+              ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
               child: Column(children: [
-                Container(
+                SizedBox(
                     height: 100.0,
                     child: StreamBuilder<QuerySnapshot>(
-                      // stream: tdeeStream,
                       stream: CalsStream,
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -217,19 +178,13 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                                 document.data()! as Map<String, dynamic>;
                             return ListTile(
                                 title: Text(
-                              // data[('tdee')] + " kcal remaining",
                               data[('Cals')].toStringAsFixed(0) +
-                                  " calories remaining  "
-                              // +
-                              // DateTime.now().toString(),
-                              ,
+                                  " calories remaining  ",
                               style: const TextStyle(
                                 fontSize: 30.0,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
-                              // isThreeLine: true,
-                              // subtitle: Text(data['Calories per 100g']),
                             ));
                           }).toList(),
                         );
@@ -321,24 +276,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               labelStyle: const TextStyle(fontWeight: FontWeight.w500),
               labelBackgroundColor: Colors.green,
             ),
-            // SpeedDialChild(
-            //   child: const Icon(MdiIcons.pencilPlusOutline, color: Colors.white),
-            //   backgroundColor: Colors.green,
-            //   onTap: () async {
-            //     // bool a =
-            //     await Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => const ManualAdd()),
-            //       // );
-            //       // if (a == true) {
-            //       //   // updateListView();
-            //       // }
-            //     );
-            //   },
-            //   label: 'Manually Add Item',
-            //   labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-            //   labelBackgroundColor: Colors.green,
-            // ),
             SpeedDialChild(
               child: const Icon(MdiIcons.minus, color: Colors.white),
               backgroundColor: Colors.red,
@@ -364,18 +301,15 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var cals in calsdate.docs) {
-        print(cals.data());
         Timestamp time;
         time = calsdate.docs[0].get("DateTime");
 
         String calsLeftDay = dayCals.toString();
-        print(calsLeftDay);
 
         return time;
       }
       return Timestamp(0, 0);
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -392,18 +326,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var tdeeval in tdeevals.docs) {
-        print(tdeeval.data());
-
         double tdee = tdeevals.docs[0].get("tdee");
-        //print(text1);
-        // double tdee = double.parse(text1);
-        //print(tdee);
 
         return tdee;
       }
       return t2;
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -420,17 +348,19 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
 
       if (tempdate.day != today) {
         getTdeeVal().then((tdee) {
-          print(tdee);
-
           double totalDeducts = tdee - 0;
           //THIS WORKS
-
-          // Date today = inputTime.;
 
           FirebaseFirestore.instance.collection('remainingCalories').add({
             'userID': uid,
             'Cals': totalDeducts,
             'DateTime': inputTime,
+          });
+
+          FirebaseFirestore.instance.collection('endDayOfCalories').add({
+            'userID': uid,
+            'Cals': tdee,
+            'DateTime': time,
           });
         });
       }
@@ -455,8 +385,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var totalcalsval in lastLoggedFood.docs) {
-        print(totalcalsval.data());
-
         double totalcals = lastLoggedFood.docs[0].get("TotalCaloriesAdded");
 
         return totalcals;
@@ -479,17 +407,14 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
           .limitToLast(1)
           .where("userID", isEqualTo: uid)
           .get();
-      for (var remainingCalsVal in lastLoggedFood.docs) {
-        print(remainingCalsVal.data());
 
+      for (var remainingCalsVal in lastLoggedFood.docs) {
         double latestnetcals = lastLoggedFood.docs[0].get("Cals");
 
-          return latestnetcals;
-        
+        return latestnetcals;
       }
       return t2;
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -504,10 +429,8 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
         print(latestnetcals.toString() + "result");
 
         double removeLastFoodsCalories = totalcals + latestnetcals;
-       
-        getNumOfFoodsToday().then((count) {
-          print(count.toString() + "NUM OF DOCS");
 
+        getNumOfFoodsToday().then((count) {
           if (count > 0) {
             removeLastFood();
           } else {
@@ -529,8 +452,6 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
               });
             }
           });
-
-          // getNumOfFoodsToday();
         });
       });
     });

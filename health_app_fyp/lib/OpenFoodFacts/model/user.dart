@@ -73,15 +73,7 @@ class Nutriments {
 
   late int novaGroupServing;
 }
-// class ProductQueryConfiguration {
 
-//   late String barcode;
-// late OpenFoodFactsLanguage language;
-// late List<ProductField> fields;
-
-//   ProductQueryConfiguration(String barcode, {language, required List fields});
-
-// }
 
 class ProductSearchQueryConfigurations {
   late OpenFoodFactsLanguage language;
@@ -98,7 +90,7 @@ class Status {
 
 enum Level { LOW, MODERATE, HIGH, UNDEFINED }
 
-// ignore: non_constant_identifier_names
+
 class NutrimentsLevel {
   late String NUTRIENT_SUGARS;
   late String NUTRIENT_FAT;
