@@ -73,6 +73,9 @@ dependencies:
   duration_picker: ^1.1.0+1
   curved_navigation_bar: ^1.0.3
   syncfusion_flutter_gauges: ^20.1.50
+  flutter_localizations: 
+    sdk: flutter
+    version: ^0.0.0
  
  
  

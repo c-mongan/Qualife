@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/daily_check_in.dart';
 import 'package:health_app_fyp/screens/graphs.dart';
+import 'package:health_app_fyp/screens/range_selector_zoom.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:health_app_fyp/widgets/logout_button.dart';
 import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
@@ -244,6 +245,14 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.white, fontSize: 15)),
                               onPressed: () {
                                 Get.to(const GraphPage());
+                              },
+                            ),
+                            NeumorphicButton(
+                              child: Text('Zoom Graphs',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15)),
+                              onPressed: () {
+                                Get.to(RangeSelectorZoomingPage());
                               },
                             ),
                             const SizedBox(
