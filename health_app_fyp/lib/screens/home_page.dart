@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/daily_check_in.dart';
+import 'package:health_app_fyp/screens/bmi_graph.dart';
 import 'package:health_app_fyp/screens/graphs.dart';
 import 'package:health_app_fyp/screens/range_selector_zoom.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
@@ -244,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
                               onPressed: () {
-                                Get.to(const GraphPage());
+                                Get.to(const GraphPage2());
                               },
                             ),
                             NeumorphicButton(

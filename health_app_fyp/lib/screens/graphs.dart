@@ -16,8 +16,8 @@ import '../model/user_model.dart';
 import '../widgets/glassmorphic_bottomnavbar.dart';
 import 'login_screen.dart';
 
-class GraphPage extends StatefulWidget {
-  const GraphPage({Key? key}) : super(key: key);
+class GraphPage2 extends StatefulWidget {
+  const GraphPage2({Key? key}) : super(key: key);
 
   static String id = 'chartSlider';
 
@@ -28,40 +28,61 @@ class GraphPage extends StatefulWidget {
 User? user = FirebaseAuth.instance.currentUser;
 UserModel loggedInUser = UserModel();
 
-class _GraphPageState extends State<GraphPage> {
+class _GraphPageState extends State<GraphPage2> {
   int key = 0;
 
-  List<_ChartData> chartData = <_ChartData>[];
-
-  late List<num> _xValues;
-  late List<num> _yValues;
-  List<double> _xPointValues = <double>[];
-  List<double> _yPointValues = <double>[];
+  List<_mood_ChartData> moodChartData = <_mood_ChartData>[];
+  //List<_mood_ChartData> weightChartData = <_mood_ChartData>[];
 
   TooltipBehavior? _tooltipBehavior;
 
-  Future<void> getDataFromFireStore() async {
+  Future<void> getBMIDataFromFireStore() async {
     var snapShotsValue = await FirebaseFirestore.instance
-        .collection("BMI")
-        .orderBy("bmiTime")
+        .collection("DailyCheckIn")
+        .orderBy("DateTime")
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get();
-    List<_ChartData> list = snapShotsValue.docs
-        .map((e) => _ChartData(
+    List<_mood_ChartData> list = snapShotsValue.docs
+        .map((e) => _mood_ChartData(
             x: DateTime.fromMillisecondsSinceEpoch(
-                e.data()['bmiTime'].millisecondsSinceEpoch),
-            y: e.data()['bmiScore']))
+                e.data()['DateTime'].millisecondsSinceEpoch),
+            y: e.data()['Mood'],
+            y2: e.data()['Weight'],
+            y3: e.data()['Sleep']))
         .toList();
     setState(() {
-      chartData = list;
+      moodChartData = list;
     });
   }
 
+  // Future<void> getWeightDataFromFireStore() async {
+  //   var snapShotsValue = await FirebaseFirestore.instance
+  //       .collection("DailyCheckIn")
+  //       .orderBy("DateTime")
+  //       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+  //       .get();
+  //   List<_mood_ChartData> list = snapShotsValue.docs
+  //       .map((e) => _mood_ChartData(
+  //           x: DateTime.fromMillisecondsSinceEpoch(
+  //               e.data()['DateTime'].millisecondsSinceEpoch),
+  //           y2: e.data()['Weight']))
+  //       .toList();
+  //   setState(() {
+  //     weightChartData = list;
+  //   });
+  // }
+
+  late ZoomPanBehavior _zoomPanBehavior;
   @override
   void initState() {
     super.initState();
-    _tooltipBehavior =
-        TooltipBehavior(enable: true, header: '', canShowMarker: false);
+
+    _zoomPanBehavior = ZoomPanBehavior(
+        // Enables pinch zooming
+        enablePinching: true,
+        enableDoubleTapZooming: true,
+        maximumZoomLevel: 0.8);
+    _tooltipBehavior = TooltipBehavior(enable: true, shouldAlwaysShow: true);
 
     FirebaseFirestore.instance
         .collection("users")
@@ -72,7 +93,7 @@ class _GraphPageState extends State<GraphPage> {
 
       if (mounted) {
         // check whether the state object is in tree
-        getDataFromFireStore().then((results) {
+        getBMIDataFromFireStore().then((results) {
           SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
             setState(() {});
           });
@@ -80,25 +101,6 @@ class _GraphPageState extends State<GraphPage> {
         setPage();
       }
     });
-
-    void asyncMethod(bool isVisible) async {
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(user!.uid)
-          .get()
-          .then((value) {
-        loggedInUser = UserModel.fromMap(value.data());
-
-        if (mounted) {
-          getDataFromFireStore().then((results) {
-            SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-              setState(() {});
-            });
-          });
-          setPage();
-        }
-      });
-    }
   }
 
   var today = DateTime.now();
@@ -115,7 +117,7 @@ class _GraphPageState extends State<GraphPage> {
   Widget build(BuildContext context) //=> Scaffold( {
   {
     return VisibilityDetector(
-        key: Key(GraphPage.id),
+        key: Key(GraphPage2.id),
         onVisibilityChanged: (VisibilityInfo info) {
           bool isVisible = info.visibleFraction != 0;
           //asyncMethod(isVisible);
@@ -177,17 +179,21 @@ class _GraphPageState extends State<GraphPage> {
                               // width: MediaQuery.of(context).size.width * 0.9,
                               height: 550,
                               child: SfCartesianChart(
-                                  borderColor: Colors.white,
-                                  borderWidth: 2,
+                                  zoomPanBehavior: _zoomPanBehavior,
+
+                                  // borderColor: Colors.white,
+                                  // borderWidth: 2,
+
+                                  plotAreaBorderWidth: 0,
                                   // Sets 5 logical pixels as margin for all the 4 sides.
-                                  margin: const EdgeInsets.all(5),
-                                  plotAreaBackgroundColor: Colors.black,
+                                  // margin: const EdgeInsets.all(5),
+                                  // plotAreaBackgroundColor: Colors.white,
                                   title: ChartTitle(
                                       text: 'BMI In the Past Week',
                                       textStyle: const TextStyle(
                                           color: Colors.white, fontSize: 20)),
                                   legend: Legend(
-                                      borderColor: Colors.transparent,
+                                      borderColor: Colors.white,
                                       borderWidth: 2,
                                       textStyle: const TextStyle(
                                           color: Colors.white, fontSize: 20),
@@ -195,101 +201,169 @@ class _GraphPageState extends State<GraphPage> {
                                       overflowMode:
                                           LegendItemOverflowMode.wrap),
                                   primaryXAxis: DateTimeAxis(
+                                    edgeLabelPlacement:
+                                        EdgeLabelPlacement.shift,
+                                    majorGridLines:
+                                        const MajorGridLines(width: 0),
                                     //autoScrollingDelta: ,
-                                    autoScrollingMode: AutoScrollingMode.start,
-                                    autoScrollingDeltaType:
-                                        DateTimeIntervalType.months,
+                                    // autoScrollingMode: AutoScrollingMode.start,
+                                    // autoScrollingDeltaType:
+                                    //     DateTimeIntervalType.months,
                                     interval: 1,
                                     intervalType: DateTimeIntervalType.days,
-                                    // maximum: today,
-                                    // minimum: today.subtract(Duration(days: 7)),
-                                    majorGridLines: MajorGridLines(
-                                        color: Colors.white, width: 0.5),
+                                    maximum: today,
+                                    minimum: today.subtract(Duration(days: 7)),
+                                    // majorGridLines: const MajorGridLines(
+                                    //   color: Colors.grey,
+                                    //   width: 0.1,
+                                    // ),
+                                    // isVisible: true,
                                     labelStyle: const TextStyle(
-                                        color: Colors.white, fontSize: 20),
+                                      color: Colors.white,
+                                    ),
                                   ),
                                   primaryYAxis: NumericAxis(
+                                    axisLine: const AxisLine(width: 0),
+                                    majorTickLines: const MajorTickLines(
+                                        color: Colors.transparent),
+                                    isVisible: true,
                                     anchorRangeToVisiblePoints: false,
-                                    plotBands: <PlotBand>[
-                                      PlotBand(
-                                        isVisible: true,
-                                        start: 18.5,
-                                        end: 25,
-                                        color: Colors.green,
-                                        text: "Normal",
-                                        textStyle: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      PlotBand(
-                                        isVisible: true,
-                                        start: 0,
-                                        end: 18.5,
-                                        color: Colors.red,
-                                        text: "Underweight",
-                                        textStyle: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      PlotBand(
-                                        isVisible: true,
-                                        start: 25.1,
-                                        end: 30,
-                                        color: Colors.yellow,
-                                        text: "Overweight",
-                                        textStyle: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      PlotBand(
-                                        isVisible: true,
-                                        start: 30.1,
-                                        end: 1000,
-                                        color: Colors.red,
-                                        text: "Obese",
-                                        textStyle: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      )
-                                    ],
+                                    maximum: 100,
+                                    // plotBands: <PlotBand>[
+                                    //   PlotBand(
+                                    //       shouldRenderAboveSeries: false,
+                                    //       isVisible: true,
+                                    //       start: 18.5,
+                                    //       end: 25,
+                                    //       // color: Colors.grey,
+                                    //       text: "Normal",
+                                    //       textStyle: const TextStyle(
+                                    //           color: Colors.green,
+                                    //           fontSize: 20),
+                                    //       color: Colors.green,
+                                    //       opacity: 0.3),
+                                    //   PlotBand(
+                                    //     isVisible: true,
+                                    //     start: 0,
+                                    //     end: 18.5,
+                                    //     color: Colors.red,
+                                    //     opacity: 0.3,
+                                    //     text: "Underweight",
+                                    //     textStyle: const TextStyle(
+                                    //         color: Colors.red, fontSize: 20),
+                                    //   ),
+                                    //   PlotBand(
+                                    //     isVisible: true,
+                                    //     start: 25.1,
+                                    //     end: 30,
+                                    //     color: Colors.yellow,
+                                    //     opacity: 0.3,
+                                    //     text: "Overweight",
+                                    //     textStyle: const TextStyle(
+                                    //         color: Colors.yellow, fontSize: 20),
+                                    //   ),
+                                    //   PlotBand(
+                                    //     isVisible: true,
+                                    //     start: 30.1,
+                                    //     end: 1000,
+                                    //     color: Colors.red,
+                                    //     opacity: 0.3,
+                                    //     text: "Obese",
+                                    //     textStyle: const TextStyle(
+                                    //         color: Colors.red, fontSize: 20),
+                                    //   )
+                                    // ],
 
-                                    interval: 10,
-                                    //desiredIntervals: 5,
+                                    // interval: 10,
+
                                     labelStyle: const TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                    //Hides Gridlines
-                                    //majorGridLines: MajorGridLines(width: 0),
+                                      color: Colors.white,
+                                    ),
+
+                                    // //Hides Gridlines
+                                    // majorGridLines:
+                                    //     const MajorGridLines(width: 0),
+                                    // decimalPlaces: 1,
                                   ),
-                                  series: <ChartSeries<_ChartData, DateTime>>[
-                                    LineSeries<_ChartData, DateTime>(
-                                        dataSource: chartData,
+                                  series: <CartesianSeries>[
+                                    LineSeries<_mood_ChartData, DateTime>(
+                                        dataSource: moodChartData,
+                                        enableTooltip: true,
+
                                         // color: Color(0xff246EE9),
-                                        color: Colors.purple,
+                                        color: Colors.green,
                                         width: 2,
-                                        name: "BMI",
+                                        name: "Mood",
                                         markerSettings: const MarkerSettings(
-                                            isVisible: true,
+                                            isVisible: false,
                                             height: 2,
                                             width: 2,
                                             color: Colors.white,
                                             borderColor: Colors.white,
                                             shape: DataMarkerType.circle),
-                                        xValueMapper: (_ChartData data, _) =>
-                                            data.x,
-                                        yValueMapper: (_ChartData data, _) =>
-                                            data.y),
+                                        xValueMapper:
+                                            (_mood_ChartData data, _) => data.x,
+                                        yValueMapper:
+                                            (_mood_ChartData data, _) =>
+                                                data.y),
+                                    LineSeries<_mood_ChartData, DateTime>(
+                                        dataSource: moodChartData,
+                                        enableTooltip: true,
+
+                                        // color: Color(0xff246EE9),
+                                        color: Colors.orange,
+                                        width: 2,
+                                        name: "Weight",
+                                        markerSettings: const MarkerSettings(
+                                            isVisible: false,
+                                            height: 2,
+                                            width: 2,
+                                            color: Colors.white,
+                                            borderColor: Colors.white,
+                                            shape: DataMarkerType.circle),
+                                        xValueMapper:
+                                            (_mood_ChartData data, _) => data.x,
+                                        yValueMapper:
+                                            (_mood_ChartData data, _) =>
+                                                data.y2),
+                                    LineSeries<_mood_ChartData, DateTime>(
+                                        dataSource: moodChartData,
+                                        enableTooltip: true,
+
+                                        // color: Color(0xff246EE9),
+                                        color: Colors.purple,
+                                        width: 2,
+                                        name: "Hours Slept",
+                                        markerSettings: const MarkerSettings(
+                                            isVisible: false,
+                                            height: 2,
+                                            width: 2,
+                                            color: Colors.white,
+                                            borderColor: Colors.white,
+                                            shape: DataMarkerType.circle),
+                                        xValueMapper:
+                                            (_mood_ChartData data, _) => data.x,
+                                        yValueMapper:
+                                            (_mood_ChartData data, _) =>
+                                                data.y3),
                                   ]))))
                 ])))));
   }
 }
 
 // Class for chart data source, this can be modified based on the data in Firestore
-class _ChartData {
-  _ChartData({this.x, this.y});
+class _mood_ChartData {
+  _mood_ChartData({this.x, this.y, this.y2, this.y3});
   final DateTime? x;
-  final double? y;
+  final int? y;
+  final double? y2;
+  final double? y3;
 }
 
-class bmiData {
-  bmiData(this.bmiTime, this.bmiScore);
-  final DateTime bmiTime;
-  final double bmiScore;
+class _weight_ChartData {
+  _weight_ChartData({this.x, this.y});
+  final DateTime? x;
+  final int? y;
 }
 
 void callThisMethod(bool isVisible) {

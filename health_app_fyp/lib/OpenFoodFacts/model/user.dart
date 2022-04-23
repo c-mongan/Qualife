@@ -74,7 +74,6 @@ class Nutriments {
   late int novaGroupServing;
 }
 
-
 class ProductSearchQueryConfigurations {
   late OpenFoodFactsLanguage language;
   late List<ProductField> fields;
@@ -89,7 +88,6 @@ class Status {
 }
 
 enum Level { LOW, MODERATE, HIGH, UNDEFINED }
-
 
 class NutrimentsLevel {
   late String NUTRIENT_SUGARS;

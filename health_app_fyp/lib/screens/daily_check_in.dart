@@ -143,169 +143,170 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
           child: SingleChildScrollView(
             // <-- wrap this around
 
-            child: Column(children: <Widget>[
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 45,
-                        child: Text(
-                          "Your Daily Check In",
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
+            child: Column(
+              children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 45,
+                          child: Text(
+                            "Your Daily Check In",
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                        Container(
+                          height: 30.0,
+                          alignment: Alignment.center,
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 2,
+                        ),
+                        const SizedBox(
+                          height: 45,
+                          child: Text(
+                            "What is your weight?",
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                        Text(
+                          "${_weight.toStringAsFixed(2)} kg",
+                          style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w500,
                               color: Colors.white),
                         ),
-                      ),
-                      Container(
-                        height: 30.0,
-                        alignment: Alignment.center,
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                        thickness: 2,
-                      ),
-                      const SizedBox(
-                        height: 45,
-                        child: Text(
-                          "What is your weight?",
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 2,
                         ),
-                      ),
-                      Text(
-                        "${_weight.toStringAsFixed(2)} kg",
-                        style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                        thickness: 2,
-                      ),
-                      weightSlider(),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                        thickness: 2,
-                      ),
-                      const SizedBox(
-                        height: 55,
-                        child: Text(
-                          "How long did you sleep?",
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                        weightSlider(),
+                        const SizedBox(
+                          height: 50,
                         ),
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                        thickness: 2,
-                      ),
-                      const SizedBox(
-                        height: 45,
-                      ),
-                      DurationPicker(
-                        height: 250,
-                        width: 250,
-                        duration: _duration,
-                        onChange: (val) {
-                          setState(() => _duration = val);
-                        },
-                        snapToMins: 5.0,
-                      ),
-                      // Text((_duration.inHours).toStringAsFixed(2) +
-                      //     " hours"),
-                      const SizedBox(
-                        height: 45,
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                        thickness: 2,
-                      ),
-                      const SizedBox(
-                        height: 45,
-                        child: Text(
-                          "What is your overall Mood?",
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 2,
                         ),
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                        thickness: 2,
-                      ),
-                      // const SizedBox(
-                      //   height: 45,
-                      // ),
-                      // SfSliderTheme(
-                      //   data: SfSliderThemeData(
-                      //       thumbColor: Colors.white,
-                      //       thumbRadius: 15,
-                      //       thumbStrokeWidth: 2,
-                      //       thumbStrokeColor: activeColor,
-                      //       activeTrackColor: Colors.green,
-                      //       inactiveTrackColor: Colors.red,
-                      //       trackCornerRadius: 13),
-                      //   child: SfSlider(
-                      //     thumbIcon: const Icon(Icons.arrow_downward_sharp,
-                      //         color: Colors.black, size: 20.0),
-                      //     min: 0.0,
-                      //     max: 4.0,
-                      //     value: startMood,
-                      //     interval: 1,
-                      //     stepSize: 1,
-                      //     showTicks: true,
-                      //     showLabels: true,
-                      //     minorTicksPerInterval: 0,
-                      //     numberFormat: NumberFormat("#0"),
-                      //     labelFormatterCallback:
-                      //         (dynamic moodRating, String formattedText) {
-                      //       switch (moodRating) {
-                      //         case 0:
-                      //           return 'Angry';
-                      //         case 1:
-                      //           return 'Upset';
-                      //         case 2:
-                      //           return 'Nuetral ';
-                      //         case 3:
-                      //           return 'Content';
-                      //         case 4:
-                      //           return 'Optimistic';
-                      //       }
-                      //       return moodRating.toString();
-                      //     },
-                      //     onChanged: (dynamic val) {
-                      //       setState(() {
-                      //         startMood = val;
-                      //       });
-                      //     },
-                      //   ),
-                      // ),
-                      // const Divider(
-                      //   color: Colors.grey,
-                      //   thickness: 2,
-                      // ),
-                    ],
+                        const SizedBox(
+                          height: 55,
+                          child: Text(
+                            "How long did you sleep?",
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 2,
+                        ),
+                        const SizedBox(
+                          height: 45,
+                        ),
+                        DurationPicker(
+                          height: 250,
+                          width: 250,
+                          duration: _duration,
+                          onChange: (val) {
+                            setState(() => _duration = val);
+                          },
+                          snapToMins: 5.0,
+                        ),
+                        // Text((_duration.inHours).toStringAsFixed(2) +
+                        //     " hours"),
+                        const SizedBox(
+                          height: 45,
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 2,
+                        ),
+                        const SizedBox(
+                          height: 45,
+                          child: Text(
+                            "What is your overall Mood?",
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 2,
+                        ),
+                        // const SizedBox(
+                        //   height: 45,
+                        // ),
+                        // SfSliderTheme(
+                        //   data: SfSliderThemeData(
+                        //       thumbColor: Colors.white,
+                        //       thumbRadius: 15,
+                        //       thumbStrokeWidth: 2,
+                        //       thumbStrokeColor: activeColor,
+                        //       activeTrackColor: Colors.green,
+                        //       inactiveTrackColor: Colors.red,
+                        //       trackCornerRadius: 13),
+                        //   child: SfSlider(
+                        //     thumbIcon: const Icon(Icons.arrow_downward_sharp,
+                        //         color: Colors.black, size: 20.0),
+                        //     min: 0.0,
+                        //     max: 4.0,
+                        //     value: startMood,
+                        //     interval: 1,
+                        //     stepSize: 1,
+                        //     showTicks: true,
+                        //     showLabels: true,
+                        //     minorTicksPerInterval: 0,
+                        //     numberFormat: NumberFormat("#0"),
+                        //     labelFormatterCallback:
+                        //         (dynamic moodRating, String formattedText) {
+                        //       switch (moodRating) {
+                        //         case 0:
+                        //           return 'Angry';
+                        //         case 1:
+                        //           return 'Upset';
+                        //         case 2:
+                        //           return 'Nuetral ';
+                        //         case 3:
+                        //           return 'Content';
+                        //         case 4:
+                        //           return 'Optimistic';
+                        //       }
+                        //       return moodRating.toString();
+                        //     },
+                        //     onChanged: (dynamic val) {
+                        //       setState(() {
+                        //         startMood = val;
+                        //       });
+                        //     },
+                        //   ),
+                        // ),
+                        // const Divider(
+                        //   color: Colors.grey,
+                        //   thickness: 2,
+                        // ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 500,
-                child: Container(
-                  child: Column(children: <Widget>[
+                SizedBox(
+                  height: 500,
+                  child: Container(
+                      child: Column(children: <Widget>[
                     // SizedBox(
                     //   height: 30,
                     // ),
@@ -609,13 +610,325 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                         }
                       },
                     ),
-                    SizedBox(
-                      height: 20,
-                    )
-                  ]),
-                ),
-              )
-            ]),
+
+                    //         SizedBox(height: 20),
+
+                    //         Center(
+                    //           child: Text(
+                    //               DateTime.now().day.toString() +
+                    //                   "/" +
+                    //                   DateTime.now().month.toString(),
+                    //               style: TextStyle(fontSize: 14)),
+                    //         ),
+
+                    //         const SizedBox(height: 15),
+                    //         SizedBox(
+                    //           height: 100,
+                    //           child: SfRadialGauge(axes: <RadialAxis>[
+                    //             RadialAxis(
+                    //                 showFirstLabel: false,
+                    //                 axisLineStyle: AxisLineStyle(
+                    //                     thickness: 0.03,
+                    //                     thicknessUnit: GaugeSizeUnit.factor,
+                    //                     color: Colors.lightBlue[50]),
+                    //                 minorTicksPerInterval: 10,
+                    //                 majorTickStyle:
+                    //                     const MajorTickStyle(length: 10),
+                    //                 minimum: 0,
+                    //                 maximum: 12,
+                    //                 interval: 3,
+                    //                 startAngle: 90,
+                    //                 endAngle: 90,
+                    //                 onLabelCreated: (AxisLabelCreatedArgs args) {
+                    //                   if (args.text == '6') {
+                    //                     args.text = '12';
+                    //                   } else if (args.text == '9') {
+                    //                     args.text = '3';
+                    //                   } else if (args.text == '12') {
+                    //                     args.text = '6';
+                    //                   } else if (args.text == '3') {
+                    //                     args.text = '9';
+                    //                   }
+                    //                 },
+                    //                 pointers: <GaugePointer>[
+                    //                   WidgetPointer(
+                    //                       enableDragging: true,
+                    //                       value: _wakeupTimeValue,
+                    //                       onValueChanged:
+                    //                           _handleWakeupTimeValueChanged,
+                    //                       onValueChanging:
+                    //                           _handleWakeupTimeValueChanging,
+                    //                       onValueChangeStart:
+                    //                           _handleWakeupTimeValueStart,
+                    //                       onValueChangeEnd:
+                    //                           _handleWakeupTimeValueEnd,
+                    //                       child: Container(
+                    //                         decoration: BoxDecoration(
+                    //                             color: Colors.blue,
+                    //                             shape: BoxShape.circle,
+                    //                             boxShadow: <BoxShadow>[
+                    //                               BoxShadow(
+                    //                                 color: Colors.white
+                    //                                     .withOpacity(0.2),
+                    //                                 offset: Offset.zero,
+                    //                                 blurRadius: 4.0,
+                    //                               ),
+                    //                             ],
+                    //                             border: Border.all(
+                    //                               color:
+                    //                                   Colors.black.withOpacity(0.1),
+                    //                               style: BorderStyle.solid,
+                    //                               width: 0.0,
+                    //                             )),
+                    //                         height: _wakeupTimePointerHeight,
+                    //                         width: _wakeupTimePointerWidth,
+                    //                         child: const Center(
+                    //                             child: Icon(
+                    //                           Icons.bedtime,
+                    //                           size: 15,
+                    //                           color: Colors.white,
+                    //                         )),
+                    //                       )),
+                    //                   WidgetPointer(
+                    //                     enableDragging: true,
+                    //                     value: _bedTimeValue,
+                    //                     onValueChanged: _handleBedTimeValueChanged,
+                    //                     onValueChanging:
+                    //                         _handleBedTimeValueChanging,
+                    //                     onValueChangeStart:
+                    //                         _handleBedTimeValueStart,
+                    //                     onValueChangeEnd: _handleBedTimeValueEnd,
+                    //                     child: Container(
+                    //                       decoration: BoxDecoration(
+                    //                           color: Colors.blue,
+                    //                           shape: BoxShape.circle,
+                    //                           boxShadow: <BoxShadow>[
+                    //                             BoxShadow(
+                    //                               color: Colors.grey,
+                    //                               offset: Offset.zero,
+                    //                               blurRadius: 4.0,
+                    //                             ),
+                    //                           ],
+                    //                           border: Border.all(
+                    //                             color:
+                    //                                 Colors.black.withOpacity(0.1),
+                    //                             style: BorderStyle.solid,
+                    //                             width: 0.0,
+                    //                           )),
+                    //                       height: _bedTimePointerHeight,
+                    //                       width: _bedTimePointerWidth,
+                    //                       child: const Center(
+                    //                           child: Icon(
+                    //                         Icons.wb_sunny,
+                    //                         color: Colors.white,
+                    //                         size: 15,
+                    //                       )),
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //                 ranges: <GaugeRange>[
+                    //                   GaugeRange(
+                    //                       endValue: _bedTimeValue,
+                    //                       sizeUnit: GaugeSizeUnit.factor,
+                    //                       startValue: _wakeupTimeValue,
+                    //                       color: Colors.blue,
+                    //                       startWidth: 0.03,
+                    //                       endWidth: 0.03)
+                    //                 ],
+                    //                 annotations: <GaugeAnnotation>[
+                    //                   GaugeAnnotation(
+                    //                       widget: SizedBox(
+                    //                         width: 300,
+                    //                         height: 200,
+                    //                         child: Stack(
+                    //                           alignment:
+                    //                               AlignmentDirectional.center,
+                    //                           children: <Widget>[
+                    //                             AnimatedPositioned(
+                    //                               right: 80,
+                    //                               duration: const Duration(
+                    //                                   milliseconds: 300),
+                    //                               curve: Curves.decelerate,
+                    //                               child: AnimatedOpacity(
+                    //                                 opacity:
+                    //                                     _isWakeupTime ? 1.0 : 0.0,
+                    //                                 duration: (_isWakeupTime &&
+                    //                                         _isBedTime)
+                    //                                     ? const Duration(
+                    //                                         milliseconds: 800)
+                    //                                     : const Duration(
+                    //                                         milliseconds: 200),
+                    //                                 child: CustomAnimatedBuilder(
+                    //                                   value: 1.3,
+                    //                                   curve: Curves.decelerate,
+                    //                                   duration: const Duration(
+                    //                                       milliseconds: 300),
+                    //                                   builder:
+                    //                                       (BuildContext context,
+                    //                                               Widget? child,
+                    //                                               Animation<dynamic>
+                    //                                                   animation) =>
+                    //                                           Transform.scale(
+                    //                                     scale: animation.value,
+                    //                                     child: child,
+                    //                                   ),
+                    //                                   child: Column(
+                    //                                     mainAxisSize:
+                    //                                         MainAxisSize.min,
+                    //                                     children: <Widget>[
+                    //                                       Text(
+                    //                                         (DateTime.now().day - 1)
+                    //                                                 .toString() +
+                    //                                             '/' +
+                    //                                             DateTime.now()
+                    //                                                 .month
+                    //                                                 .toString(),
+                    //                                         style: TextStyle(
+                    //                                           fontSize: 10,
+                    //                                           color: Colors.blue,
+                    //                                         ),
+                    //                                       ),
+                    //                                       const SizedBox(height: 4),
+                    //                                       Text(
+                    //                                         _wakeupTimeAnnotation,
+                    //                                         style: TextStyle(
+                    //                                             color: Colors.blue,
+                    //                                             fontSize: 10),
+                    //                                       ),
+                    //                                     ],
+                    //                                   ),
+                    //                                 ),
+                    //                               ),
+                    //                             ),
+                    //                             AnimatedOpacity(
+                    //                               opacity:
+                    //                                   (_isBedTime && _isWakeupTime)
+                    //                                       ? 1.0
+                    //                                       : 0.0,
+                    //                               duration:
+                    //                                   (_isWakeupTime && _isBedTime)
+                    //                                       ? const Duration(
+                    //                                           milliseconds: 800)
+                    //                                       : const Duration(
+                    //                                           milliseconds: 200),
+                    //                               child: Container(
+                    //                                 margin: const EdgeInsets.only(
+                    //                                     top: 16.0),
+                    //                                 child: const Text(
+                    //                                   '-',
+                    //                                   textAlign: TextAlign.center,
+                    //                                   style: TextStyle(
+                    //                                     fontSize: 25,
+                    //                                     color: Colors.blue,
+                    //                                   ),
+                    //                                 ),
+                    //                               ),
+                    //                             ),
+                    //                             AnimatedPositioned(
+                    //                               left: 83,
+                    //                               duration: const Duration(
+                    //                                   milliseconds: 300),
+                    //                               curve: Curves.decelerate,
+                    //                               child: AnimatedOpacity(
+                    //                                 opacity: _isBedTime ? 1.0 : 0.0,
+                    //                                 duration: (_isWakeupTime &&
+                    //                                         _isBedTime)
+                    //                                     ? const Duration(
+                    //                                         milliseconds: 800)
+                    //                                     : const Duration(
+                    //                                         milliseconds: 200),
+                    //                                 child: CustomAnimatedBuilder(
+                    //                                   value: 1.3,
+                    //                                   curve: Curves.decelerate,
+                    //                                   duration: const Duration(
+                    //                                       milliseconds: 300),
+                    //                                   builder:
+                    //                                       (BuildContext context,
+                    //                                               Widget? child,
+                    //                                               Animation<dynamic>
+                    //                                                   animation) =>
+                    //                                           Transform.scale(
+                    //                                     scale: animation.value,
+                    //                                     child: child,
+                    //                                   ),
+                    //                                   child: Column(
+                    //                                     mainAxisSize:
+                    //                                         MainAxisSize.min,
+                    //                                     children: <Widget>[
+                    //                                       Text(
+                    //                                         DateTime.now()
+                    //                                                 .day
+                    //                                                 .toString() +
+                    //                                             "/" +
+                    //                                             DateTime.now()
+                    //                                                 .month
+                    //                                                 .toString(),
+                    //                                         style: TextStyle(
+                    //                                           fontSize: 10,
+                    //                                           // fontSize:
+
+                    //                                           //  isWebOrDesktop
+                    //                                           //     ? 24
+                    //                                           //     : isCardView
+                    //                                           //         ? 14
+                    //                                           //         : 10,
+
+                    //                                           color: Colors.blue,
+                    //                                         ),
+                    //                                       ),
+                    //                                       const SizedBox(
+                    //                                         height: 4,
+                    //                                       ),
+                    //                                       Text(
+                    //                                         _bedTimeAnnotation,
+                    //                                         style: TextStyle(
+                    //                                           color: Colors.blue,
+                    //                                           fontSize: 10,
+                    //                                           // fontSize: isWebOrDesktop
+                    //                                           //     ? 28
+                    //                                           //     : isCardView
+                    //                                           //         ? 20
+                    //                                           //         : 16
+                    //                                         ),
+                    //                                       ),
+                    //                                     ],
+                    //                                   ),
+                    //                                 ),
+                    //                               ),
+                    //                             ),
+                    //                           ],
+                    //                         ),
+                    //                       ),
+                    //                       positionFactor: 0.05,
+                    //                       angle: 0),
+                    //                 ])
+                    //           ]),
+                    //         ),
+                    //         // if (!isCardView) const SizedBox(height: 15),
+                    //         // if (!isCardView)
+                    //         Text(
+                    //           _sleepMinutes == '00'
+                    //               ? '$_sleepHours hrs'
+                    //               : '$_sleepHours hrs ' '$_sleepMinutes mins',
+                    //           style: TextStyle(
+                    //               // fontSize: isCardView ? 14 : 20,
+                    //               fontWeight: FontWeight.w500),
+                    //         ),
+                    //         // if (!isCardView) const SizedBox(height: 15),
+                    //         Text(
+                    //           'Sleep time',
+                    //           style: TextStyle(
+                    //               fontSize: 15, fontWeight: FontWeight.w400),
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+
+                    // ),
+                  ])),
+                )
+              ],
+            ),
           ),
         ),
       ),

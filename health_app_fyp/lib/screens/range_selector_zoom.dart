@@ -1,5 +1,6 @@
 ///Dart import
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -65,15 +66,9 @@ class _RangeSelectorZoomingPageState extends SampleViewState
     });
   }
 
- 
-  DateTime now = DateTime.now();
-
-  DateTime lastMonth = DateTime.now().subtract(Duration(days: 30));
-
   final DateTime min = DateTime.now().subtract(Duration(days: 30)),
       max = DateTime.now();
 
-  //final List<_ChartData> chartData = <_ChartData>[];
   late RangeController rangeController;
   late SfCartesianChart columnChart, splineChart;
   late List<_ChartData> columnData, splineSeriesData;
@@ -83,8 +78,11 @@ class _RangeSelectorZoomingPageState extends SampleViewState
   void initState() {
     super.initState();
     rangeController = RangeController(
-      start: DateTime.fromMillisecondsSinceEpoch(1498608000000),
-      end: DateTime.fromMillisecondsSinceEpoch(1508112000000),
+      // start: DateTime.fromMillisecondsSinceEpoch(1498608000000),
+      // end: DateTime.fromMillisecondsSinceEpoch(1508112000000),
+
+      start: min,
+      end: max,
     );
 
     _tooltipBehavior =
@@ -136,7 +134,7 @@ class _RangeSelectorZoomingPageState extends SampleViewState
   void dispose() {
     chartData.clear();
     rangeController.dispose();
-    
+
     super.dispose();
   }
 
@@ -165,11 +163,49 @@ class _RangeSelectorZoomingPageState extends SampleViewState
         majorTickLines: const MajorTickLines(size: 0),
         axisLine: const AxisLine(color: Colors.transparent),
         anchorRangeToVisiblePoints: false,
+        maximum: 100,
+        minimum: 0,
       ),
       series: <SplineSeries<_ChartData, DateTime>>[
         SplineSeries<_ChartData, DateTime>(
-            name: 'EUR',
             dataSource: chartData,
+            onCreateShader: (ShaderDetails details) {
+              return ui.Gradient.linear(
+                  details.rect.topCenter, details.rect.bottomCenter, <Color>[
+                // const Color.fromRGBO(4, 8, 195, 1),
+                // const Color.fromRGBO(4, 8, 195, 1),
+
+                // const Color.fromRGBO(26, 112, 23, 1),
+
+                // const ui.Color.fromARGB(255, 219, 255, 14),
+
+                // const Color.fromRGBO(229, 11, 10, 1),
+
+                // const Color.fromRGBO(229, 11, 10, 1),
+
+                // const Color.fromRGBO(229, 11, 10, 1),
+
+                // const Color.fromRGBO(4, 8, 195, 1),
+                // const Color.fromRGBO(4, 8, 195, 1),
+
+                // const Color.fromRGBO(229, 11, 10, 1),
+                // const Color.fromRGBO(229, 11, 10, 1),
+                // const Color.fromRGBO(229, 11, 10, 1),
+                // const Color.fromRGBO(229, 11, 10, 1),
+                ui.Color.fromRGBO(170, 0, 255, 1),
+                ui.Color.fromRGBO(234, 128, 252, 1),
+                ui.Color.fromRGBO(142, 36, 170, 1),
+                ui.Color.fromRGBO(101, 31, 255, 1),
+                ui.Color.fromRGBO(74, 20, 140, 1),
+              ], <double>[
+                0.1,
+                0.3,
+                0.5,
+                0.7,
+                0.9
+              ]);
+            },
+            name: 'BMI',
             color: const Color.fromRGBO(0, 193, 187, 1),
             animationDuration: 0,
             xValueMapper: (_ChartData data, _) => data.x,
