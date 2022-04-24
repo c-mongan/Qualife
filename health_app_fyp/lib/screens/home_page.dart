@@ -6,20 +6,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/daily_check_in.dart';
-import 'package:health_app_fyp/screens/bmi_graph.dart';
 import 'package:health_app_fyp/screens/graphs.dart';
 import 'package:health_app_fyp/screens/range_selector_zoom.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:health_app_fyp/widgets/logout_button.dart';
 import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
-import 'package:health_app_fyp/widgets/transparentnavbar.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
-import '../MoodTracker/models.dart';
 import '../model/user_model.dart';
 import 'login_screen.dart';
 
@@ -38,6 +35,78 @@ UserModel loggedInUser = UserModel();
 class _HomePageState extends State<HomePage> {
   int key = 0;
 
+  double lastWeight = 0;
+
+  double _weight = 0;
+
+  void setLastWeight() async {
+    getLastWeight().then((firestoreLastWeightText) {
+      lastWeight = firestoreLastWeightText;
+    });
+  }
+
+  Future<double> getLastWeight() async {
+    String Exc = "Error";
+
+    try {
+      final latestDailyCheckInDoc = await FirebaseFirestore.instance
+          .collection('DailyCheckIn')
+          .orderBy('DateTime')
+          .limitToLast(1)
+          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+          .get();
+      for (var weight in latestDailyCheckInDoc.docs) {
+        lastWeight = latestDailyCheckInDoc.docs[0].get("WeightDifference");
+
+        double firestoreLastWeight = lastWeight;
+
+        setLastWeight();
+
+        // print(lastWeight);
+        return firestoreLastWeight;
+      }
+      return lastWeight;
+    } catch (Exc) {
+      rethrow;
+    }
+  }
+
+  // Text(
+  //     "Your weight has fluctuated by: ${_weight.toStringAsFixed(2)}kg",
+  //     style: TextStyle(
+  //         color: setColorWeight(_weight), fontSize: 20))),
+
+  ListTile getWeightChanges() {
+    return ListTile(
+        title: RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(children: <TextSpan>[
+        const TextSpan(
+            text: "Your weight has fluctuated by: ",
+            style: TextStyle(color: Colors.white, fontSize: 20)),
+        TextSpan(
+            text: _weight.toStringAsFixed(2) + "kg",
+            style: TextStyle(
+                color: setColorWeight(_weight),
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
+        const TextSpan(
+            text: " since your last check-in.",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+            )),
+        // TextSpan(
+        //     text: bmiResultText,
+        //     style: TextStyle(
+        //       color: activeColor,
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: 20,
+        //     )),
+      ]),
+    ));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +117,9 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
+
+      getLastWeight().then((value) => setState(() => _weight = value));
+      setColorWeight(_weight);
 
       if (mounted) {
         // check whether the state object is in tree
@@ -227,6 +299,12 @@ class _HomePageState extends State<HomePage> {
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 20))),
                             SizedBox(height: 60, child: lastMoodCard()),
+                            const SizedBox(height: 20),
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 2,
+                            ),
+                           
                             const SizedBox(
                               height: 20,
                             ),
@@ -248,8 +326,11 @@ class _HomePageState extends State<HomePage> {
                                 Get.to(const GraphPage2());
                               },
                             ),
+                            const SizedBox(
+                              height: 20,
+                            ),
                             NeumorphicButton(
-                              child: Text('Zoom Graphs',
+                              child: const Text('Zoom Graphs',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
                               onPressed: () {
@@ -877,6 +958,17 @@ class _HomePageState extends State<HomePage> {
     getBMITextResult().then((firestoreBmiTxtResult) {
       bmiResultText = firestoreBmiTxtResult;
     });
+  }
+
+  Color setColorWeight(double result) {
+    if (result < 0) {
+      return Colors.red;
+    } else if (result > 0) {
+      return Colors.green;
+    } else if (result == 0) {
+      return Colors.yellow;
+    }
+    return Colors.transparent;
   }
 
   void setColorSlider(String result) {

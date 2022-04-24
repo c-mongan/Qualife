@@ -28,6 +28,8 @@ class DailyCheckInPage extends StatefulWidget {
 User? user = FirebaseAuth.instance.currentUser;
 UserModel loggedInUser = UserModel();
 
+double oldweight = 0;
+
 class _DailyCheckInPageState extends State<DailyCheckInPage> {
   late WeightSliderController _controller;
   double _weight = 60.0;
@@ -48,6 +50,10 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
   @override
   void initState() {
     super.initState();
+
+    getLastWeight().then((value) => setState(() => _weight = value));
+
+    setLastWeight();
     _controller = WeightSliderController(
         initialWeight: _weight, minWeight: 0, interval: 0.1);
 
@@ -118,6 +124,40 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
     Activity('assets/eat.png', 'Eating', false),
     Activity('assets/clean.png', 'Cleaning', false)
   ];
+
+  void setLastWeight() async {
+    getLastWeight().then((firestoreLastWeightText) {
+      lastWeight = firestoreLastWeightText;
+    });
+  }
+
+  double lastWeight = 0;
+
+  Future<double> getLastWeight() async {
+    String Exc = "Error";
+
+    try {
+      final latestDailyCheckInDoc = await FirebaseFirestore.instance
+          .collection('DailyCheckIn')
+          .orderBy('DateTime')
+          .limitToLast(1)
+          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+          .get();
+      for (var weight in latestDailyCheckInDoc.docs) {
+        lastWeight = latestDailyCheckInDoc.docs[0].get("Weight");
+
+        double firestoreLastWeight = lastWeight;
+
+        setLastWeight();
+
+        print(lastWeight);
+        return firestoreLastWeight;
+      }
+      return lastWeight;
+    } catch (Exc) {
+      rethrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) //=> Scaffold( {
@@ -554,9 +594,12 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                           style: TextStyle(color: Colors.white, fontSize: 15)),
                       onPressed: () {
                         if (mood != null && list.isNotEmpty) {
-                          // print(startMood.toString() + " Mood");
-                          // print(_duration.toString() + " Sleep");
-                          // print(_weight.toString() + " Weight");
+                          getLastWeight().then(
+                              (value) => setState(() => oldweight = value));
+
+                          double difference = _weight - oldweight;
+                          print(difference.toString() +
+                              " XXXXXXXXXXXXXXXXXXXXXXXXXX");
 
                           FirebaseFirestore.instance
                               .collection('DailyCheckIn')
@@ -566,6 +609,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                             'Mood': moodValue,
                             'Sleep': _duration.inMinutes / 60,
                             'Weight': _weight,
+                            'WeightDifference': difference,
                           });
 
                           NumberFormat formatter = NumberFormat("00");
