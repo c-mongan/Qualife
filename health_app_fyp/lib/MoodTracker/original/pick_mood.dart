@@ -70,6 +70,7 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
     Activity('assets/eat.png', 'Eating', false),
     Activity('assets/clean.png', 'Cleaning', false)
   ];
+
   Color colour = Colors.white;
   @override
   void initState() {

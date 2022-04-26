@@ -11,14 +11,16 @@ class Methods {
         .get();
     final userTDEE = documents.docs.first.data;
     String sTDEE = userTDEE.toString();
-    print(sTDEE);
+
     return sTDEE;
   }
 
+  
 
-  void deductCal(String tdee, double energy_100g_kcal, uid, inputTime) {
+
+  void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
     double result = double.parse(tdee);
-    double calRemaining = result - energy_100g_kcal;
+    double calRemaining = result - energy100gKcal;
     print(tdee + " " + "kcal");
     print(calRemaining.toString() + "kcal");
 

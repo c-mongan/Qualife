@@ -18,6 +18,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../model/user_model.dart';
+import '../widgets/neumorphic_indicater.dart';
+import 'graphs_land_page.dart';
 import 'login_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,6 +44,83 @@ class _HomePageState extends State<HomePage> {
   void setLastWeight() async {
     getLastWeight().then((firestoreLastWeightText) {
       lastWeight = firestoreLastWeightText;
+    });
+  }
+
+  String dayCals = "";
+
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  Future<Timestamp> getLastCalsRemainingDay() async {
+    String Exc = "Error";
+
+    try {
+      final calsdate = await FirebaseFirestore.instance
+          .collection('remainingCalories')
+          .orderBy('DateTime')
+          .limitToLast(1)
+          .where("userID", isEqualTo: uid)
+          .get();
+      for (var cals in calsdate.docs) {
+        Timestamp time;
+        time = calsdate.docs[0].get("DateTime");
+
+        String calsLeftDay = dayCals.toString();
+
+        return time;
+      }
+      return Timestamp(0, 0);
+    } catch (Exc) {
+      rethrow;
+    }
+  }
+
+  Future<double> getTdeeVal() async {
+    double Exc = 0;
+    double t2 = 0;
+
+    try {
+      final tdeevals = await FirebaseFirestore.instance
+          .collection('TDEE')
+          .orderBy('tdeeTime')
+          .limitToLast(1)
+          .where("userID", isEqualTo: uid)
+          .get();
+      for (var tdeeval in tdeevals.docs) {
+        double tdee = tdeevals.docs[0].get("tdee");
+
+        return tdee;
+      }
+      return t2;
+    } catch (Exc) {
+      rethrow;
+    }
+  }
+
+  bool isAfterToday(Timestamp timestamp) {
+    return DateTime.now().toUtc().isAfter(
+          DateTime.fromMillisecondsSinceEpoch(
+            timestamp.millisecondsSinceEpoch,
+            isUtc: false,
+          ).toUtc(),
+        );
+  }
+
+  void checkDay() {
+    getLastCalsRemainingDay().then((time) {
+      isAfterToday(time);
+
+      if (isAfterToday(time)) {
+        getTdeeVal().then((tdee) {
+          print("Its before today");
+
+          FirebaseFirestore.instance.collection('endDayOfCalories').add({
+            'userID': uid,
+            'Cals': tdee,
+            'DateTime': time,
+          });
+        });
+      }
     });
   }
 
@@ -87,7 +166,7 @@ class _HomePageState extends State<HomePage> {
         TextSpan(
             text: _weight.toStringAsFixed(2) + "kg",
             style: TextStyle(
-                color: setColorWeight(_weight),
+                color: setColorValue(_weight),
                 fontSize: 20,
                 fontWeight: FontWeight.bold)),
         const TextSpan(
@@ -111,6 +190,19 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    DateTime todaysDate = DateTime.now();
+    DateTime yesterdayDate =
+        DateTime.utc(todaysDate.year, todaysDate.month, todaysDate.day - 7);
+
+    final Stream<QuerySnapshot> activityStream = FirebaseFirestore.instance
+        .collection('ActivityTracking')
+        .orderBy("DateTime")
+        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        // .where('DateTime', isGreaterThanOrEqualTo: yesterdayDate)
+        // .where('DateTime', isLessThanOrEqualTo: todaysDate)
+        .where('DateTime', isEqualTo: todaysDate)
+        .snapshots();
+
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -119,7 +211,7 @@ class _HomePageState extends State<HomePage> {
       loggedInUser = UserModel.fromMap(value.data());
 
       getLastWeight().then((value) => setState(() => _weight = value));
-      setColorWeight(_weight);
+      setColorValue(_weight);
 
       if (mounted) {
         // check whether the state object is in tree
@@ -230,6 +322,13 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.grey,
                               thickness: 2,
                             ),
+
+                            getWeightDifference(),
+
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 2,
+                            ),
                             SizedBox(
                               height: 40,
                               child: ListTile(
@@ -270,7 +369,8 @@ class _HomePageState extends State<HomePage> {
                                 textAlign: TextAlign.center,
                                 text: const TextSpan(children: <TextSpan>[
                                   TextSpan(
-                                      text: "Activity Tracker",
+                                      text:
+                                          "Activities Logged in the last 7 days",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 20)),
                                 ]),
@@ -284,27 +384,11 @@ class _HomePageState extends State<HomePage> {
                                   height: 30,
                                 ),
                                 Center(
-                                  child: activityPieChart(),
-                                ),
+                                    //  child: activityPieChart(),
+                                    ),
                               ],
                             ),
                             const SizedBox(height: 20),
-                            const Divider(
-                              color: Colors.grey,
-                              thickness: 2,
-                            ),
-                            const SizedBox(
-                                height: 30,
-                                child: Text("Your last logged mood was:",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20))),
-                            SizedBox(height: 60, child: lastMoodCard()),
-                            const SizedBox(height: 20),
-                            const Divider(
-                              color: Colors.grey,
-                              thickness: 2,
-                            ),
-                           
                             const SizedBox(
                               height: 20,
                             ),
@@ -312,20 +396,34 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.grey,
                               thickness: 2,
                             ),
-                            const SizedBox(
-                              height: 20,
+                            CustomListTile(
+                                text: "Graphs",
+                                leadingIcon: Icon(Icons.show_chart),
+                                trailingIcon: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  Get.to(const GraphsHome());
+                                },
+                                color: Color.fromARGB(255, 255, 255, 255)),
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 2,
                             ),
-                            const SizedBox(
-                              height: 20,
+
+                            CustomListTile(
+                                text: "Pie Charts",
+                                leadingIcon: Icon(Icons.pie_chart),
+                                trailingIcon: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  Get.to(const CheckInGraph());
+                                },
+                                color: Color.fromARGB(255, 255, 255, 255)),
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 2,
                             ),
-                            NeumorphicButton(
-                              child: const Text('Graphs',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15)),
-                              onPressed: () {
-                                Get.to(const GraphPage2());
-                              },
-                            ),
+                            // const SizedBox(
+                            //   height: 20,
+                            // ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -352,6 +450,72 @@ class _HomePageState extends State<HomePage> {
                             )
                           ])))
                 ])))));
+  }
+
+  SizedBox getWeightDifference() {
+    return SizedBox(
+        height: 75.0,
+        child: StreamBuilder<QuerySnapshot>(
+          stream: weightStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("Loading");
+            }
+
+            return ListView(
+              // shrinkWrap: true,
+              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                return ListTile(
+                  title: Text("Your weight has fluctuated by:",
+                      style: TextStyle(color: Colors.white, fontSize: 20)),
+
+                  trailing: Text(
+                    "${data['WeightDifference'].toStringAsFixed(2)} kg",
+                    style: TextStyle(
+                        color: setColorValue(_weight),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+
+                  //                            TextSpan(children: <TextSpan>[
+                  // const TextSpan(
+                  //     text: "Your weight has fluctuated by: ",
+                  //     style: TextStyle(color: Colors.white, fontSize: 20)),
+                  // TextSpan(
+                  //     text: _weight.toStringAsFixed(2) + "kg",
+                  //     style: TextStyle(
+                  //         color: setColorWeight(_weight),
+                  //         fontSize: 20,
+                  //         fontWeight: FontWeight.bold)),
+                  // const TextSpan(
+                  //     text: " since your last check-in.",
+                  //     style: TextStyle(
+                  //       fontSize: 20,
+                  //       color: Colors.white,
+                  //     )),
+
+                  //      Text(
+                  //   data[('WeightDifference')]
+                  //           .toStringAsFixed(2) +
+                  //       " kg",
+                  //   style: const TextStyle(
+                  //     fontSize: 30.0,
+                  //     color: Colors.white,
+                  //     fontWeight: FontWeight.w600,
+                  //   ),
+                  // )
+                );
+              }).toList(),
+            );
+          },
+        ));
   }
 
   SfCartesianChart bmiOverTimeGraph() {
@@ -410,14 +574,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   StreamBuilder<Object> activityPieChart() {
+    var activityStream;
+
+    DateTime todaysDate = DateTime.now();
+    DateTime yesterdayDate =
+        DateTime.utc(todaysDate.year, todaysDate.month, todaysDate.day - 7);
+
+    activityStream = FirebaseFirestore.instance
+        .collection('ActivityTracking')
+        .orderBy("DateTime")
+        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .where('DateTime', isGreaterThanOrEqualTo: yesterdayDate)
+        .where('DateTime', isLessThanOrEqualTo: todaysDate)
+        .snapshots();
+
     return StreamBuilder<Object>(
         stream: activityStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text("something went wrong");
           }
+
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            // return NeumorphicProgressIndicator(
+            //     indicatorColor: Colors.indigo);
+            return SizedBox(
+                height: 45,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: NeumorphicProgressIndicator(
+                        indicatorColor: Colors.indigo,
+                      ),
+                    ),
+                  ],
+                ));
           }
 
           if (snapshot.data == null) {
@@ -511,7 +702,19 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading");
+          // return NeumorphicProgressIndicator(
+          //     indicatorColor: Colors.indigo);
+          return SizedBox(
+              height: 45,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: NeumorphicProgressIndicator(
+                      indicatorColor: Colors.indigo,
+                    ),
+                  ),
+                ],
+              ));
         }
 
         return ListView(
@@ -528,8 +731,8 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(color: Colors.white, fontSize: 20)),
                 TextSpan(
                     text: data[('Cals')].toStringAsFixed(0),
-                    style: const TextStyle(
-                        color: Colors.white,
+                    style: TextStyle(
+                        color: setColorValue(data[('Cals')]),
                         fontSize: 20,
                         fontWeight: FontWeight.bold)),
                 const TextSpan(
@@ -553,9 +756,20 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
         }
-
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading");
+          // return NeumorphicProgressIndicator(
+          //     indicatorColor: Colors.indigo);
+          return SizedBox(
+              height: 45,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: NeumorphicProgressIndicator(
+                      indicatorColor: Colors.indigo,
+                    ),
+                  ),
+                ],
+              ));
         }
 
         return ListView(
@@ -609,7 +823,6 @@ class _HomePageState extends State<HomePage> {
             setState(() {});
           });
         });
-        setPage();
       }
     });
   }
@@ -756,17 +969,35 @@ class _HomePageState extends State<HomePage> {
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
+  final Stream<QuerySnapshot> weightStream = FirebaseFirestore.instance
+      .collection('DailyCheckIn')
+      .orderBy("DateTime", descending: true)
+      .limit(1)
+      // .limitToLast(1)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .snapshots();
+
   final Stream<QuerySnapshot> moodPieChartStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime")
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
-  final Stream<QuerySnapshot> activityStream = FirebaseFirestore.instance
-      .collection('ActivityTracking')
-      .orderBy("DateTime")
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-      .snapshots();
+  Future<QuerySnapshot<Map<String, dynamic>>> getRecentDocs() async {
+    final Timestamp now = Timestamp.fromDate(DateTime.now());
+    final Timestamp yesterday = Timestamp.fromDate(
+      DateTime.now().subtract(const Duration(days: 1)),
+    );
+
+    final query = FirebaseFirestore.instance
+        .collection('ActivityTracking')
+        .orderBy("DateTime")
+        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .where('createdAt', isLessThan: now, isGreaterThan: yesterday);
+
+    return query.get();
+  }
+
   final Stream<QuerySnapshot> bmiStream = FirebaseFirestore.instance
       .collection('BMI')
       .orderBy("bmiTime")
@@ -802,7 +1033,8 @@ class _HomePageState extends State<HomePage> {
     await getbmiScore();
     await getBMITextResult();
     await getLatestMood();
-    await getLatestActivity();
+    // await getLastWeight();
+    //await getLatestActivity();
 
     lastMoodCard();
   }
@@ -917,12 +1149,19 @@ class _HomePageState extends State<HomePage> {
   Future<String> getLatestActivity() async {
     String Exc = "Error";
 
+    DateTime todaysDate = DateTime.now();
+    DateTime weekAgoDate =
+        DateTime.utc(todaysDate.year, todaysDate.month, todaysDate.day - 7);
+
     try {
       final latestActivityName = await FirebaseFirestore.instance
           .collection('ActivityTracking')
           .orderBy('DateTime')
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+          // .where('DateTime', isGreaterThanOrEqualTo: weekAgoDate)
+          // .where('DateTime', isLessThanOrEqualTo: todaysDate)
+          .where('DateTime', isEqualTo: todaysDate)
           .get();
 
       for (var actName in latestActivityName.docs) {
@@ -930,7 +1169,7 @@ class _HomePageState extends State<HomePage> {
 
         String firestoreActivityText = activityNameText;
 
-        setActivityResult();
+        //setActivityResult();
 
         return firestoreActivityText;
       }
@@ -960,7 +1199,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Color setColorWeight(double result) {
+  Color setColorValue(double result) {
     if (result < 0) {
       return Colors.red;
     } else if (result > 0) {
@@ -993,9 +1232,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   isMoodsEmpty(Stream<QuerySnapshot> moodstream) {
+    // ignore: unrelated_type_equality_checks
     if (moodCardStream.isEmpty == true) {
-      print("Empty");
-
       return true;
     } else {
       return false;
@@ -1052,8 +1290,57 @@ void callThisMethod(bool isVisible) {
 
 Future<void> logout(BuildContext context) async {
   await FirebaseAuth.instance.signOut();
-  // Navigator.of(context).pushReplacement(
-  //     MaterialPageRoute(builder: (context) => const LoginScreen()));
   Get.to(const LoginScreen());
   Fluttertoast.showToast(msg: "Logout Successful! ");
 }
+
+class CustomListTile extends StatelessWidget {
+  final String text;
+  final Widget leadingIcon;
+  final Widget trailingIcon;
+  final Function() onTap;
+  final Color color;
+  const CustomListTile(
+      {required this.text,
+      required this.leadingIcon,
+      required this.trailingIcon,
+      required this.onTap,
+      this.color = const Color(0xFF4338CA),
+      Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTileTheme(
+      child: ListTile(
+        leading: leadingIcon,
+        title: Text(
+          text,
+          textScaleFactor: 1,
+        ),
+        trailing: trailingIcon,
+        selected: false,
+        onTap: onTap,
+      ),
+      textColor: color,
+      iconColor: color,
+    );
+  }
+}
+
+
+
+// ListTileTheme(
+//       child: ListTile(
+//         leading: Icon(Icons.monetization_on),
+//         title: Text(
+//           'My Cards',
+//           textScaleFactor: 1,
+//         ),
+//         trailing: Icon(Icons.chevron_right),
+//         selected: false,
+//         onTap: () {},
+//       ),
+//       textColor: Color(0xFF4338CA),
+//       iconColor: Color(0xFF4338CA),
+//     )

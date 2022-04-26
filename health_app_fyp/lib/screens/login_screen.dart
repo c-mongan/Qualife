@@ -119,14 +119,12 @@ class _LoginScreenState extends State<LoginScreen> {
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    // colors: [Colors.red, Colors.white, Colors.red],
+                   
                     colors: [
                   Colors.red,
                   Colors.blue,
-                  // Colors.red,
-                  //Colors.blue,
-
-                  // Colors.orange,
+               
+               
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: Container(
               color: Colors.white,
@@ -210,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Navigator.of(context).pushReplacement(MaterialPageRoute(
                   //     builder: (context) => const HomeScreen())),
 
-                  Get.to(HomePage())
+                  Get.to(const HomePage())
 
                   //Navigates the user to Home Screen
                 });

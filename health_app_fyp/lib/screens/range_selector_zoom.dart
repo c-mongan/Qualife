@@ -23,6 +23,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 ///Slider import
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+import '../BMR+BMR/colors&fonts.dart';
 import '../SyncFusion/sample_view.dart';
 import '../model/user_model.dart';
 import 'daily_check_in.dart';
@@ -85,8 +86,11 @@ class _RangeSelectorZoomingPageState extends SampleViewState
       end: max,
     );
 
-    _tooltipBehavior =
-        TooltipBehavior(enable: true, header: '', canShowMarker: false);
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      header: '',
+      canShowMarker: false,
+    );
 
     FirebaseFirestore.instance
         .collection("users")
@@ -114,14 +118,14 @@ class _RangeSelectorZoomingPageState extends SampleViewState
     columnChart = SfCartesianChart(
       margin: EdgeInsets.zero,
       primaryXAxis:
-          DateTimeAxis(isVisible: false, maximum: DateTime(2018, 1, 1)),
+          DateTimeAxis(isVisible: false, maximum: DateTime(2029, 1, 1)),
       primaryYAxis: NumericAxis(isVisible: false),
       plotAreaBorderWidth: 0,
       series: <SplineAreaSeries<_ChartData, DateTime>>[
         SplineAreaSeries<_ChartData, DateTime>(
             dataSource: chartData,
             borderColor: const Color.fromRGBO(0, 193, 187, 1),
-            color: const Color.fromRGBO(163, 226, 224, 1),
+            color: RoyalBlue,
             borderDrawMode: BorderDrawMode.excludeBottom,
             borderWidth: 1,
             xValueMapper: (_ChartData data, _) => data.x,
@@ -169,42 +173,44 @@ class _RangeSelectorZoomingPageState extends SampleViewState
       series: <SplineSeries<_ChartData, DateTime>>[
         SplineSeries<_ChartData, DateTime>(
             dataSource: chartData,
-            onCreateShader: (ShaderDetails details) {
-              return ui.Gradient.linear(
-                  details.rect.topCenter, details.rect.bottomCenter, <Color>[
-                // const Color.fromRGBO(4, 8, 195, 1),
-                // const Color.fromRGBO(4, 8, 195, 1),
+            splineType: SplineType.cardinal,
+            cardinalSplineTension: 0.5,
+            // onCreateShader: (ShaderDetails details) {
+            //   return ui.Gradient.linear(
+            //       details.rect.topCenter, details.rect.bottomCenter, <Color>[
+            //     // const Color.fromRGBO(4, 8, 195, 1),
+            //     // const Color.fromRGBO(4, 8, 195, 1),
 
-                // const Color.fromRGBO(26, 112, 23, 1),
+            //     // const Color.fromRGBO(26, 112, 23, 1),
 
-                // const ui.Color.fromARGB(255, 219, 255, 14),
+            //     // const ui.Color.fromARGB(255, 219, 255, 14),
 
-                // const Color.fromRGBO(229, 11, 10, 1),
+            //     // const Color.fromRGBO(229, 11, 10, 1),
 
-                // const Color.fromRGBO(229, 11, 10, 1),
+            //     // const Color.fromRGBO(229, 11, 10, 1),
 
-                // const Color.fromRGBO(229, 11, 10, 1),
+            //     // const Color.fromRGBO(229, 11, 10, 1),
 
-                // const Color.fromRGBO(4, 8, 195, 1),
-                // const Color.fromRGBO(4, 8, 195, 1),
+            //     // const Color.fromRGBO(4, 8, 195, 1),
+            //     // const Color.fromRGBO(4, 8, 195, 1),
 
-                // const Color.fromRGBO(229, 11, 10, 1),
-                // const Color.fromRGBO(229, 11, 10, 1),
-                // const Color.fromRGBO(229, 11, 10, 1),
-                // const Color.fromRGBO(229, 11, 10, 1),
-                ui.Color.fromRGBO(170, 0, 255, 1),
-                ui.Color.fromRGBO(234, 128, 252, 1),
-                ui.Color.fromRGBO(142, 36, 170, 1),
-                ui.Color.fromRGBO(101, 31, 255, 1),
-                ui.Color.fromRGBO(74, 20, 140, 1),
-              ], <double>[
-                0.1,
-                0.3,
-                0.5,
-                0.7,
-                0.9
-              ]);
-            },
+            //     // const Color.fromRGBO(229, 11, 10, 1),
+            //     // const Color.fromRGBO(229, 11, 10, 1),
+            //     // const Color.fromRGBO(229, 11, 10, 1),
+            //     // const Color.fromRGBO(229, 11, 10, 1),
+            //     ui.Color.fromRGBO(170, 0, 255, 1),
+            //     ui.Color.fromRGBO(234, 128, 252, 1),
+            //     ui.Color.fromRGBO(142, 36, 170, 1),
+            //     ui.Color.fromRGBO(101, 31, 255, 1),
+            //     ui.Color.fromRGBO(74, 20, 140, 1),
+            //   ], <double>[
+            //     0.1,
+            //     0.3,
+            //     0.5,
+            //     0.7,
+            //     0.9
+            //   ]);
+            // },
             name: 'BMI',
             color: const Color.fromRGBO(0, 193, 187, 1),
             animationDuration: 0,
@@ -263,7 +269,7 @@ class _RangeSelectorZoomingPageState extends SampleViewState
                         child: SfRangeSelector(
                           min: min,
                           max: max,
-                          interval: 1,
+                          interval: .25,
                           enableDeferredUpdate: enableDeferredUpdate,
                           deferredUpdateDelay: 1000,
                           labelPlacement: LabelPlacement.betweenTicks,

@@ -78,8 +78,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
 
   var today = DateTime.now();
 
-  Future<void> setPage() async {}
-
   Color activeColor = Colors.white;
   Color inactiveColor = Colors.white;
 
@@ -288,57 +286,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                           color: Colors.grey,
                           thickness: 2,
                         ),
-                        // const SizedBox(
-                        //   height: 45,
-                        // ),
-                        // SfSliderTheme(
-                        //   data: SfSliderThemeData(
-                        //       thumbColor: Colors.white,
-                        //       thumbRadius: 15,
-                        //       thumbStrokeWidth: 2,
-                        //       thumbStrokeColor: activeColor,
-                        //       activeTrackColor: Colors.green,
-                        //       inactiveTrackColor: Colors.red,
-                        //       trackCornerRadius: 13),
-                        //   child: SfSlider(
-                        //     thumbIcon: const Icon(Icons.arrow_downward_sharp,
-                        //         color: Colors.black, size: 20.0),
-                        //     min: 0.0,
-                        //     max: 4.0,
-                        //     value: startMood,
-                        //     interval: 1,
-                        //     stepSize: 1,
-                        //     showTicks: true,
-                        //     showLabels: true,
-                        //     minorTicksPerInterval: 0,
-                        //     numberFormat: NumberFormat("#0"),
-                        //     labelFormatterCallback:
-                        //         (dynamic moodRating, String formattedText) {
-                        //       switch (moodRating) {
-                        //         case 0:
-                        //           return 'Angry';
-                        //         case 1:
-                        //           return 'Upset';
-                        //         case 2:
-                        //           return 'Nuetral ';
-                        //         case 3:
-                        //           return 'Content';
-                        //         case 4:
-                        //           return 'Optimistic';
-                        //       }
-                        //       return moodRating.toString();
-                        //     },
-                        //     onChanged: (dynamic val) {
-                        //       setState(() {
-                        //         startMood = val;
-                        //       });
-                        //     },
-                        //   ),
-                        // ),
-                        // const Divider(
-                        //   color: Colors.grey,
-                        //   thickness: 2,
-                        // ),
                       ],
                     ),
                   ),
@@ -598,8 +545,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                               (value) => setState(() => oldweight = value));
 
                           double difference = _weight - oldweight;
-                          print(difference.toString() +
-                              " XXXXXXXXXXXXXXXXXXXXXXXXXX");
 
                           FirebaseFirestore.instance
                               .collection('DailyCheckIn')
@@ -607,7 +552,8 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                             'userID': loggedInUser.uid,
                             'DateTime': DateTime.now(),
                             'Mood': moodValue,
-                            'Sleep': _duration.inMinutes / 60,
+                            'Sleep': double.parse(
+                                (_duration.inMinutes / 60).toStringAsFixed(1)),
                             'Weight': _weight,
                             'WeightDifference': difference,
                           });
@@ -648,7 +594,20 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                 'MoodValue': moodValue
                               });
 
-                              Get.to(homePage.HomePage());
+                              FirebaseFirestore.instance
+                                  .collection('SleepTracking')
+                                  .add({
+                                'userID': uid,
+                                'DateOfSleep': selectedDate,
+                                'TimeOfSleep': time,
+                                'SleepTime': DateFormat('yyyy-MM-dd')
+                                    .parse(DateTime.now().toString()),
+                                'SleepDuration': double.parse(
+                                    (_duration.inMinutes / 60)
+                                        .toStringAsFixed(1)),
+                              });
+
+                              Get.to(const homePage.HomePage());
                             }
                           }
                         }
@@ -1008,7 +967,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                       ? Colors.amber
                       : _todayValue < 400
                           ? const Color(0xffFB7D55)
-                          : const Color(0xff0DC9AB),
+                          : Color.fromARGB(255, 232, 235, 234),
               position: LinearElementPosition.cross,
               shapeType: LinearShapePointerType.circle),
           const LinearWidgetPointer(

@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:get/get.dart';
 import 'package:health_app_fyp/OpenFoodFacts/track_a_food.dart';
 import 'package:health_app_fyp/model/user_data.dart';
+import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
+import 'package:health_app_fyp/widgets/widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -17,28 +20,62 @@ class BarcodeScanner extends StatefulWidget {
   static String id = 'myTest';
 }
 
+var start;
+var pastWeek;
+var pastMonth;
+var end;
+
 class _BarcodeScannerState extends State<BarcodeScanner> {
   @override
   void initState() {
     super.initState();
+
+    start = DateTime.now();
+    pastWeek = DateTime.now().day - 7;
+    pastMonth = DateTime.now().day - 30;
+
+    end = DateTime.now().day - 1;
+    checkDay();
+  }
+
+
+Color setColorValue(double result) {
+    if (result < 0) {
+      return Colors.red;
+    } else if (result > 0) {
+      return Colors.green;
+    } else if (result == 0) {
+      return Colors.yellow;
+    }
+    return Colors.transparent;
   }
 
   String uid = FirebaseAuth.instance.currentUser!.uid;
   String dayCals = "";
 
+  String? filter = "";
+
   User? user = FirebaseAuth.instance.currentUser;
   Measurements loggedInUser = Measurements();
 
   void asyncMethod(bool isVisible) async {
-    checkDay();
+    //checkDay();
   }
 
   void callThisMethod(bool isVisible) {
     debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');
   }
 
+  final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+      .collection('Food')
+      .orderBy("DateTime")
+      .where('DateTime', isGreaterThanOrEqualTo: start)
+      .where('DateTime', isLessThanOrEqualTo: end)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
+
 //DISPLAYS ALL SCANNED FOODS FROM TODAY
-  final Stream<QuerySnapshot> foodStream = FirebaseFirestore.instance
+  final Stream<QuerySnapshot> foodStreamToday = FirebaseFirestore.instance
       .collection('Food')
       .orderBy("DateTime")
       .where('DateTime',
@@ -47,6 +84,24 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
       .where('DateTime',
           isLessThanOrEqualTo: DateTime(DateTime.now().year,
               DateTime.now().month, DateTime.now().day, 23, 59, 59))
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
+
+  //DISPLAYS ALL SCANNED FOODS FROM THE WEEK
+  final Stream<QuerySnapshot> foodStreamWeek = FirebaseFirestore.instance
+      .collection('Food')
+      .orderBy("DateTime")
+      .where('DateTime', isGreaterThanOrEqualTo: start)
+      .where('DateTime', isLessThanOrEqualTo: pastWeek)
+      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
+
+  //DISPLAYS ALL SCANNED FOODS FROM THE MONTH
+  final Stream<QuerySnapshot> foodStreamMonth = FirebaseFirestore.instance
+      .collection('Food')
+      .orderBy("DateTime")
+      .where('DateTime', isGreaterThanOrEqualTo: start)
+      .where('DateTime', isLessThanOrEqualTo: pastMonth)
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
 
@@ -155,8 +210,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                 Colors.grey,
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
               child: Column(children: [
+                Divider(
+                  color: Colors.white,
+                  thickness: 1,
+                ),
                 SizedBox(
-                    height: 100.0,
+                    height: 75.0,
                     child: StreamBuilder<QuerySnapshot>(
                       stream: CalsStream,
                       builder: (BuildContext context,
@@ -179,10 +238,11 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                             return ListTile(
                                 title: Text(
                               data[('Cals')].toStringAsFixed(0) +
-                                  " calories remaining  ",
-                              style: const TextStyle(
+                                  " kcal remaining today",
+                              style:  TextStyle(
                                 fontSize: 30.0,
-                                color: Colors.white,
+                                color: setColorValue(
+                                    data[('Cals')]),
                                 fontWeight: FontWeight.w600,
                               ),
                             ));
@@ -190,11 +250,17 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                         );
                       },
                     )),
-                // Expanded(
-                Container(
+                const Divider(
+                  color: Colors.white,
+                  thickness: 1,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                SizedBox(
                     height: 350.0,
                     child: StreamBuilder<QuerySnapshot>(
-                      stream: foodStream,
+                      stream: foodStreamToday,
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {
@@ -203,11 +269,24 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
 
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text("Loading");
+                          // return NeumorphicProgressIndicator(
+                          //     indicatorColor: Colors.indigo);
+                          return SizedBox(
+                              height: 45,
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: NeumorphicProgressIndicator(
+                                      indicatorColor: Colors.indigo,
+                                    ),
+                                  ),
+                                ],
+                              ));
                         }
 
                         return ListView(
                           //itemExtent: 75,
+
                           shrinkWrap: true,
                           physics: const ClampingScrollPhysics(),
                           children: snapshot.data!.docs
@@ -354,11 +433,11 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
             'DateTime': inputTime,
           });
 
-          FirebaseFirestore.instance.collection('endDayOfCalories').add({
-            'userID': uid,
-            'Cals': tdee,
-            'DateTime': time,
-          });
+          //   FirebaseFirestore.instance.collection('endDayOfCalories').add({
+          //     'userID': uid,
+          //     'Cals': tdee,
+          //     'DateTime': time,
+          //   });
         });
       }
     });

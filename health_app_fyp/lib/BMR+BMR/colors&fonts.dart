@@ -2,11 +2,33 @@
 
 import 'package:flutter/material.dart';
 
-const Color kAppBarColor = Color(0xffFF2400);
-const kActiveCardColor = Color(0xffFF2400);
-const kInactiveCardColor = Color(0xff246EE9);
-const kBottomButtonColor = Color(0xffFF2400);
-const kBottomReturnButtonColor = Color(0xff246EE9);
+const Color AppBarColor = Color(0xffFF2400);
+const ActiveCardColor = Color(0xffFF2400);
+const InactiveCardColor = Color(0xff246EE9);
+const BottomButtonColor = Color(0xffFF2400);
+const BottomReturnButtonColor = Color(0xff246EE9);
+
+const RoyalBlue = Color.fromARGB(255, 36, 110, 233);
+const ScarletRed = Color.fromARGB(255, 255, 0, 0);
+const StrikingPink = Color.fromARGB(255, 255, 197, 243);
+const MintGreen = Color.fromARGB(255, 62, 180, 137);
+
+
+const DeepSeaBlue = Color.fromARGB(255, 0, 0, 255);
+const BrightSkyBlue = Color.fromARGB(255, 0, 255, 255);
+const BrightYellow = Color.fromARGB(255, 255, 255, 0);
+const BrightGreen = Color.fromARGB(255, 0, 255, 0);
+const BrightRed = Color.fromARGB(255, 255, 0, 0);
+const BrightPurple = Color.fromARGB(255, 255, 0, 255);
+const BrightOrange = Color.fromARGB(255, 255, 165, 0);
+const BrightPink = Color.fromARGB(255, 255, 192, 203);
+const BrightBlue = Color.fromARGB(255, 0, 0, 255);
+const BrightCyan = Color.fromARGB(255, 0, 255, 255);
+const BrightMagenta = Color.fromARGB(255, 255, 0, 255);
+const BrightWhite = Color.fromARGB(255, 255, 255, 255);
+const BrightBlack = Color.fromARGB(255, 0, 0, 0);
+
+  
 
 const textStyle1 = TextStyle(
   color: Colors.white,
@@ -21,7 +43,7 @@ const textStyle3 = TextStyle(
   color: Colors.white,
   fontSize: 30.0,
 );
-const kNumberStyle = TextStyle(
+const NumberStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w900,
   fontSize: 50.0,

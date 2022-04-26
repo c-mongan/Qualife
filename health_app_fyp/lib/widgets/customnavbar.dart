@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/BMR+BMR/screens/bmi_main_page.dart';
+import 'package:health_app_fyp/SleepTracker/list_of_sleep_time.dart';
 import 'package:health_app_fyp/screens/home_page.dart';
 
 import '../MoodTracker/original/list_of_moods.dart';
@@ -40,20 +41,36 @@ class CustomisedNavigationBar extends StatelessWidget {
             ),
           ),
           IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.food_bank_outlined,
                 size: 30,
               ),
               onPressed: () {
-                Get.to(BarcodeScanner());
+                Get.to(const BarcodeScanner());
               }),
           IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.mood,
                 size: 30,
               ),
               onPressed: () {
-                Get.to(ListMoods());
+                Get.to(const ListMoods());
+              }),
+          IconButton(
+              icon: const Icon(
+                Icons.bedroom_child_outlined,
+                size: 30,
+              ),
+              onPressed: () {
+                Get.to(const ListSleep());
+              }),
+          IconButton(
+              icon: const Icon(
+                Icons.analytics_outlined,
+                size: 30,
+              ),
+              onPressed: () {
+                Get.to(const ListSleep());
               }),
         ]),
       ),

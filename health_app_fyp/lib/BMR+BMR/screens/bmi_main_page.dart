@@ -67,7 +67,7 @@ class _BMITDEEState extends State<BMITDEE> {
                   children: <Widget>[
                     Expanded(
                       child: ContainerCard(
-                        color: kActiveCardColor,
+                        color: ActiveCardColor,
                         childContainer: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -145,7 +145,7 @@ class _BMITDEEState extends State<BMITDEE> {
                     ),
                     Expanded(
                       child: ContainerCard(
-                        color: kActiveCardColor,
+                        color: ActiveCardColor,
                         childContainer: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -210,7 +210,7 @@ class _BMITDEEState extends State<BMITDEE> {
               Expanded(
                 flex: 3,
                 child: ContainerCard(
-                  color: kActiveCardColor,
+                  color: ActiveCardColor,
                   childContainer: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -274,8 +274,8 @@ class _BMITDEEState extends State<BMITDEE> {
                     Expanded(
                       child: ContainerCard(
                         color: selectedGender == GenderType.male
-                            ? kActiveCardColor
-                            : kInactiveCardColor,
+                            ? ActiveCardColor
+                            : InactiveCardColor,
                         childContainer: const GenderIconContent(
                           color: Colors.white,
                           sex: FontAwesomeIcons.mars,
@@ -295,8 +295,8 @@ class _BMITDEEState extends State<BMITDEE> {
                     Expanded(
                       child: ContainerCard(
                         color: selectedGender == GenderType.female
-                            ? kActiveCardColor
-                            : kInactiveCardColor,
+                            ? ActiveCardColor
+                            : InactiveCardColor,
                         childContainer: const GenderIconContent(
                           color: Colors.white,
                           sex: FontAwesomeIcons.venus,

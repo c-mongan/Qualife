@@ -331,8 +331,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedLevel == ActivityLevel.level_0
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -369,8 +369,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedLevel == ActivityLevel.level_1
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -407,8 +407,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedLevel == ActivityLevel.level_2
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -454,8 +454,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedLevel == ActivityLevel.level_3
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -501,8 +501,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedLevel == ActivityLevel.level_4
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -564,8 +564,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedGoal == WeightGoal.lose
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -590,8 +590,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedGoal == WeightGoal.keep
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -616,8 +616,8 @@ class _SecondPageState extends State<SecondPage> {
                         });
                       },
                       color: selectedGoal == WeightGoal.gain
-                          ? kActiveCardColor
-                          : kInactiveCardColor,
+                          ? ActiveCardColor
+                          : InactiveCardColor,
                       childContainer: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
