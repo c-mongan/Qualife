@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/BMR+BMR/screens/bmi_main_page.dart';
 import 'package:health_app_fyp/SleepTracker/list_of_sleep_time.dart';
+import 'package:health_app_fyp/screens/graphs_land_page.dart';
 import 'package:health_app_fyp/screens/home_page.dart';
 
 import '../MoodTracker/original/list_of_moods.dart';
@@ -70,7 +71,7 @@ class CustomisedNavigationBar extends StatelessWidget {
                 size: 30,
               ),
               onPressed: () {
-                Get.to(const ListSleep());
+                Get.to(const GraphsHome());
               }),
         ]),
       ),

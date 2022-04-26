@@ -53,7 +53,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
 
     getLastWeight().then((value) => setState(() => _weight = value));
 
-    setLastWeight();
+    //setLastWeight();
     _controller = WeightSliderController(
         initialWeight: _weight, minWeight: 0, interval: 0.1);
 
@@ -123,11 +123,11 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
     Activity('assets/clean.png', 'Cleaning', false)
   ];
 
-  void setLastWeight() async {
-    getLastWeight().then((firestoreLastWeightText) {
-      lastWeight = firestoreLastWeightText;
-    });
-  }
+  // void setLastWeight() async {
+  //   getLastWeight().then((firestoreLastWeightText) {
+  //     lastWeight = firestoreLastWeightText;
+  //   });
+  // }
 
   double lastWeight = 0;
 
@@ -146,7 +146,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
 
         double firestoreLastWeight = lastWeight;
 
-        setLastWeight();
+        // setLastWeight();
 
         print(lastWeight);
         return firestoreLastWeight;
@@ -403,9 +403,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                             print(act[index].selected);
 
                                             list.add(act[index].name);
-                                            // Provider.of<MoodCard>(context,
-                                            //         listen: false)
-                                            //     .add(act[index]);
                                           }),
                                       }),
                             ]);
@@ -415,126 +412,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                       color: Colors.grey,
                       thickness: 2,
                     ),
-                    // const Text('What time was this at?',
-                    //     style: TextStyle(
-                    //         color: Colors.white,
-                    //         fontSize: 22,
-                    //         fontWeight: FontWeight.bold)),
-                    // SizedBox(height: 6),
-                    // Row(
-                    //   children: [
-                    //     Center(
-                    //       child: Text(
-                    //         // "               Time selected ${selectedTime.hour}:${selectedTime.minute}",
-
-                    //         "                          Time selected : ${selectedTime.format(context)}",
-                    //         style: const TextStyle(
-                    //             color: Colors.white,
-                    //             fontSize: 14,
-                    //             fontWeight: FontWeight.w500),
-                    //       ),
-                    //     ),
-                    //     SizedBox(
-                    //       width: 5,
-                    //     ),
-                    //     CircleAvatar(
-                    //       radius: 15,
-                    //       child: CircleAvatar(
-                    //           child: Icon(Icons.timer,
-                    //               color: Colors.black, size: 20),
-                    //           radius: 20,
-                    //           backgroundColor: Colors.white),
-                    //       backgroundColor: Colors.black,
-                    //     ),
-                    //     SizedBox(
-                    //       height: 30,
-                    //       width: 5,
-                    //     ),
-                    //   ],
-                    // ),
-
-                    // // SizedBox(height: 20),
-                    // Divider(
-                    //   color: Colors.grey,
-                    //   thickness: 2,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () => {
-                    //     setState(() {
-                    //       NumberFormat formatter = NumberFormat("00");
-                    //       String formatted =
-                    //           formatter.format(selectedTime.minute);
-                    //       String time = ((selectedTime.hour.toString() + ":") +
-                    //           formatted);
-
-                    //     if (mood != null && list.isNotEmpty) {
-                    //       FirebaseFirestore.instance
-                    //           .collection('MoodTracking')
-                    //           .add({
-                    //         'userID': uid,
-                    //         // 'DateOfMood': widget.selectedDate,
-                    //         'TimeOfMood': time,
-                    //         'Mood': mood,
-                    //         'Activities': list,
-                    //         // 'DateTime': DateFormat('yyyy-MM-dd')
-                    //         //     .parse(widget.selectedDate),
-                    //         'Icon': image
-                    //       });
-
-                    //       for (int i = 0; i < list.length; i++) {
-                    //         FirebaseFirestore.instance
-                    //             .collection('ActivityTracking')
-                    //             .add({
-                    //           'userID': uid,
-                    //           // 'DateOfActivity': widget.selectedDate,
-                    //           'TimeOfActivity': time,
-                    //           'Mood': mood,
-                    //           'Activity': list[i],
-                    //           // 'DateTime': DateFormat('yyyy-MM-dd')
-                    //           //     .parse(widget.selectedDate),
-                    //           'Icon': image
-                    //         });
-                    //       }
-                    //       Get.to(const ListMoods());
-                    //     }
-                    //   }),
-                    // },
-                    //   child: Container(
-                    //     height: 38.00,
-                    //     width: 117.00,
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       children: const <Widget>[
-                    //         Divider(
-                    //           color: Colors.grey,
-                    //           thickness: 2,
-                    //         ),
-                    //         Text(
-                    //           'Save ',
-                    //           style: TextStyle(
-                    //             fontWeight: FontWeight.w500,
-                    //             color: Colors.white,
-                    //             fontSize: 21.5,
-                    //           ),
-                    //           textAlign: TextAlign.center,
-                    //         ),
-                    //         SizedBox(
-                    //           width: 5,
-                    //         ),
-                    //         Icon(Icons.save_alt, size: 20, color: Colors.white)
-                    //       ],
-                    //     ),
-                    //     decoration: BoxDecoration(
-                    //       // color: Color(0xffff3d00),
-                    //       color: Colors.black,
-                    //       border: Border.all(
-                    //         width: 0.00,
-                    //         color: Colors.grey,
-                    //       ),
-                    //       borderRadius: BorderRadius.circular(19.00),
-                    //     ),
-                    //   ),
-                    // ),
 
                     NeumorphicButton(
                       child: const Text('Check In',

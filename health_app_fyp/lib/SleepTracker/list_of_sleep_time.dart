@@ -38,10 +38,12 @@ class _MyTestState extends State<ListSleep> {
     debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');
   }
 
+  bool isInteger(num value) => (value % 1) == 0;
+
 //DISPLAYS ALL SCANNED FOODS FROM TODAY
   final Stream<QuerySnapshot> sleepStream = FirebaseFirestore.instance
       .collection('SleepTracking')
-      .orderBy("SleepTime", descending: false)
+      .orderBy("SleepTime", descending: true)
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
 
@@ -156,21 +158,38 @@ class _MyTestState extends State<ListSleep> {
                                 Map<String, dynamic> data =
                                     document.data()! as Map<String, dynamic>;
                                 return ListTile(
-                                    title: Text(
-                                      data['SleepDuration'].toString() + "hrs",
-                                      style: const TextStyle(
-                                        fontSize: 15.0,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+
+                               
+                                    title: isInteger(data['SleepDuration']) ==
+                                            true
+                                        ? Text(
+                                            data['SleepDuration']
+                                                    .toStringAsFixed(0) +
+                                                "hrs",
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              color: setColorValue(
+                                                  data['SleepDuration']),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          )
+                                        : Text(
+                                            data['SleepDuration'].toString() +
+                                                "hrs",
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              color: setColorValue(
+                                                  data['SleepDuration']),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                     subtitle: Text(
                                       data['DateOfSleep'].toString() +
                                           " " +
                                           //" at Time: " +
                                           data['TimeOfSleep'].toString(),
                                       style: const TextStyle(
-                                        fontSize: 10.0,
+                                        fontSize: 15.0,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -183,6 +202,18 @@ class _MyTestState extends State<ListSleep> {
               ])),
           floatingActionButton: getFloatingActionButton(),
         ));
+  }
+
+  Color setColorValue(double result) {
+    if (result < 7) {
+      return Colors.red;
+    } else if (result >= 7 && result < 9) {
+      return Colors.green;
+    } else if (result >= 9) {
+      return Colors.yellow;
+    }
+
+    return Colors.transparent;
   }
 
   bool dialVisible = true;

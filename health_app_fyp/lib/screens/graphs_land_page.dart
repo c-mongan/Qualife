@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:health_app_fyp/BMR+BMR/colors&fonts.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/bmi_graph.dart';
+import 'package:health_app_fyp/screens/pie_chart_screen.dart';
 import 'package:health_app_fyp/screens/range_selector_zoom.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +18,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../model/user_model.dart';
 import '../widgets/glassmorphic_bottomnavbar.dart';
+import '../widgets/nuemorphic_button.dart';
 import 'graphs.dart';
 import 'home_page.dart';
 import 'login_screen.dart';
@@ -97,6 +99,33 @@ class _GraphPageState extends State<GraphsHome> {
                           const Divider(
                             color: Colors.grey,
                             thickness: 2,
+                          ),
+
+                          CustomListTile(
+                              text: "Pie Charts",
+                              leadingIcon: Icon(Icons.pie_chart),
+                              trailingIcon: Icon(Icons.chevron_right),
+                              onTap: () {
+                                Get.to(PieChartSelect());
+                              },
+                              color: Color.fromARGB(255, 255, 255, 255)),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 2,
+                          ),
+                          // const SizedBox(
+                          //   height: 20,
+                          // ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          NeumorphicButton(
+                            child: const Text('Zoom Graphs',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15)),
+                            onPressed: () {
+                              Get.to(RangeSelectorZoomingPage());
+                            },
                           ),
                         ],
                       ),

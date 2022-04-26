@@ -33,7 +33,7 @@ class _GraphPageState extends State<CheckInGraph> {
   int key = 0;
 
   List<_DailyCheckIn_ChartData> moodChartData = <_DailyCheckIn_ChartData>[];
-  //List<_mood_ChartData> weightChartData = <_mood_ChartData>[];
+
 
   TooltipBehavior? _tooltipBehavior;
 
@@ -58,22 +58,7 @@ class _GraphPageState extends State<CheckInGraph> {
     }
   }
 
-  // Future<void> getWeightDataFromFireStore() async {
-  //   var snapShotsValue = await FirebaseFirestore.instance
-  //       .collection("DailyCheckIn")
-  //       .orderBy("DateTime")
-  //       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-  //       .get();
-  //   List<_mood_ChartData> list = snapShotsValue.docs
-  //       .map((e) => _mood_ChartData(
-  //           x: DateTime.fromMillisecondsSinceEpoch(
-  //               e.data()['DateTime'].millisecondsSinceEpoch),
-  //           y2: e.data()['Weight']))
-  //       .toList();
-  //   setState(() {
-  //     weightChartData = list;
-  //   });
-  // }
+  
 
   late ZoomPanBehavior _zoomPanBehavior;
   @override

@@ -11,8 +11,6 @@ import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-
-
 class ListMoods extends StatefulWidget {
   const ListMoods({Key? key}) : super(key: key);
 
@@ -43,14 +41,6 @@ class _MyTestState extends State<ListMoods> {
   final Stream<QuerySnapshot> moodStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime", descending: false)
-      // Uncomment to show all moods for today
-
-      // .where('DateTime',
-      //     isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-      //         DateTime.now().month, DateTime.now().day, 0, 0))
-      // .where('DateTime',
-      //     isLessThanOrEqualTo: DateTime(DateTime.now().year,
-      //         DateTime.now().month, DateTime.now().day, 23, 59, 59))
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
 
@@ -83,8 +73,6 @@ class _MyTestState extends State<ListMoods> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var date in datetime.docs) {
-      
-
         dateTimeText = datetime.docs[0].get("DateTime");
 
         print(dateTimeText);
@@ -164,6 +152,26 @@ class _MyTestState extends State<ListMoods> {
     await docRef.delete();
   }
 
+  Color setColorValue(String mood) {
+    if (mood == "Optimistic") {
+      // return Color.fromARGB(255, 99, 255, 0);
+      return Colors.green;
+    } else if (mood == "Content") {
+      // return Color.fromARGB(255, 214, 255, 0);
+      return Colors.yellow;
+    } else if (mood == "Nuetral") {
+      // return Color.fromARGB(255, 255, 255, 0);
+      return const Color.fromARGB(213, 211, 194, 41);
+    } else if (mood == "Upset") {
+      // return Color.fromARGB(255, 255, 193, 0);
+      return Colors.orange;
+    } else if (mood == "Angry") {
+      // return Color.fromARGB(255, 255, 0, 0);
+      return Colors.red;
+    }
+    return const Color.fromARGB(255, 0, 0, 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
@@ -184,17 +192,14 @@ class _MyTestState extends State<ListMoods> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                Colors.black,
-                Colors.grey
-               
-       
-              ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                  gradient: LinearGradient(
+                      colors: [Colors.black, Colors.grey],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter)),
               child: Column(children: [
                 const SizedBox(
                   width: 5,
                 ),
-               
                 Expanded(
                     child: Container(
                         height: 400.0,
@@ -226,9 +231,9 @@ class _MyTestState extends State<ListMoods> {
                                     isThreeLine: true,
                                     title: Text(
                                       data['Mood'],
-                                      style: const TextStyle(
-                                        fontSize: 15.0,
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: setColorValue(data['Mood']),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -245,9 +250,9 @@ class _MyTestState extends State<ListMoods> {
                                           " " +
                                           //" at Time: " +
                                           data['TimeOfMood'].toString(),
-                                      style: const TextStyle(
-                                        fontSize: 10.0,
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        fontSize: 15.0,
+                                        color: setColorValue(data['Mood']),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -256,30 +261,7 @@ class _MyTestState extends State<ListMoods> {
                             );
                           },
                         ))),
-                // Button(
-                //     edges: const EdgeInsets.all(0.0),
-                //     color: Colors.blue,
-                //     text: const Text(
-                //       'Home',
-                //       style: textStyle2,
-                //       // TextStyle(fontWeight: FontWeight.bold),
-                //     ),
-                //     onTap: () {
-                //       Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //           builder: (context) => const HomePage(),
-                //         ),
-                //       );
-                //     }
-
-                //     )
-              ]
-                  // Flexible(
-                  //     flex: 1,
-                  //     child:
-
-                  )),
+              ])),
           floatingActionButton: getFloatingActionButton(),
         ));
   }
@@ -318,7 +300,6 @@ class _MyTestState extends State<ListMoods> {
                     .then((count) {
                   for (int i = 0; i < count; i++) {
                     removeLastActivityEntry(i);
-                   
                   }
                 });
                 getNumOfMoods().then((count) => count).then((count) {

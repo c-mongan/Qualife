@@ -26,6 +26,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../BMR+BMR/colors&fonts.dart';
 import '../SyncFusion/sample_view.dart';
 import '../model/user_model.dart';
+import '../widgets/customnavbar.dart';
 import 'daily_check_in.dart';
 
 /// Renders the range selector with line chart zooming option
@@ -144,10 +145,28 @@ class _RangeSelectorZoomingPageState extends SampleViewState
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
+
+        final ThemeData themeData = Theme.of(context);
     final bool isLightTheme =
         themeData.colorScheme.brightness == Brightness.light;
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
+    Scaffold(
+     appBar: AppBar(
+              title: const Text('Pie Charts'),
+              elevation: 0,
+              backgroundColor: Colors.black,
+            ),
+            bottomNavigationBar: CustomisedNavigationBar(),
+            body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                  Colors.black,
+                  Colors.grey,
+                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+
+child :
     splineChart = SfCartesianChart(
       title: ChartTitle(text: 'BMI in the past month'),
       plotAreaBorderWidth: 0,
@@ -175,49 +194,14 @@ class _RangeSelectorZoomingPageState extends SampleViewState
             dataSource: chartData,
             splineType: SplineType.cardinal,
             cardinalSplineTension: 0.5,
-            // onCreateShader: (ShaderDetails details) {
-            //   return ui.Gradient.linear(
-            //       details.rect.topCenter, details.rect.bottomCenter, <Color>[
-            //     // const Color.fromRGBO(4, 8, 195, 1),
-            //     // const Color.fromRGBO(4, 8, 195, 1),
 
-            //     // const Color.fromRGBO(26, 112, 23, 1),
-
-            //     // const ui.Color.fromARGB(255, 219, 255, 14),
-
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-
-            //     // const Color.fromRGBO(4, 8, 195, 1),
-            //     // const Color.fromRGBO(4, 8, 195, 1),
-
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-            //     // const Color.fromRGBO(229, 11, 10, 1),
-            //     ui.Color.fromRGBO(170, 0, 255, 1),
-            //     ui.Color.fromRGBO(234, 128, 252, 1),
-            //     ui.Color.fromRGBO(142, 36, 170, 1),
-            //     ui.Color.fromRGBO(101, 31, 255, 1),
-            //     ui.Color.fromRGBO(74, 20, 140, 1),
-            //   ], <double>[
-            //     0.1,
-            //     0.3,
-            //     0.5,
-            //     0.7,
-            //     0.9
-            //   ]);
-            // },
             name: 'BMI',
             color: const Color.fromRGBO(0, 193, 187, 1),
             animationDuration: 0,
             xValueMapper: (_ChartData data, _) => data.x,
             yValueMapper: (_ChartData data, _) => data.y),
       ],
-    );
+    )));
     final Widget page = Container(
         margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,
