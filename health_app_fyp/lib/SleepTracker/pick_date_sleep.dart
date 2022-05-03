@@ -11,7 +11,6 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../widgets/customnavbar.dart';
 
-
 /// My app class to display the date range picker
 class PickDateSleepTracker extends StatefulWidget {
   const PickDateSleepTracker({Key? key}) : super(key: key);
@@ -30,8 +29,45 @@ class MyAppState extends State<PickDateSleepTracker> {
   DateTime picked = DateTime.now();
   var newString = '';
 
+  String _dateCount = '';
+  String _range = '';
+  String _rangeCount = '';
+
+  /// The method for [DateRangePickerSelectionChanged] callback, which will be
+  /// called whenever a selection changed on the date picker widget.
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    if (!mounted) return;
+    /// The argument value will return the changed date as [DateTime] when the
+    /// widget [SfDateRangeSelectionMode] set as single.
+    ///
+    /// The argument value will return the changed dates as [List<DateTime>]
+    /// when the widget [SfDateRangeSelectionMode] set as multiple.
+    ///
+    /// The argument value will return the changed range as [PickerDateRange]
+    /// when the widget [SfDateRangeSelectionMode] set as range.
+    ///
+    /// The argument value will return the changed ranges as
+    /// [List<PickerDateRange] when the widget [SfDateRangeSelectionMode] set as
+    /// multi range.
+    setState(() {
+      if (args.value is PickerDateRange) {
+        _range = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
+            // ignore: lines_longer_than_80_chars
+            ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
+      } else if (args.value is DateTime) {
+        selectedDate = args.value.toString();
+
+        if (selectedDate.length >= 13) {
+          selectedDate = selectedDate.substring(0, selectedDate.length - 13);
+        }
+
+        //  newString = selectedDate.substring(selectedDate.length - 15);
+        picked = args.value;
+      } else if (args.value is List<DateTime>) {
+        _dateCount = args.value.length.toString();
+      } else {
+        _rangeCount = args.value.length.toString();
+      }
+    });
   }
 
   @override
@@ -108,7 +144,6 @@ class MyAppState extends State<PickDateSleepTracker> {
         visible: dialVisible,
         curve: Curves.bounceIn,
         children: [
-          
           SpeedDialChild(
             child: const Icon(MdiIcons.calendar, color: Colors.white),
             backgroundColor: Colors.green,

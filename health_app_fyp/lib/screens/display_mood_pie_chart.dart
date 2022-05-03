@@ -38,7 +38,7 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
   int key = 0;
   String? mood;
 
-  String activityNameText = "";
+  String activityNameText = " ";
 
   Future<String> getLatestActivity() async {
     String Exc = "Error";
@@ -51,7 +51,6 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
       final latestActivityName = await FirebaseFirestore.instance
           .collection('ActivityTracking')
           .orderBy('DateTime')
-       
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .where('Mood', isEqualTo: widget.mood)
           .get();
@@ -84,6 +83,7 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
     DateTime todaysDate = DateTime.now();
 
     DateTime.utc(todaysDate.year, todaysDate.month, todaysDate.day - 1);
+
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -249,13 +249,13 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
           } else {
             final data = snapshot.requireData;
 
-//NEEDS TO BE CHANGED
+
 
             getActivityListfromSnapshot(data);
 
             getLatestActivity();
 
-            if (activityNameText != "") {
+            if (activityNameText != " ") {
               return pieChartActivity();
             } else {
               return const Text("No activities logged yet",

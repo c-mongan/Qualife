@@ -158,14 +158,12 @@ class _MyTestState extends State<ListSleep> {
                                 Map<String, dynamic> data =
                                     document.data()! as Map<String, dynamic>;
                                 return ListTile(
-
-                               
                                     title: isInteger(data['SleepDuration']) ==
                                             true
                                         ? Text(
                                             data['SleepDuration']
                                                     .toStringAsFixed(0) +
-                                                "hrs",
+                                                " hours",
                                             style: TextStyle(
                                               fontSize: 20.0,
                                               color: setColorValue(
@@ -175,7 +173,7 @@ class _MyTestState extends State<ListSleep> {
                                           )
                                         : Text(
                                             data['SleepDuration'].toString() +
-                                                "hrs",
+                                                " hours",
                                             style: TextStyle(
                                               fontSize: 20.0,
                                               color: setColorValue(

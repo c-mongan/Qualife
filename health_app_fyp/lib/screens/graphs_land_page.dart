@@ -119,14 +119,14 @@ class _GraphPageState extends State<GraphsHome> {
                           const SizedBox(
                             height: 20,
                           ),
-                          NeumorphicButton(
-                            child: const Text('Zoom Graphs',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15)),
-                            onPressed: () {
-                              Get.to(RangeSelectorZoomingPage());
-                            },
-                          ),
+                          // NeumorphicButton(
+                          //   child: const Text('Zoom Graphs',
+                          //       style: TextStyle(
+                          //           color: Colors.white, fontSize: 15)),
+                          //   onPressed: () {
+                          //     Get.to(RangeSelectorZoomingPage());
+                          //   },
+                          // ),
                         ],
                       ),
                     ),

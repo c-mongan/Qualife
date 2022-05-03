@@ -76,6 +76,8 @@ dependencies:
   flutter_localizations: 
     sdk: flutter
     version: ^0.0.0
+  firebase_messaging: ^11.2.15
+  firebase_messaging_web: ^2.2.13
  
  
  
@@ -106,7 +108,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/
-  #   - images/a_dot_ham.jpeg
+  
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

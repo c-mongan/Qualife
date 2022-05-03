@@ -145,63 +145,61 @@ class _RangeSelectorZoomingPageState extends SampleViewState
 
   @override
   Widget build(BuildContext context) {
-
-        final ThemeData themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
     final bool isLightTheme =
         themeData.colorScheme.brightness == Brightness.light;
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     Scaffold(
-     appBar: AppBar(
-              title: const Text('Pie Charts'),
-              elevation: 0,
-              backgroundColor: Colors.black,
-            ),
-            bottomNavigationBar: CustomisedNavigationBar(),
-            body: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                  Colors.black,
-                  Colors.grey,
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-
-child :
-    splineChart = SfCartesianChart(
-      title: ChartTitle(text: 'BMI in the past month'),
-      plotAreaBorderWidth: 0,
-      tooltipBehavior: TooltipBehavior(
-          animationDuration: 0, shadowColor: Colors.transparent, enable: true),
-      primaryXAxis: DateTimeAxis(
-          labelStyle: const TextStyle(),
-          isVisible: false,
-          minimum: DateTime.fromMillisecondsSinceEpoch(1483315200000),
-          maximum: DateTime.fromMillisecondsSinceEpoch(1514678400000),
-          visibleMinimum: rangeController.start,
-          visibleMaximum: rangeController.end,
-          rangeController: rangeController),
-      primaryYAxis: NumericAxis(
-        labelPosition: ChartDataLabelPosition.inside,
-        labelAlignment: LabelAlignment.end,
-        majorTickLines: const MajorTickLines(size: 0),
-        axisLine: const AxisLine(color: Colors.transparent),
-        anchorRangeToVisiblePoints: false,
-        maximum: 100,
-        minimum: 0,
-      ),
-      series: <SplineSeries<_ChartData, DateTime>>[
-        SplineSeries<_ChartData, DateTime>(
-            dataSource: chartData,
-            splineType: SplineType.cardinal,
-            cardinalSplineTension: 0.5,
-
-            name: 'BMI',
-            color: const Color.fromRGBO(0, 193, 187, 1),
-            animationDuration: 0,
-            xValueMapper: (_ChartData data, _) => data.x,
-            yValueMapper: (_ChartData data, _) => data.y),
-      ],
-    )));
+        appBar: AppBar(
+          title: const Text('Pie Charts'),
+          elevation: 0,
+          backgroundColor: Colors.black,
+        ),
+        bottomNavigationBar: CustomisedNavigationBar(),
+        body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Colors.black,
+              Colors.grey,
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+            child: splineChart = SfCartesianChart(
+              title: ChartTitle(text: 'BMI in the past month'),
+              plotAreaBorderWidth: 0,
+              tooltipBehavior: TooltipBehavior(
+                  animationDuration: 0,
+                  shadowColor: Colors.transparent,
+                  enable: true),
+              primaryXAxis: DateTimeAxis(
+                  labelStyle: const TextStyle(),
+                  isVisible: false,
+                  minimum: DateTime.fromMillisecondsSinceEpoch(1483315200000),
+                  maximum: DateTime.fromMillisecondsSinceEpoch(1514678400000),
+                  visibleMinimum: rangeController.start,
+                  visibleMaximum: rangeController.end,
+                  rangeController: rangeController),
+              primaryYAxis: NumericAxis(
+                labelPosition: ChartDataLabelPosition.inside,
+                labelAlignment: LabelAlignment.end,
+                majorTickLines: const MajorTickLines(size: 0),
+                axisLine: const AxisLine(color: Colors.transparent),
+                anchorRangeToVisiblePoints: false,
+                maximum: 100,
+                minimum: 0,
+              ),
+              series: <SplineSeries<_ChartData, DateTime>>[
+                SplineSeries<_ChartData, DateTime>(
+                    dataSource: chartData,
+                    splineType: SplineType.cardinal,
+                    cardinalSplineTension: 0.5,
+                    name: 'BMI',
+                    color: const Color.fromRGBO(0, 193, 187, 1),
+                    animationDuration: 0,
+                    xValueMapper: (_ChartData data, _) => data.x,
+                    yValueMapper: (_ChartData data, _) => data.y),
+              ],
+            )));
     final Widget page = Container(
         margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,

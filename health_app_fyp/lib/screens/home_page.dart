@@ -31,8 +31,44 @@ class HomePage extends StatefulWidget {
 User? user = FirebaseAuth.instance.currentUser;
 UserModel loggedInUser = UserModel();
 
+bool? showCheckIn;
+
 class _HomePageState extends State<HomePage> {
   int key = 0;
+
+  Future<Timestamp> getLastDailyCheckInDay() async {
+    String Exc = "Error";
+
+    try {
+      final calsdate = await FirebaseFirestore.instance
+          .collection('DailyCheckIn')
+          .orderBy('DateTime')
+          .limit(1)
+          .where("userID", isEqualTo: uid)
+          .where('DateTime',
+              isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day, 0, 0))
+          .where('DateTime',
+              isLessThanOrEqualTo: DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day, 23, 59, 59))
+          .get();
+      for (var cals in calsdate.docs) {
+        print(cals.data().toString() + "ERROR");
+        Timestamp time;
+        time = calsdate.docs[0].get("DateTime");
+
+        print(time.toString() + "ERROR");
+
+        return time;
+      }
+
+      print(Exc);
+      return Timestamp(0, 0);
+    } catch (Exc) {
+      print(Exc);
+      rethrow;
+    }
+  }
 
   double lastWeight = 0;
 
@@ -94,6 +130,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  DateTime dateToday =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
   bool isAfterToday(Timestamp timestamp) {
     return DateTime.now().toUtc().isAfter(
           DateTime.fromMillisecondsSinceEpoch(
@@ -103,23 +142,45 @@ class _HomePageState extends State<HomePage> {
         );
   }
 
-  void checkDay() {
-    getLastCalsRemainingDay().then((time) {
-      isAfterToday(time);
+  void checkDay(showCheckIn) {
+    // getLastCalsRemainingDay().then((time) {
+    //   isAfterToday(time);
 
-      if (isAfterToday(time)) {
-        getTdeeVal().then((tdee) {
-          print("Its before today");
+    //   if (isAfterToday(time)) {
+    //     getTdeeVal().then((tdee) {
+    //       print("Its before today");
 
-          FirebaseFirestore.instance.collection('endDayOfCalories').add({
-            'userID': uid,
-            'Cals': tdee,
-            'DateTime': time,
-          });
-        });
-      }
-    });
+    //       FirebaseFirestore.instance.collection('endDayOfCalories').add({
+    //         'userID': uid,
+    //         'Cals': tdee,
+    //         'DateTime': time,
+    //       });
+
+    //   showCheckInButton(tempdate);
+    // });
   }
+
+  // Future<String> showCheckInButton() async {
+  //   getLastDailyCheckInDay().then((time) {
+  //     DateTime lastdate =
+  //         DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch);
+
+  //     print(lastdate.day.toString());
+
+  //     final today = DateTime.now();
+
+  //     print(today.day.toString());
+
+  //     if (lastdate.day == today.day) {
+  //       return "false";
+  //     } else if (lastdate.day != today.day) {
+  //       return "true";
+  //     }
+  //   });
+
+  //   print("error ");
+  //   return "error";
+  // }
 
   Future<double> getLastWeight() async {
     String Exc = "Error";
@@ -147,7 +208,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  
   ListTile getWeightChanges() {
     return ListTile(
         title: RichText(
@@ -168,7 +228,6 @@ class _HomePageState extends State<HomePage> {
               fontSize: 20,
               color: Colors.white,
             )),
-     
       ]),
     ));
   }
@@ -177,11 +236,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    DateTime todaysDate = DateTime.now();
-    DateTime yesterdayDate =
-        DateTime.utc(todaysDate.year, todaysDate.month, todaysDate.day - 7);
+    // bool showCheckIn = false;
 
-   
+    // showCheckInButton();
+
+    //checkDay(showCheckIn);
+
+    getRecentDailyCheckIn();
+
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -205,8 +267,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) //=> Scaffold(
-  {
+  Widget build(BuildContext context) {
     return VisibilityDetector(
         key: Key(HomePage.id),
         onVisibilityChanged: (VisibilityInfo info) {
@@ -268,14 +329,90 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(
                             height: 25,
                           ),
-                          NeumorphicButton(
-                            child: const Text('Check In',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15)),
-                            onPressed: () {
-                              Get.to(const DailyCheckInPage());
-                            },
-                          ),
+                          // if (showCheckInButton() == "true") ...[
+
+                          StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('DailyCheckIn')
+                                  .where('DateTime',
+                                      isGreaterThanOrEqualTo: DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day,
+                                          0,
+                                          0))
+                                  .where('DateTime',
+                                      isLessThanOrEqualTo: DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day,
+                                          23,
+                                          59,
+                                          59))
+                                  .where("userID", isEqualTo: uid)
+                                  // .where("DateTime", isGreaterThan: dateToday)
+                                  .limit(1)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData &&
+                                    snapshot.data!.docs.length == 1) {
+                                  // return const Text(
+                                  //   ("Daily Check-in completed!"),
+                                  //   style: TextStyle(
+                                  //     //  fontSize: 15.0,
+                                  //     color: Colors.white,
+                                  //     fontWeight: FontWeight.bold,
+                                  //   ),
+                                  // );
+
+                                  return Text(
+                                    snapshot.data!.docs.length.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 50.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.transparent,
+                                    ),
+                                  );
+                                } else if (snapshot.hasData ||
+                                    snapshot.data?.docs.length == 0) {
+                                  return NeumorphicButton(
+                                    child: const Text('Check In',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15)),
+                                    onPressed: () {
+                                      Get.to(const DailyCheckInPage());
+                                    },
+                                  );
+                                } else if (snapshot.data?.docs.isEmpty ??
+                                    true) {
+                                  return NeumorphicButton(
+                                    child: const Text('Check In',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15)),
+                                    onPressed: () {
+                                      Get.to(const DailyCheckInPage());
+                                    },
+                                  );
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              })
+
+                          //   NeumorphicButton(
+                          //     child: const Text('Check In',
+                          //         style: TextStyle(
+                          //             color: Colors.white, fontSize: 15)),
+                          //     onPressed: () {
+                          //       Get.to(const DailyCheckInPage());
+                          //     },
+
+                          //     //   ] else if (showCheckInButton() == "false") ...[
+                          //     //     const SizedBox(
+                          //     //       height: 25,
+                          //     //       child: Text("You have checked In"),
+                          //     //     ),
+                          //     //   ],
+                          //   )
                         ],
                       ),
                     ),
@@ -371,7 +508,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(
                               height: 20,
                             ),
-                            
+
                             LogOutButton(
                               onPressed: () {
                                 logout(context);
@@ -429,30 +566,30 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-  SfCartesianChart bmiOverTimeGraph() {
-    return SfCartesianChart(
-        title: ChartTitle(
-            text: 'BMI over time',
-            textStyle: const TextStyle(color: Colors.white, fontSize: 20)),
-        legend:
-            Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
-        primaryXAxis: DateTimeAxis(
-          edgeLabelPlacement: EdgeLabelPlacement.shift,
-          dateFormat: DateFormat('dd/MM'),
-          intervalType: DateTimeIntervalType.days,
-          interval: 14,
-        ),
-        primaryYAxis: NumericAxis(),
-        series: <ChartSeries<_ChartData, DateTime>>[
-          LineSeries<_ChartData, DateTime>(
-              dataSource: chartData,
-              width: 2,
-              name: "BMI",
-              markerSettings: const MarkerSettings(isVisible: true),
-              xValueMapper: (_ChartData data, _) => data.x,
-              yValueMapper: (_ChartData data, _) => data.y),
-        ]);
-  }
+  // SfCartesianChart bmiOverTimeGraph() {
+  //   return SfCartesianChart(
+  //       title: ChartTitle(
+  //           text: 'BMI over time',
+  //           textStyle: const TextStyle(color: Colors.white, fontSize: 20)),
+  //       legend:
+  //           Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+  //       primaryXAxis: DateTimeAxis(
+  //         edgeLabelPlacement: EdgeLabelPlacement.shift,
+  //         dateFormat: DateFormat('dd/MM'),
+  //         intervalType: DateTimeIntervalType.days,
+  //         interval: 14,
+  //       ),
+  //       primaryYAxis: NumericAxis(),
+  //       series: <ChartSeries<_ChartData, DateTime>>[
+  //         LineSeries<_ChartData, DateTime>(
+  //             dataSource: chartData,
+  //             width: 2,
+  //             name: "BMI",
+  //             markerSettings: const MarkerSettings(isVisible: true),
+  //             xValueMapper: (_ChartData data, _) => data.x,
+  //             yValueMapper: (_ChartData data, _) => data.y),
+  //       ]);
+  // }
 
   StreamBuilder<Object> moodPieChart() {
     return StreamBuilder<Object>(
@@ -483,8 +620,6 @@ class _HomePageState extends State<HomePage> {
           }
         });
   }
-
- 
 
   SfSliderTheme bmiSlider() {
     return SfSliderTheme(
@@ -671,6 +806,12 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
+      getLastWeight().then((value) => setState(() => _weight = value));
+      setColorValue(_weight);
+      // showCheckInButton();
+
+      // checkDay(showCheckIn);
+
       if (mounted) {
         getDataFromFireStore().then((results) {
           SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -684,7 +825,6 @@ class _HomePageState extends State<HomePage> {
   var today = DateTime.now();
 
   List<Mood> _moods = [];
-
 
   List<_ChartData> chartData = <_ChartData>[];
 
@@ -700,8 +840,6 @@ class _HomePageState extends State<HomePage> {
     }
     return catMap;
   }
-
- 
 
   final gradientList = <List<Color>>[
     [
@@ -757,7 +895,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   Future<void> getDataFromFireStore() async {
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("BMI")
@@ -770,6 +907,11 @@ class _HomePageState extends State<HomePage> {
                 e.data()['bmiTime'].millisecondsSinceEpoch),
             y: e.data()['bmiScore']))
         .toList();
+    if (mounted) {
+      setState(() {
+        chartData = list;
+      });
+    }
     setState(() {
       chartData = list;
     });
@@ -808,6 +950,22 @@ class _HomePageState extends State<HomePage> {
     return query.get();
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>> getRecentDailyCheckIn() async {
+    final Timestamp now = Timestamp.fromDate(DateTime.now());
+    final Timestamp yesterday = Timestamp.fromDate(
+      DateTime.now().subtract(const Duration(days: 1)),
+    );
+
+    final query = FirebaseFirestore.instance
+        .collection('DailyCheckIn')
+        .orderBy("DateTime")
+        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .where('DateTime', isLessThan: now, isGreaterThan: yesterday);
+
+    print(query.get());
+    return query.get();
+  }
+
   final Stream<QuerySnapshot> bmiStream = FirebaseFirestore.instance
       .collection('BMI')
       .orderBy("bmiTime")
@@ -826,8 +984,6 @@ class _HomePageState extends State<HomePage> {
       }
     }
   }
-
-  
 
   Future<void> setPage() async {
     await getbmiScore();
@@ -943,7 +1099,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
   void setMoodResult() async {
     getLatestMood().then((firestoreMoodText) {
       moodNameText = firestoreMoodText;
@@ -1027,7 +1182,6 @@ class Mood {
     );
   }
 }
-
 
 void callThisMethod(bool isVisible) {
   debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');

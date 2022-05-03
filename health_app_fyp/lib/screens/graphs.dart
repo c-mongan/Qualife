@@ -34,7 +34,6 @@ class _GraphPageState extends State<CheckInGraph> {
 
   List<_DailyCheckIn_ChartData> moodChartData = <_DailyCheckIn_ChartData>[];
 
-
   TooltipBehavior? _tooltipBehavior;
 
   Future<void> getBMIDataFromFireStore() async {
@@ -57,8 +56,6 @@ class _GraphPageState extends State<CheckInGraph> {
       });
     }
   }
-
-  
 
   late ZoomPanBehavior _zoomPanBehavior;
   @override
@@ -85,20 +82,19 @@ class _GraphPageState extends State<CheckInGraph> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-     
-        // check whether the state object is in tree
-        getBMIDataFromFireStore().then((results) {
-          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-            if (mounted) {
-              setState(() {
-                key = 1;
-              });
-            }
-            setState(() {});
-          });
+      // check whether the state object is in tree
+      getBMIDataFromFireStore().then((results) {
+        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+          if (mounted) {
+            setState(() {
+              key = 1;
+            });
+          }
+          setState(() {});
         });
-        setPage();
       });
+      setPage();
+    });
   }
 
   var today = DateTime.now();
@@ -122,7 +118,7 @@ class _GraphPageState extends State<CheckInGraph> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Graphs'),
+              title: const Text('Daily Check In Graph'),
               elevation: 0,
               backgroundColor: Colors.black,
             ),
@@ -295,7 +291,7 @@ class _DailyCheckIn_ChartData {
   _DailyCheckIn_ChartData({this.x, this.y, this.y2, this.y3});
   final DateTime? x;
   final int? y;
-  final double? y2;
+  final num? y2;
   final num? y3;
 }
 

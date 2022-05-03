@@ -176,33 +176,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
     ProductResult result = await OpenFoodAPIClient.getProduct(configuration);
 
     if (result.status == 1) {
-      // return result.product;
-//   } else {
-//     throw Exception('product not found, please insert data for ' + barcode);
-//   }
-// }
-
-//     ProductQueryConfiguration configurations = ProductQueryConfiguration(
-//         barcode,
-//         language: OpenFoodFactsLanguage.ENGLISH,
-//         fields: [
-//           ProductField.NAME,
-//           ProductField.NUTRIMENTS,
-//           ProductField.INGREDIENTS_TEXT,
-//           ProductField.INGREDIENTS,
-//           ProductField.ADDITIVES,
-//           ProductField.NUTRIENT_LEVELS,
-//           ProductField.NUTRIMENT_ENERGY_UNIT,
-//           ProductField.SERVING_SIZE,
-//           ProductField.SERVING_QUANTITY
-//           //ProductField.NUTRIMENT_DATA_PER
-//         ]);
-
-//     try {
-//       ProductResult? result = await OpenFoodAPIClient.getProduct(
-//         configurations,
-//       ); //.catchError((e) => print(e));
-
+     
       if (result.status != 1) {
         print(
             "Error retreiving the product with barcode : $barcode If the barcode number here matches the one on your food item , the item may not exist in the database. Please visit openfoodfacts.org ");
@@ -211,12 +185,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
         found = false;
         return;
 
-        // ${result.status!.errorVerbose}
+       
       } else {
         found = true;
 
-        //String? Name;
-        //= result.product!.productName;
 
         if (result.product!.productName != null) {
           Name = result.product!.productName;
@@ -257,38 +229,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           print(ingredientsT);
           print(energy100gKcal.toStringAsFixed(2));
 
-          // getTdeeVal().then((tdee) {
-          //   String val = tdee;
-          // print("getTdeeVal() method called , val = " + val);
-
-          // getDailyCalsRemaining().then((calsLeft) {
-          //   print(calsLeft + "result");
-          //   // double num = double.parse(calsLeft);
-          //   // String val = calsLeft.toString();
-
-          //   // String decimal = ".00";
-          //   // String val = calsLeft + decimal;
-
-          //   String val = calsLeft;
-
-          //   print(val);
-
-          //   // deductCal(tdee, energy_100g_kcal, uid, inputTime);
-          //  // deductCal(val, energy_100g_kcal, uid, inputTime);
-
-          //   // double result = double.parse(tdee);
-          //   // double calRemaining = result - energy_100g_kcal;
-          //   // print(tdee + " " + "kcal");
-          //   // print(calRemaining.toString() + "kcal");
-          // });
-
-          // FirebaseFirestore.instance.collection('Food').add({
-          //   'Food Name': Name,
-          //   'DateTime': inputTime,
-          //   'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
-          //   'userID': uid
-          // });
-
+         
           FirebaseFirestore.instance.collection('TempFood').add({
             'Food Name': Name,
             'DateTime': inputTime,
@@ -299,10 +240,9 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           print("Temp food added");
 
           getFoodName().then((gotFoodName) {
-            // print(foodNameTxt + "result LINE 143");
-            // String val = tdee;
+          
             foodNameTxt = gotFoodName;
-            //  print(foodNameTxt + " GOT FOOD NAME TXT FROM FIRESTORE LINE 145");
+            
             print("getFoodName method called");
           });
 
@@ -310,51 +250,23 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
             found = true;
           }
 
-          //});
-
-          //addToDB(Name, ingredientsT, energy_100g_kcal, inputTime);
+        
 
         }
-        //  found = true;
+       
       }
-      // } catch (e) {
-      //   print("ERROR: Item Data Exists In Database But Name Not Found!");
-      //   print(e);
-      // }
-      // }
+   
 
     }
   }
 
-  // Future<void> getFoodName() async {
-  //   // Platform messages may fail, so we use a try/catch PlatformException.
-  //   try {
-  //     food = fetchAnItem(_scannedBarcode);
-  //     // ignore: avoid_print
-  //     print('GET FOOD METHOD CALLED');
-  //     // ignore: avoid_print
-  //     print((await food));
-  //   // ignore: empty_catches
-  //   } on PlatformException {
-  //   }
-
-  //   // If the widget was removed from the tree while the asynchronous platform
-  //   // message was in flight, we want to discard the reply rather than calling
-  //   // setState to update our non-existent appearance.
-  //   if (!mounted) return;
-
-  //   setState(() {
-  //   });
-  // }
+  
 
   Future<void> runBarcodeScanner() async {
     scanBarcode();
   }
 
-  // Future<void> addFood() async {
-  //   helper.insertAnItem(await food!);
-  //   exitscreen(true);
-  // }
+ 
 
   void exitscreen(bool reload) {
     Navigator.pop(context, reload);
@@ -494,7 +406,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                       maxNumber: 20,
                                                       minNumber: 1,
                                                       selectedNumber: servings,
-                                                      // onChanged: (double newValue) => setState(() => null
+                                                   
 
                                                       onChanged: (int servNum) {
                                                         //Dont forget to setState so it changes

@@ -13,7 +13,8 @@ Future<void> main() async {
   await Firebase.initializeApp();
   HttpOverrides.global = MyHttpOverrides();
 
-  runApp(const GetMaterialApp(home: MyApp()));
+  runApp(
+      const GetMaterialApp(home: MyApp(), debugShowCheckedModeBanner: false));
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -31,8 +32,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner:
-          false, //Gets rid of debug mode icon in top right
+      debugShowCheckedModeBanner: false,
+
       title: 'Health App',
 
       theme: ThemeData(primarySwatch: Colors.red),
@@ -82,13 +83,22 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Image.asset("images/welcome.png"),
+              SizedBox(
+                  height: 200,
+                  child: Image.asset(
+                    "assets/LOGO1.png",
+                    fit: BoxFit.contain,
+                  )),
+              // Image.asset("assets/LOGO1.png"),
               SizedBox(
                 height: 20.0,
               ),
               Text(
-                "Health App FYP",
-                style: TextStyle(color: Colors.white),
+                "Qualife",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),

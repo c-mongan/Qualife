@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Color.fromARGB(255, 212, 11, 62), //Color of button
+      color: Colors.black, //Color of button
       child: MaterialButton(
           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context)
@@ -99,8 +99,6 @@ class _LoginScreenState extends State<LoginScreen> {
           //When the button is pressed , use the controllers to set the text
           onPressed: () {
             signIn(emailController.text, passwordController.text);
-            //Navigator.pushReplacement(context,
-            // MaterialPageRoute(builder: (context) => const HomeScreen()));
           },
           child: const Text(
             "Login",
@@ -111,87 +109,119 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-            child: SingleChildScrollView(
-          child: Container(
+        body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                   
-                    colors: [
-                  Colors.red,
-                  Colors.blue,
-               
-               
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "Health App FYP",
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.lightBlue,
-                        ),
-                        // color: Color.fromARGB(255, 74, 134, 204)),
-                      ),
-                      SizedBox(
-                          height: 200,
-                          child: Image.asset(
-                            "assets/healthy1.png",
-                            fit: BoxFit.contain,
-                          )),
-                      Text(
-                        "Login",
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.lightBlue),
-                      ),
-                      const SizedBox(height: 45),
-                      emailField,
-                      const SizedBox(height: 25),
-                      passwordField,
-                      const SizedBox(height: 35),
-                      loginButton,
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text("Don't have an account? "),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const RegistrationScreen())); //This sends the user to sign up if they click it
-                            },
-                            child: const Text("Sign Up",
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 212, 11, 62),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15)),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        )));
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Colors.black,
+              Colors.grey,
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+            child: SingleChildScrollView(
+                child: Column(children: <Widget>[
+              Center(
+                  child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Form(
+                              key: _formKey,
+                              child: SafeArea(
+                                child: SingleChildScrollView(
+                                  child: Column(children: <Widget>[
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 30.0,
+                                        ),
+
+                                        Text(
+                                          "Login",
+                                          style: const TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                        // Text(
+                                        //   "WellnessScale",
+                                        //   style: const TextStyle(
+                                        //     fontSize: 30,
+                                        //     fontWeight: FontWeight.bold,
+                                        //     color: Colors.white,
+                                        //   ),
+                                        // ),
+                                        SizedBox(
+                                          height: 30.0,
+                                        ),
+                                        // SizedBox(
+                                        //     height: 200,
+                                        //     child: Image.asset(
+                                        //       "assets/healthy1.png",
+                                        //       fit: BoxFit.contain,
+                                        //     )),
+                                        SizedBox(
+                                            height: 200,
+                                            child: Image.asset(
+                                              "assets/LOGO1.png",
+                                              fit: BoxFit.contain,
+                                            )),
+                                        SizedBox(
+                                          height: 30.0,
+                                        ),
+                                        // Text(
+                                        //   "Login",
+                                        //   style: const TextStyle(
+                                        //       fontSize: 25,
+                                        //       fontWeight: FontWeight.bold,
+                                        //       color: Colors.grey),
+                                        // ),
+                                        const SizedBox(height: 45),
+                                        emailField,
+                                        const SizedBox(height: 25),
+                                        passwordField,
+                                        const SizedBox(height: 35),
+                                        loginButton,
+                                        const SizedBox(height: 15),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            const Text(
+                                                "Don't have an account? "),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const RegistrationScreen())); //This sends the user to sign up if they click it
+                                              },
+                                              child: const Text("Sign Up",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15)),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ]),
+                                ),
+                              ),
+                            ),
+                          ])))
+            ]))));
   }
 
 //Login Method
@@ -205,11 +235,8 @@ class _LoginScreenState extends State<LoginScreen> {
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful! "),
                   //Login Success message
-                  // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  //     builder: (context) => const HomeScreen())),
-
-                  Get.to(const HomePage())
-
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const HomePage())),
                   //Navigates the user to Home Screen
                 });
       } on FirebaseAuthException catch (error) {
@@ -237,8 +264,6 @@ class _LoginScreenState extends State<LoginScreen> {
             errorMessage = "An unexpected Error has occurred.";
         }
         Fluttertoast.showToast(msg: errorMessage!);
-        // ignore: avoid_print
-        print(error.code);
       }
     }
   }

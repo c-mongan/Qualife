@@ -3,9 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:health_app_fyp/model/user_model.dart';
-import 'package:health_app_fyp/screens/home_page.dart';
-import 'package:health_app_fyp/services/database.dart';
+
+import '../../model/user_model.dart';
+import '../../services/database.dart';
+import 'home_page.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -180,7 +181,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       //color: Colors.redAccent, //Color of button
-      color: Color.fromARGB(255, 212, 11, 62),
+      color: Colors.grey,
       child: MaterialButton(
           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context)
@@ -198,83 +199,92 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.red),
-              onPressed: () {
-                //Passing this to our root
-                Navigator.of(context).pop();
-              }),
-        ),
         body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    // colors: [Colors.red, Colors.white, Colors.red],
-                    colors: [
-                  Colors.red,
-                  Colors.blue,
-                  // Colors.red,
-                  //Colors.blue,
-
-                  // Colors.orange,
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(36.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Colors.black,
+              Colors.grey,
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+            child: SingleChildScrollView(
+                child: Column(children: <Widget>[
+              Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            "Health App FYP",
-                            style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.lightBlue),
+                          Form(
+                            key: _formKey,
+                            child: SafeArea(
+                              child: SingleChildScrollView(
+                                child: Column(children: <Widget>[
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 30.0,
+                                      ),
+                                      // Text(
+                                      //   "Qualife",
+                                      //   style: const TextStyle(
+                                      //     fontSize: 30,
+                                      //     fontWeight: FontWeight.bold,
+                                      //     color: Colors.white,
+                                      //   ),
+                                      // ),
+                                      Text(
+                                        "Register",
+                                        style: const TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                      SizedBox(
+                                        height: 30.0,
+                                      ),
+                                      SizedBox(
+                                          height: 200,
+                                          child: Image.asset(
+                                            "assets/LOGO1.png",
+                                            fit: BoxFit.contain,
+                                          )),
+                                      SizedBox(
+                                        height: 30.0,
+                                      ),
+                                      // Text(
+                                      //   "Register",
+                                      //   style: const TextStyle(
+                                      //       fontSize: 25,
+                                      //       fontWeight: FontWeight.bold,
+                                      //       color: Colors.grey),
+                                      // ),
+                                      const SizedBox(height: 45),
+                                      firstNameField,
+                                      const SizedBox(height: 20),
+                                      secondNameField,
+                                      const SizedBox(height: 20),
+                                      emailField,
+                                      const SizedBox(height: 20),
+                                      passwordField,
+                                      const SizedBox(height: 20),
+                                      confirmPasswordField,
+                                      const SizedBox(height: 20),
+                                      signUpButton,
+                                      const SizedBox(height: 15),
+                                    ],
+                                  ),
+                                ]),
+                              ),
+                            ),
                           ),
-                          SizedBox(
-                              height: 200,
-                              child: Image.asset(
-                                "assets/healthy1.png",
-                                fit: BoxFit.contain,
-                              )),
-                          Text(
-                            "Register",
-                            style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.lightBlue),
-                          ),
-                          const SizedBox(height: 45),
-                          firstNameField,
-                          const SizedBox(height: 20),
-                          secondNameField,
-                          const SizedBox(height: 20),
-                          emailField,
-                          const SizedBox(height: 20),
-                          passwordField,
-                          const SizedBox(height: 20),
-                          confirmPasswordField,
-                          const SizedBox(height: 20),
-                          signUpButton,
-                          const SizedBox(height: 15),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )));
+                        ])),
+              )
+            ]))));
   }
 
   void signUp(String email, String password) async {
