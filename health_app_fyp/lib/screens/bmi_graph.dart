@@ -33,8 +33,6 @@ class _GraphPageState extends State<GraphPage> {
 
   List<_bmi_ChartData> chartData = <_bmi_ChartData>[];
 
-
-
   TooltipBehavior? _tooltipBehavior;
 
   Future<void> getBMIDataFromFireStore() async {
@@ -83,7 +81,6 @@ class _GraphPageState extends State<GraphPage> {
         setPage();
       }
     });
-
   }
 
   var today = DateTime.now();
@@ -132,13 +129,6 @@ class _GraphPageState extends State<GraphPage> {
                         children: const <Widget>[
                           SizedBox(
                             height: 25,
-                            child: Text(
-                              "Your Personalised Graphs",
-                              style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey),
-                            ),
                           ),
                           SizedBox(
                             height: 20,
@@ -169,7 +159,8 @@ class _GraphPageState extends State<GraphPage> {
                                   margin: const EdgeInsets.all(5),
                                   plotAreaBackgroundColor: Colors.white,
                                   title: ChartTitle(
-                                      text: 'BMI In the Past Week',
+                                      text:
+                                          'Your Body Composition In the last month',
                                       textStyle: const TextStyle(
                                           color: Colors.white, fontSize: 20)),
                                   legend: Legend(
@@ -184,8 +175,8 @@ class _GraphPageState extends State<GraphPage> {
                                     //autoScrollingDelta: ,
                                     autoScrollingMode: AutoScrollingMode.start,
                                     autoScrollingDeltaType:
-                                        DateTimeIntervalType.months,
-                                    interval: 3,
+                                        DateTimeIntervalType.days,
+                                    interval: 1,
                                     intervalType: DateTimeIntervalType.months,
                                     // maximum: today,
                                     // minimum: today.subtract(Duration(days: 7)),
@@ -193,10 +184,9 @@ class _GraphPageState extends State<GraphPage> {
                                       color: Colors.grey,
                                       width: 0.1,
                                     ),
-                                    isVisible: false,
+                                    isVisible: true,
                                     labelStyle: const TextStyle(
-                                        color: Colors.transparent,
-                                        fontSize: 20),
+                                        color: Colors.white, fontSize: 20),
                                   ),
                                   primaryYAxis: NumericAxis(
                                     isVisible: false,
@@ -256,7 +246,8 @@ class _GraphPageState extends State<GraphPage> {
                                         const MajorGridLines(width: 0),
                                     decimalPlaces: 1,
                                   ),
-                                  series: <ChartSeries<_bmi_ChartData, DateTime>>[
+                                  series: <
+                                      ChartSeries<_bmi_ChartData, DateTime>>[
                                     LineSeries<_bmi_ChartData, DateTime>(
                                         dataSource: chartData,
                                         enableTooltip: true,
@@ -272,10 +263,10 @@ class _GraphPageState extends State<GraphPage> {
                                             color: Colors.white,
                                             borderColor: Colors.white,
                                             shape: DataMarkerType.circle),
-                                        xValueMapper: (_bmi_ChartData data, _) =>
-                                            data.x,
-                                        yValueMapper: (_bmi_ChartData data, _) =>
-                                            data.y),
+                                        xValueMapper:
+                                            (_bmi_ChartData data, _) => data.x,
+                                        yValueMapper:
+                                            (_bmi_ChartData data, _) => data.y),
                                   ]))))
                 ])))));
   }
@@ -287,8 +278,6 @@ class _bmi_ChartData {
   final DateTime? x;
   final double? y;
 }
-
-
 
 void callThisMethod(bool isVisible) {
   debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');

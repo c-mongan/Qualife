@@ -398,13 +398,13 @@ class _HomePageState extends State<HomePage> {
                                 }
                               })
 
-                          //   NeumorphicButton(
-                          //     child: const Text('Check In',
-                          //         style: TextStyle(
-                          //             color: Colors.white, fontSize: 15)),
-                          //     onPressed: () {
-                          //       Get.to(const DailyCheckInPage());
-                          //     },
+                          // NeumorphicButton(
+                          //   child: const Text('Check In',
+                          //       style: TextStyle(
+                          //           color: Colors.white, fontSize: 15)),
+                          //   onPressed: () {
+                          //     Get.to(const DailyCheckInPage());
+                          //   },
 
                           //     //   ] else if (showCheckInButton() == "false") ...[
                           //     //     const SizedBox(
@@ -413,6 +413,7 @@ class _HomePageState extends State<HomePage> {
                           //     //     ),
                           //     //   ],
                           //   )
+                          // )
                         ],
                       ),
                     ),
@@ -806,13 +807,14 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-      getLastWeight().then((value) => setState(() => _weight = value));
-      setColorValue(_weight);
       // showCheckInButton();
 
       // checkDay(showCheckIn);
 
       if (mounted) {
+        getLastWeight().then((value) => setState(() => _weight = value));
+        setColorValue(_weight);
+        getWeightChanges();
         getDataFromFireStore().then((results) {
           SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
             setState(() {});

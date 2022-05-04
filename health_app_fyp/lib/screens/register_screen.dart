@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:health_app_fyp/initialregistrationscreens/initialbmi.dart';
 
 import '../../model/user_model.dart';
 import '../../services/database.dart';
@@ -339,7 +340,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     //   'DateTime': DateTime.now(),
     // });
 
-    Get.to(HomePage());
+    Get.to( FirstBMI());
     // Navigator.pushAndRemoveUntil(
     //     context,
     //     MaterialPageRoute(builder: (context) => const HomeScreen()),

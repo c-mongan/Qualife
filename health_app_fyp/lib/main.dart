@@ -57,8 +57,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   displaySplash() {
-    Timer(Duration(seconds: 2), () async {
-      if (await FirebaseAuth.instance.currentUser != null) {
+    Timer(const Duration(seconds: 2), () async {
+      if (FirebaseAuth.instance.currentUser != null) {
         Get.to(const HomePage());
       } else {
         Get.to(const LoginScreen());

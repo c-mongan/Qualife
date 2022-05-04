@@ -17,13 +17,13 @@ import 'package:health_app_fyp/MoodTracker/models.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
 
-class DailyCheckInPage extends StatefulWidget {
-  const DailyCheckInPage({Key? key}) : super(key: key);
+class InitialDailyCheckIn extends StatefulWidget {
+  const InitialDailyCheckIn({Key? key}) : super(key: key);
 
   static String id = 'check_in_page';
 
   @override
-  _DailyCheckInPageState createState() => _DailyCheckInPageState();
+  _InitialDailyCheckInState createState() => _InitialDailyCheckInState();
 }
 
 User? user = FirebaseAuth.instance.currentUser;
@@ -31,7 +31,7 @@ UserModel loggedInUser = UserModel();
 
 double oldweight = 0;
 
-class _DailyCheckInPageState extends State<DailyCheckInPage> {
+class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
   late WeightSliderController _controller;
   double _weight = 60.0;
 
@@ -124,11 +124,11 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
     Activity('assets/clean.png', 'Cleaning', false)
   ];
 
-  void setLastWeight() async {
-    getLastWeight().then((firestoreLastWeightText) {
-      lastWeight = firestoreLastWeightText;
-    });
-  }
+  // void setLastWeight() async {
+  //   getLastWeight().then((firestoreLastWeightText) {
+  //     lastWeight = firestoreLastWeightText;
+  //   });
+  // }
 
   double lastWeight = 0;
 
@@ -147,7 +147,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
 
         double firestoreLastWeight = lastWeight;
 
-        setLastWeight();
+        // setLastWeight();
 
         print(lastWeight);
         return firestoreLastWeight;
@@ -190,7 +190,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
   Widget build(BuildContext context) //=> Scaffold( {
   {
     return VisibilityDetector(
-      key: Key(DailyCheckInPage.id),
+      key: Key(InitialDailyCheckIn.id),
       onVisibilityChanged: (VisibilityInfo info) {},
       child: Scaffold(
         appBar: AppBar(
@@ -198,7 +198,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
           elevation: 0,
           backgroundColor: Colors.black,
         ),
-        bottomNavigationBar: CustomisedNavigationBar(),
+        // bottomNavigationBar: CustomisedNavigationBar(),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -472,10 +472,12 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                 //         textColor: Colors.white,
                                 //         fontSize: 16.0);
                                 //   } else
-                                if (mood != null && list.isNotEmpty) {
+                                if (mood != null && list.isNotEmpty)
+                                  //  &&
+                                  // tempdate.day != today
+
                                   getLastWeight().then((value) =>
                                       setState(() => oldweight = value));
-                                }
 
                                 double difference = _weight - oldweight;
 
@@ -542,7 +544,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                               .toStringAsFixed(1)),
                                     });
 
-                                    Get.to(const homePage.HomePage());
+                                    Get.to(homePage.HomePage());
                                   }
                                 }
                               }

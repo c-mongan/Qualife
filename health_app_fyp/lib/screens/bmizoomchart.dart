@@ -30,17 +30,17 @@ import '../widgets/customnavbar.dart';
 import 'daily_check_in.dart';
 
 /// Renders the range selector with line chart zooming option
-class RangeSelectorZoomingPage extends SampleView {
+class bmiZoomChart extends SampleView {
   /// Renders the range selector with line chart zooming option
 
   @override
-  _RangeSelectorZoomingPageState createState() =>
-      _RangeSelectorZoomingPageState();
+  _bmiZoomChartChartState createState() =>
+      _bmiZoomChartChartState();
 }
 
-class _RangeSelectorZoomingPageState extends SampleViewState
+class _bmiZoomChartChartState extends SampleViewState
     with SingleTickerProviderStateMixin {
-  _RangeSelectorZoomingPageState();
+  _bmiZoomChartChartState();
 
   List<_ChartData> chartData = <_ChartData>[];
 
@@ -165,7 +165,7 @@ class _RangeSelectorZoomingPageState extends SampleViewState
               Colors.grey,
             ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: splineChart = SfCartesianChart(
-              title: ChartTitle(text: 'BMI in the past month'),
+              title: ChartTitle(text: 'Your BMI fluctuations'),
               plotAreaBorderWidth: 0,
               tooltipBehavior: TooltipBehavior(
                   animationDuration: 0,
@@ -194,7 +194,7 @@ class _RangeSelectorZoomingPageState extends SampleViewState
                     splineType: SplineType.cardinal,
                     cardinalSplineTension: 0.5,
                     name: 'BMI',
-                    color: const Color.fromRGBO(0, 193, 187, 1),
+                    color: Colors.red,
                     animationDuration: 0,
                     xValueMapper: (_ChartData data, _) => data.x,
                     yValueMapper: (_ChartData data, _) => data.y),

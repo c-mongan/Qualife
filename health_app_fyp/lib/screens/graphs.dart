@@ -118,7 +118,7 @@ class _GraphPageState extends State<CheckInGraph> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Daily Check In Graph'),
+              title: const Text(''),
               elevation: 0,
               backgroundColor: Colors.black,
             ),
@@ -192,10 +192,10 @@ class _GraphPageState extends State<CheckInGraph> {
                                     majorGridLines:
                                         const MajorGridLines(width: 0),
 
-                                    interval: 1,
+                                    interval: 14,
                                     intervalType: DateTimeIntervalType.days,
-                                    maximum: today,
-                                    minimum: today.subtract(Duration(days: 7)),
+                                    // maximum: today,
+                                    // minimum: today.subtract(Duration(days: 7)),
                                     // majorGridLines: const MajorGridLines(
                                     //   color: Colors.grey,
                                     //   width: 0.1,

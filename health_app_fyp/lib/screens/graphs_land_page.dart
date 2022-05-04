@@ -7,8 +7,9 @@ import 'package:get/get.dart';
 import 'package:health_app_fyp/BMR+BMR/colors&fonts.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/bmi_graph.dart';
+import 'package:health_app_fyp/screens/bmizoomchart.dart';
 import 'package:health_app_fyp/screens/pie_chart_screen.dart';
-import 'package:health_app_fyp/screens/range_selector_zoom.dart';
+import 'package:health_app_fyp/screens/weightzoomchart.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -49,7 +50,7 @@ class _GraphPageState extends State<GraphsHome> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Graphs'),
+              title: const Text('Analytics'),
               elevation: 0,
               backgroundColor: Colors.black,
             ),
@@ -89,11 +90,12 @@ class _GraphPageState extends State<GraphsHome> {
                             thickness: 2,
                           ),
                           CustomListTile(
-                              text: "BMI Chart",
-                              leadingIcon: Icon(Icons.monitor_weight),
+                              text: "Body Composition",
+                              leadingIcon: Icon(Icons.boy_rounded),
                               trailingIcon: Icon(Icons.chevron_right),
                               onTap: () {
-                                Get.to(RangeSelectorZoomingPage());
+                                //Get.to(RangeSelectorZoomingPage());
+                                Get.to(GraphPage());
                               },
                               color: Color.fromARGB(255, 255, 255, 255)),
                           const Divider(
@@ -102,7 +104,35 @@ class _GraphPageState extends State<GraphsHome> {
                           ),
 
                           CustomListTile(
-                              text: "Pie Charts",
+                              text: "BMI Changes",
+                              leadingIcon: Icon(Icons.monitor_weight),
+                              trailingIcon: Icon(Icons.chevron_right),
+                              onTap: () {
+                                Get.to(bmiZoomChart());
+                                // Get.to(GraphPage());
+                              },
+                              color: Color.fromARGB(255, 255, 255, 255)),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 2,
+                          ),
+
+                          CustomListTile(
+                              text: "Weight Changes",
+                              leadingIcon: Icon(Icons.scale),
+                              trailingIcon: Icon(Icons.chevron_right),
+                              onTap: () {
+                                Get.to(RangeSelectorZoomingPage());
+                                // Get.to(GraphPage());
+                              },
+                              color: Color.fromARGB(255, 255, 255, 255)),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 2,
+                          ),
+
+                          CustomListTile(
+                              text: "Moods & Activities",
                               leadingIcon: Icon(Icons.pie_chart),
                               trailingIcon: Icon(Icons.chevron_right),
                               onTap: () {
