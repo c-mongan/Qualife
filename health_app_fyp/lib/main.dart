@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,26 @@ Future<void> main() async {
   await Firebase.initializeApp();
   HttpOverrides.global = MyHttpOverrides();
 
-  runApp(
-      const GetMaterialApp(home: MyApp(), debugShowCheckedModeBanner: false));
+  final configuration = DdSdkConfiguration(
+    clientToken: 'pubf95e31114c49951733bdcbd1df890da1',
+    env: 'prod',
+    site: DatadogSite.us1,
+    trackingConsent: TrackingConsent.granted,
+    nativeCrashReportEnabled: true,
+    loggingConfiguration: LoggingConfiguration(),
+    tracingConfiguration: TracingConfiguration(),
+    rumConfiguration:
+        RumConfiguration(applicationId: 'ee8d9e09-6a24-4396-8d80-c9e07508d1d6'),
+  );
+  await DatadogSdk.runApp(configuration, () async {
+    runApp(
+        const GetMaterialApp(home: MyApp(), debugShowCheckedModeBanner: false));
+
+    DatadogSdk.instance.logs?.debug("A debug message.");
+    DatadogSdk.instance.logs?.info("Some relevant information?");
+    DatadogSdk.instance.logs?.warn("An important warning…");
+    DatadogSdk.instance.logs?.error("An error was met!");
+  });
 }
 
 class MyHttpOverrides extends HttpOverrides {

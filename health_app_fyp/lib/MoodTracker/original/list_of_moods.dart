@@ -238,7 +238,7 @@ class _MyTestState extends State<ListMoods> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      // "Activities: " +
+                                     
                                       data['Activities'].toString().substring(
                                               1,
                                               data['Activities']
@@ -248,7 +248,7 @@ class _MyTestState extends State<ListMoods> {
                                           "             " +
                                           data['DateOfMood'].toString() +
                                           " " +
-                                          //" at Time: " +
+                                         
                                           data['TimeOfMood'].toString(),
                                       style: TextStyle(
                                         fontSize: 15.0,
@@ -280,9 +280,7 @@ class _MyTestState extends State<ListMoods> {
           child: const Icon(MdiIcons.plus, color: Colors.white),
           backgroundColor: Colors.green,
           onTap: () async {
-            // await Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => PickDateMoodTracker()),
+           
             Get.to(PickDateMoodTracker());
           },
           label: 'Add an entry',
