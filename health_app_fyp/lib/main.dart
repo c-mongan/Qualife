@@ -25,15 +25,42 @@ Future<void> main() async {
     rumConfiguration:
         RumConfiguration(applicationId: 'ee8d9e09-6a24-4396-8d80-c9e07508d1d6'),
   );
+
+
   await DatadogSdk.runApp(configuration, () async {
-    runApp(
-        const GetMaterialApp(home: MyApp(), debugShowCheckedModeBanner: false));
+    runApp(GetMaterialApp(
+        home: const MyApp(),
+
+
+        navigatorObservers: [
+          DatadogNavigationObserver(datadogSdk: DatadogSdk.instance),
+        ],
+        debugShowCheckedModeBanner: false));
 
     DatadogSdk.instance.logs?.debug("A debug message.");
+
     DatadogSdk.instance.logs?.info("Some relevant information?");
     DatadogSdk.instance.logs?.warn("An important warning…");
     DatadogSdk.instance.logs?.error("An error was met!");
+
+    var foodLogger = DatadogSdk.instance.createLogger(
+      LoggingConfiguration(loggerName: 'foodLogger'),
+
+
+       
+    );
+
+    
+
+
+     var loginLogger= DatadogSdk.instance.createLogger(
+      LoggingConfiguration(loggerName: 'loggedIn'),
+    );
+
+
   });
+
+  
 }
 
 class MyHttpOverrides extends HttpOverrides {

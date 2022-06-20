@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -250,6 +251,44 @@ class _HomePageState extends State<HomePage> {
         .get()
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
+
+//Associates the RUM with the user
+      DatadogSdk.instance.setUserInfo(
+        id: user!.uid,
+        name: loggedInUser.firstName,
+        email: loggedInUser.email,
+      );
+
+      final myLogger = DatadogSdk.instance.createLogger(
+        LoggingConfiguration(loggerName: "myLogger"),
+      );
+
+      myLogger.info("Logged in user: ${loggedInUser.firstName}");
+
+      myLogger.info('This is a test.');
+
+// final myLogger = DatadogSdk.instance.createLogger(
+//   LoggingConfiguration({
+//     loggerName: 'Additional logger'
+//   })
+// );
+
+// myLogger.info('Info from my additional logger.');
+
+//    ddLogger = DdLogs(loggerName: 'orders');
+// // optionally set a value for HOST
+// // ddLogger.addAttribute('hostname', <DEVICE IDENTIFIER>);
+
+// ddLogger.addTag('restaurant_type', 'pizza');
+// ddLogger.removeTag('restaurant_type');
+
+// // add attribute to every log
+// ddLogger.addAttribute('toppings', 'extra_cheese');
+
+// // add atttributes to some logs
+// ddLogger.log('time to cook pizza', Level.FINE, attributes: {
+//   'durationInMilliseconds': timer.elapsedMilliseconds,
+// });
 
       getLastWeight().then((value) => setState(() => _weight = value));
       setColorValue(_weight);

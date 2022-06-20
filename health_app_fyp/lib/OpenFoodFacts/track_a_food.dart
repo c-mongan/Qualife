@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -176,7 +177,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
     ProductResult result = await OpenFoodAPIClient.getProduct(configuration);
 
     if (result.status == 1) {
-     
       if (result.status != 1) {
         print(
             "Error retreiving the product with barcode : $barcode If the barcode number here matches the one on your food item , the item may not exist in the database. Please visit openfoodfacts.org ");
@@ -184,11 +184,8 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
         foodNameTxt = 'error';
         found = false;
         return;
-
-       
       } else {
         found = true;
-
 
         if (result.product!.productName != null) {
           Name = result.product!.productName;
@@ -196,9 +193,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           Name = "ERROR: Item Data Exists In Database But Name Not Found!";
         }
 
-      
         String? ingredientsT = result.product!.ingredientsText;
-        
 
         double? energy_100g = result.product!.nutriments!.energy;
 
@@ -215,7 +210,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           double? servingQuan = result.product!.servingQuantity;
           print(servingQuan);
 
-         
           double? fat_100g = result.product!.nutriments!.fat;
 
           double? saltServing = result.product!.nutriments!.saltServing;
@@ -224,12 +218,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           String uid = FirebaseAuth.instance.currentUser!.uid;
           DateTime inputTime = (DateTime.now());
 
-
           print(Name);
           print(ingredientsT);
           print(energy100gKcal.toStringAsFixed(2));
 
-         
           FirebaseFirestore.instance.collection('TempFood').add({
             'Food Name': Name,
             'DateTime': inputTime,
@@ -240,33 +232,22 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           print("Temp food added");
 
           getFoodName().then((gotFoodName) {
-          
             foodNameTxt = gotFoodName;
-            
+
             print("getFoodName method called");
           });
 
           if (foodNameTxt.isNotEmpty) {
             found = true;
           }
-
-        
-
         }
-       
       }
-   
-
     }
   }
-
-  
 
   Future<void> runBarcodeScanner() async {
     scanBarcode();
   }
-
- 
 
   void exitscreen(bool reload) {
     Navigator.pop(context, reload);
@@ -371,7 +352,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                               );
                             },
                           )),
-
                           Card(
                               child: Material(
                                   color: Colors.white,
@@ -383,13 +363,9 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                         } else {
                                           return 'Servings ';
                                         }
-                                      }())
-                                        
-                                          ),
+                                      }())),
                                       subtitle: const Text(
-                                          "Please select amount of servings"
-                                         
-                                          ),
+                                          "Please select amount of servings"),
                                       leading: SizedBox(
                                           width: 40,
                                           // ignore: deprecated_member_use
@@ -406,13 +382,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                       maxNumber: 20,
                                                       minNumber: 1,
                                                       selectedNumber: servings,
-                                                   
-
                                                       onChanged: (int servNum) {
                                                         //Dont forget to setState so it changes
                                                         setState(() {
                                                           servings = servNum;
-                                                      
                                                         });
                                                       })))))),
                           Card(
@@ -426,16 +399,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                         } else {
                                           return 'Serving size (g)) ';
                                         }
-                                      }())
-                                        
-                                          ),
+                                      }())),
                                       subtitle: const Text(
-                                          "Please enter the weight in grammes for your serving(s)"
-                                         
-                                          ),
+                                          "Please enter the weight in grammes for your serving(s)"),
                                       leading: SizedBox(
                                           width: 65,
-                                     
                                           child: OutlineButton(
                                               borderSide: const BorderSide(
                                                   width: 2,
@@ -452,32 +420,23 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                                       selectedNumber:
                                                           servingSize,
                                                       step: 5,
-                                                    
                                                       onChanged:
                                                           (int servSize) {
-                                                        
                                                         setState(() {
                                                           servingSize =
                                                               servSize;
-                                                          
                                                         });
                                                       })))))),
                           Button(
                               edges: const EdgeInsets.all(0.0),
                               color: Colors.white,
-                              text: const Text('Enter food', style: textStyle2
-
-                                 
-                                  ),
+                              text: const Text('Enter food', style: textStyle2),
                               onTap: () {
                                 double totalCals =
                                     servCalorie! / 100 * servingSize * servings;
 
                                 getFoodName().then((gotFoodName) {
-                                 
                                   foodNameTxt = gotFoodName;
-                                  
-                                 
                                 });
 
                                 FirebaseFirestore.instance
@@ -493,19 +452,13 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                   'DateTime': inputTime,
                                 });
 
-                              
-
                                 getLastCalsRemainingDay().then((time) {
-                                  
-
                                   DateTime tempdate =
                                       DateTime.fromMicrosecondsSinceEpoch(
                                           time.microsecondsSinceEpoch);
 
                                   if (tempdate.day != today) {
                                     getTdeeVal().then((tdee) {
-                                    
-
                                       servings - 1;
                                       double totalCals = servings *
                                           servCalorie! /
@@ -513,7 +466,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           servingSize;
                                       double totalDeducts = tdee - totalCals;
 
-                                  
                                       FirebaseFirestore.instance
                                           .collection('remainingCalories')
                                           .add({
@@ -524,10 +476,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                     });
                                   } else {
                                     getDailyCalsRemaining().then((calsLeft) {
-                                    
                                       double num = double.parse(calsLeft);
-
-                                    
 
                                       servings - 1;
 
@@ -537,8 +486,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           servingSize;
                                       double totalDeducts = num - totalCals;
 
-                                   
-
                                       FirebaseFirestore.instance
                                           .collection('remainingCalories')
                                           .add({
@@ -546,8 +493,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                         'Cals': totalDeducts,
                                         'DateTime': inputTime,
                                       });
-
-                              
                                     });
                                   }
                                 });
@@ -558,7 +503,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
               ]));
             })));
   }
-
 
   //THIS METHOD IS FOR GETTING FOOD NAME INTO A STRING , FROM TEMPFOOOD
   Future<String> getFoodName() async {
@@ -572,11 +516,9 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
       for (var name in foodname.docs) {
-       
         foodNameTxt = foodname.docs[0].get("Food Name");
         //print(tempText1);
         String gotFoodName = foodNameTxt.toString();
-       
 
         return gotFoodName;
       }
@@ -590,8 +532,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
   void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
     double result = double.parse(tdee);
     double calRemaining = result - energy100gKcal;
-    
-
 
     FirebaseFirestore.instance.collection('remainingCalories').add({
       'userID': uid,
@@ -600,6 +540,3 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
     });
   }
 }
-  
-
-
