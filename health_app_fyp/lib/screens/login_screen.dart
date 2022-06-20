@@ -1,3 +1,4 @@
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,6 +21,10 @@ class _LoginScreenState extends State<LoginScreen> {
   //editing controller
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  var myLogger = DatadogSdk.instance.createLogger(
+    LoggingConfiguration(loggerName: "Logins"),
+  );
 
   //firebase
   final _auth = FirebaseAuth.instance;
@@ -224,6 +229,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ]))));
   }
 
+// try {
+//   await FirebaseAuth.instance.signInWithEmailAndPassword(
+//     email: "barry.allen@example.com",
+//     password: "SuperSecretPassword!"
+//   );
+// } on FirebaseAuthException catch  (e) {
+//   print('Failed with error code: ${e.code}');
+//   print(e.message);
+
 //Login Method
 //Google async function
   void signIn(String email, String password) async {
@@ -234,6 +248,10 @@ class _LoginScreenState extends State<LoginScreen> {
 //If Login is a success we will pass it the UserID
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful! "),
+
+                  myLogger.info(
+                      "Logged in user: ${FirebaseAuth.instance.currentUser?.uid}"),
+
                   //Login Success message
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomePage())),
@@ -243,25 +261,40 @@ class _LoginScreenState extends State<LoginScreen> {
         switch (error.code) {
           case "invalid-email":
             errorMessage = "Your email address appears to be invalid.";
-
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
             break;
           case "wrong-password":
             errorMessage = "Your password is incorrect.";
+
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
+
             break;
           case "user-not-found":
             errorMessage = "User with this email doesn't exist.";
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
             break;
           case "user-disabled":
             errorMessage = "User with this email has been disabled.";
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
             break;
           case "too-many-requests":
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
             errorMessage = "Too many requests";
             break;
           case "operation-not-allowed":
             errorMessage = "Signing in with Email and Password is not enabled.";
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
             break;
           default:
             errorMessage = "An unexpected Error has occurred.";
+            myLogger.error("Login Error: $errorMessage "
+                "User Email:  $email, ");
         }
         Fluttertoast.showToast(msg: errorMessage!);
       }

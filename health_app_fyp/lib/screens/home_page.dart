@@ -252,20 +252,7 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-//Associates the RUM with the user
-      DatadogSdk.instance.setUserInfo(
-        id: user!.uid,
-        name: loggedInUser.firstName,
-        email: loggedInUser.email,
-      );
 
-      final myLogger = DatadogSdk.instance.createLogger(
-        LoggingConfiguration(loggerName: "myLogger"),
-      );
-
-      myLogger.info("Logged in user: ${loggedInUser.firstName}");
-
-      myLogger.info('This is a test.');
 
 // final myLogger = DatadogSdk.instance.createLogger(
 //   LoggingConfiguration({

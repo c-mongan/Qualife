@@ -26,41 +26,22 @@ Future<void> main() async {
         RumConfiguration(applicationId: 'ee8d9e09-6a24-4396-8d80-c9e07508d1d6'),
   );
 
-
   await DatadogSdk.runApp(configuration, () async {
     runApp(GetMaterialApp(
         home: const MyApp(),
 
-
+//This tracks the changes in users navigation
         navigatorObservers: [
           DatadogNavigationObserver(datadogSdk: DatadogSdk.instance),
         ],
         debugShowCheckedModeBanner: false));
 
-    DatadogSdk.instance.logs?.debug("A debug message.");
+    // DatadogSdk.instance.logs?.debug("A debug message.");
 
-    DatadogSdk.instance.logs?.info("Some relevant information?");
-    DatadogSdk.instance.logs?.warn("An important warning…");
-    DatadogSdk.instance.logs?.error("An error was met!");
-
-    var foodLogger = DatadogSdk.instance.createLogger(
-      LoggingConfiguration(loggerName: 'foodLogger'),
-
-
-       
-    );
-
-    
-
-
-     var loginLogger= DatadogSdk.instance.createLogger(
-      LoggingConfiguration(loggerName: 'loggedIn'),
-    );
-
-
+    // DatadogSdk.instance.logs?.info("Some relevant information?");
+    // DatadogSdk.instance.logs?.warn("An important warning…");
+    // DatadogSdk.instance.logs?.error("An error was met!");
   });
-
-  
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -105,6 +86,18 @@ class _SplashScreenState extends State<SplashScreen> {
   displaySplash() {
     Timer(const Duration(seconds: 2), () async {
       if (FirebaseAuth.instance.currentUser != null) {
+        //Associates the RUM with the user
+        DatadogSdk.instance.setUserInfo(
+          id: FirebaseAuth.instance.currentUser?.uid,
+        );
+
+        final myLogger = DatadogSdk.instance.createLogger(
+          LoggingConfiguration(loggerName: "Logins"),
+        );
+
+        myLogger
+            .info("Logged in user: ${FirebaseAuth.instance.currentUser?.uid}");
+
         Get.to(const HomePage());
       } else {
         Get.to(const LoginScreen());
