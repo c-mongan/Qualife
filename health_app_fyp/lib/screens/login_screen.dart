@@ -252,6 +252,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   myLogger.info(
                       "Logged in user: ${FirebaseAuth.instance.currentUser?.uid}"),
 
+  //Associates the RUM with the user
+        DatadogSdk.instance.setUserInfo(
+          id: FirebaseAuth.instance.currentUser?.uid,
+          email: FirebaseAuth.instance.currentUser?.email,
+            ),
                   //Login Success message
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomePage())),

@@ -89,7 +89,11 @@ class _SplashScreenState extends State<SplashScreen> {
         //Associates the RUM with the user
         DatadogSdk.instance.setUserInfo(
           id: FirebaseAuth.instance.currentUser?.uid,
+          email: FirebaseAuth.instance.currentUser?.email,
         );
+
+
+        
 
         final myLogger = DatadogSdk.instance.createLogger(
           LoggingConfiguration(loggerName: "Logins"),

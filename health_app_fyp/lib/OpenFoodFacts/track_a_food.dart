@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_material_pickers/helpers/show_number_picker.dart';
 import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
+import 'package:health_app_fyp/initialregistrationscreens/initialdailycheckin.dart';
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
@@ -25,10 +26,14 @@ class BarcodeScanSecond extends StatefulWidget {
 class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
   String _scannedBarcode = 'Unknown';
 
+  final foodTrackerLogger = DatadogSdk.instance.createLogger(
+    LoggingConfiguration(loggerName: 'Calorie Tracker Logger'),
+  );
   // DatabaseManager helper = DatabaseManager();
   @override
   void initState() {
     super.initState();
+
     runBarcodeScanner();
     getFoodName();
   }
@@ -181,8 +186,12 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
         print(
             "Error retreiving the product with barcode : $barcode If the barcode number here matches the one on your food item , the item may not exist in the database. Please visit openfoodfacts.org ");
 
+        foodTrackerLogger
+            .warn('Food item with barcode $barcode not found in database');
+
         foodNameTxt = 'error';
         found = false;
+
         return;
       } else {
         found = true;
@@ -191,6 +200,8 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           Name = result.product!.productName;
         } else {
           Name = "ERROR: Item Data Exists In Database But Name Not Found!";
+
+          foodTrackerLogger.warn('Food item with barcode $barcode has no name');
         }
 
         String? ingredientsT = result.product!.ingredientsText;
@@ -228,6 +239,9 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
             'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
             'userID': uid
           });
+
+          foodTrackerLogger.info(
+              'Food item : $Name with barcode $barcode added to database');
 
           print("Temp food added");
 
@@ -465,7 +479,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           100 *
                                           servingSize;
                                       double totalDeducts = tdee - totalCals;
-
+//Allows us to see how many of our users are overconsuming calories
+                                      if (totalDeducts < 0) {
+                                        foodTrackerLogger.info(
+                                            "User $uid has exceeded their daily recommended calorie intake by $totalDeducts calories today");
+                                      }
                                       FirebaseFirestore.instance
                                           .collection('remainingCalories')
                                           .add({
@@ -485,6 +503,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           100 *
                                           servingSize;
                                       double totalDeducts = num - totalCals;
+//Allows us to see how many of our users are overconsuming calories
+                                      if (totalDeducts < 0) {
+                                        foodTrackerLogger.info(
+                                            "User $uid has exceeded their daily recommended calorie intake by $totalDeducts calories today");
+                                      }
 
                                       FirebaseFirestore.instance
                                           .collection('remainingCalories')
@@ -532,6 +555,12 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
   void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
     double result = double.parse(tdee);
     double calRemaining = result - energy100gKcal;
+
+//Allows us to see how many of our users are overconsuming calories
+    if (calRemaining < 0) {
+      foodTrackerLogger.info(
+          "User $uid has exceeded their daily recommended calorie intake by $calRemaining calories today");
+    }
 
     FirebaseFirestore.instance.collection('remainingCalories').add({
       'userID': uid,
