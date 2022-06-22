@@ -1,17 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/MoodTracker/models.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 
-import 'package:health_app_fyp/MoodTracker/original/list_of_moods.dart';
 import 'package:health_app_fyp/screens/display_mood_pie_chart.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
-import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
-import 'package:intl/intl.dart';
 
-import 'package:health_app_fyp/SleepTracker/list_of_sleep_time.dart';
 
 import '../MoodTracker/moodcard.dart';
 

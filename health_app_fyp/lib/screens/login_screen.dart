@@ -2,7 +2,6 @@ import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:health_app_fyp/screens/register_screen.dart';
 
 import 'home_page.dart';
@@ -23,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   var myLogger = DatadogSdk.instance.createLogger(
-    LoggingConfiguration(loggerName: "Logins"),
+    LoggingConfiguration(loggerName: "loginLogger"),
   );
 
   //firebase
@@ -102,7 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
               .size
               .width, //resizes button to width of fields
           //When the button is pressed , use the controllers to set the text
+
           onPressed: () {
+            
+
             signIn(emailController.text, passwordController.text);
           },
           child: const Text(
@@ -252,11 +254,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   myLogger.info(
                       "Logged in user: ${FirebaseAuth.instance.currentUser?.uid}"),
 
-  //Associates the RUM with the user
-        DatadogSdk.instance.setUserInfo(
-          id: FirebaseAuth.instance.currentUser?.uid,
-          email: FirebaseAuth.instance.currentUser?.email,
-            ),
+                  myLogger.addAttribute('hostname', uid),
+
+                  //Associates the RUM with the user
+                  DatadogSdk.instance.setUserInfo(
+                    id: FirebaseAuth.instance.currentUser?.uid,
+                    email: FirebaseAuth.instance.currentUser?.email,
+                  ),
                   //Login Success message
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomePage())),

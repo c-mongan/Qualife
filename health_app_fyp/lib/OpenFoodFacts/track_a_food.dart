@@ -239,9 +239,15 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
             'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
             'userID': uid
           });
+          foodTrackerLogger.addAttribute('hostname', uid);
+          foodTrackerLogger
+              .info('Food item :$Name with barcode $barcode added to database');
 
-          foodTrackerLogger.info(
-              'Food item : $Name with barcode $barcode added to database');
+//Logging item scanned details
+          foodTrackerLogger.addAttribute('hostname', uid);
+          foodTrackerLogger.addAttribute('item_name', Name!);
+          foodTrackerLogger.addAttribute('item_barcode', barcode);
+          foodTrackerLogger.addAttribute('calories_per_serving', servCalorie!);
 
           print("Temp food added");
 
@@ -481,7 +487,14 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                       double totalDeducts = tdee - totalCals;
 //Allows us to see how many of our users are overconsuming calories
                                       if (totalDeducts < 0) {
-                                        foodTrackerLogger.info(
+                                        foodTrackerLogger.addAttribute(
+                                            'hostname', uid);
+                                        foodTrackerLogger.addAttribute(
+                                            'calories_overconsumed',
+                                            totalDeducts);
+                                        foodTrackerLogger.addAttribute(
+                                            'hostname', uid);
+                                        foodTrackerLogger.warn(
                                             "User $uid has exceeded their daily recommended calorie intake by $totalDeducts calories today");
                                       }
                                       FirebaseFirestore.instance
@@ -505,7 +518,14 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                       double totalDeducts = num - totalCals;
 //Allows us to see how many of our users are overconsuming calories
                                       if (totalDeducts < 0) {
-                                        foodTrackerLogger.info(
+                                        foodTrackerLogger.addAttribute(
+                                            'hostname', uid);
+                                        foodTrackerLogger.addAttribute(
+                                            'calories_overconsumed',
+                                            totalDeducts);
+                                        foodTrackerLogger.addAttribute(
+                                            'hostname', uid);
+                                        foodTrackerLogger.warn(
                                             "User $uid has exceeded their daily recommended calorie intake by $totalDeducts calories today");
                                       }
 
@@ -552,20 +572,22 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
     }
   }
 
-  void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
-    double result = double.parse(tdee);
-    double calRemaining = result - energy100gKcal;
+//   void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
+//     double result = double.parse(tdee);
+//     double calRemaining = result - energy100gKcal;
 
-//Allows us to see how many of our users are overconsuming calories
-    if (calRemaining < 0) {
-      foodTrackerLogger.info(
-          "User $uid has exceeded their daily recommended calorie intake by $calRemaining calories today");
-    }
+// //Allows us to see how many of our users are overconsuming calories
+//     if (calRemaining < 0) {
+//         foodTrackerLogger.addAttribute('hostname', uid);
+//             foodTrackerLogger.addAttribute('calories_overconsumed', totalDeducts);
+//       foodTrackerLogger.info(
+//           "User $uid has exceeded their daily recommended calorie intake by $calRemaining calories today");
+//     }
 
-    FirebaseFirestore.instance.collection('remainingCalories').add({
-      'userID': uid,
-      'Cals': calRemaining,
-      'DateTime': inputTime,
-    });
-  }
+//     FirebaseFirestore.instance.collection('remainingCalories').add({
+//       'userID': uid,
+//       'Cals': calRemaining,
+//       'DateTime': inputTime,
+//     });
+//   }
 }

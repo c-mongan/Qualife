@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,12 +36,6 @@ Future<void> main() async {
           DatadogNavigationObserver(datadogSdk: DatadogSdk.instance),
         ],
         debugShowCheckedModeBanner: false));
-
-    // DatadogSdk.instance.logs?.debug("A debug message.");
-
-    // DatadogSdk.instance.logs?.info("Some relevant information?");
-    // DatadogSdk.instance.logs?.warn("An important warning…");
-    // DatadogSdk.instance.logs?.error("An error was met!");
   });
 }
 
@@ -92,15 +87,15 @@ class _SplashScreenState extends State<SplashScreen> {
           email: FirebaseAuth.instance.currentUser?.email,
         );
 
-
-        
-
         final myLogger = DatadogSdk.instance.createLogger(
-          LoggingConfiguration(loggerName: "Logins"),
+          LoggingConfiguration(loggerName: "Logins", printLogsToConsole: true),
         );
 
-        myLogger
-            .info("Logged in user: ${FirebaseAuth.instance.currentUser?.uid}");
+        String? id = FirebaseAuth.instance.currentUser?.uid;
+        myLogger.addAttribute('hostname', id!);
+
+        myLogger.info(
+            "Logged in user: ${FirebaseAuth.instance.currentUser?.uid} ");
 
         Get.to(const HomePage());
       } else {

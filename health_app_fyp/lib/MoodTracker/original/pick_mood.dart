@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -296,6 +297,22 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
                           'Icon': image,
                           'MoodValue': moodValue
                         });
+
+                        final moodTrackerLogger =
+                            DatadogSdk.instance.createLogger(
+                          LoggingConfiguration(
+                              loggerName: 'Mood Tracker Logger'),
+                        );
+
+                        moodTrackerLogger.addAttribute('hostname', uid);
+
+                        moodTrackerLogger.addAttribute('mood', mood!);
+                        moodTrackerLogger.addAttribute('activities', list);
+                        moodTrackerLogger.addAttribute(
+                            'dateofmood', widget.selectedDate);
+
+                        moodTrackerLogger.info(
+                            'The user reported the mood : "$mood" when doing the actvitity(s) : $list  on the date ${widget.selectedDate} ');
 
                         for (int i = 0; i < list.length; i++) {
                           FirebaseFirestore.instance
