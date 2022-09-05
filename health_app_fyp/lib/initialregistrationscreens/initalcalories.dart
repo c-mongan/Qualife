@@ -718,8 +718,8 @@ class _FirstTDEEState extends State<FirstTDEE> {
                 children: <Widget>[
                   Expanded(
                       flex: 2,
-                      child: RaisedButton(
-                        color: Colors.grey,
+                      child: TextButton(
+                        // color: Colors.grey,
                         onPressed: () {
                           {
                             Navigator.push(

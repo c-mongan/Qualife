@@ -259,8 +259,8 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
                     ),
                   ],
                 ),
-                RaisedButton(
-                  color: Colors.black,
+                TextButton(
+                  //color: Colors.black,
                   child: Text(
                     "Select Time",
                     style: TextStyle(color: Colors.white, fontSize: 15),

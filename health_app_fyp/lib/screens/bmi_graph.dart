@@ -74,7 +74,7 @@ class _GraphPageState extends State<GraphPage> {
       if (mounted) {
         // check whether the state object is in tree
         getBMIDataFromFireStore().then((results) {
-          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
           });
         });

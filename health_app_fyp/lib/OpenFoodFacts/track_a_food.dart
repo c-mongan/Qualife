@@ -389,11 +389,21 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                       leading: SizedBox(
                                           width: 40,
                                           // ignore: deprecated_member_use
-                                          child: OutlineButton(
+                                          child: OutlinedButton(
                                               child: Text(servings.toString()),
-                                              borderSide: const BorderSide(
-                                                  width: 2,
-                                                  color: Colors.blueGrey),
+                                              // side: const BorderSide(
+                                              //     width: 2,
+                                              //     color: Colors.blueGrey),
+                                                  style: ButtonStyle(
+              padding: MaterialStateProperty.all(
+                EdgeInsets.symmetric(vertical: 14),
+              ),
+              backgroundColor:
+                  MaterialStateProperty.all(Theme.of(context).primaryColor),
+              shape: MaterialStateProperty.all(
+                StadiumBorder(),
+              ),
+            ),
                                               onPressed: () =>
                                                   showMaterialNumberPicker(
                                                       context: context,
@@ -424,10 +434,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                           "Please enter the weight in grammes for your serving(s)"),
                                       leading: SizedBox(
                                           width: 65,
-                                          child: OutlineButton(
-                                              borderSide: const BorderSide(
-                                                  width: 2,
-                                                  color: Colors.blueGrey),
+                                          child: OutlinedButton(
+                                              // borderSide: const BorderSide(
+                                              //     width: 2,
+                                              //     color: Colors.blueGrey),
+                                              
                                               child: Text(
                                                   servingSize.toString() + "g"),
                                               onPressed: () =>

@@ -252,8 +252,6 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-
-
 // final myLogger = DatadogSdk.instance.createLogger(
 //   LoggingConfiguration({
 //     loggerName: 'Additional logger'
@@ -283,7 +281,7 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         // check whether the state object is in tree
         getDataFromFireStore().then((results) {
-          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
           });
         });
@@ -466,12 +464,12 @@ class _HomePageState extends State<HomePage> {
                               thickness: 2,
                             ),
 
-                            getWeightDifference(),
+                            // getWeightDifference(),
 
-                            const Divider(
-                              color: Colors.grey,
-                              thickness: 2,
-                            ),
+                            // const Divider(
+                            //   color: Colors.grey,
+                            //   thickness: 2,
+                            // ),
                             SizedBox(
                               height: 40,
                               child: ListTile(
@@ -840,9 +838,9 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         getLastWeight().then((value) => setState(() => _weight = value));
         setColorValue(_weight);
-        getWeightChanges();
+        //getWeightChanges();
         getDataFromFireStore().then((results) {
-          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
           });
         });

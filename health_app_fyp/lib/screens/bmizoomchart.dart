@@ -34,8 +34,7 @@ class bmiZoomChart extends SampleView {
   /// Renders the range selector with line chart zooming option
 
   @override
-  _bmiZoomChartChartState createState() =>
-      _bmiZoomChartChartState();
+  _bmiZoomChartChartState createState() => _bmiZoomChartChartState();
 }
 
 class _bmiZoomChartChartState extends SampleViewState
@@ -103,7 +102,7 @@ class _bmiZoomChartChartState extends SampleViewState
       if (mounted) {
         // check whether the state object is in tree
         getDataFromFireStore().then((results) {
-          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
           });
         });

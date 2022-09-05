@@ -22,7 +22,7 @@ Future<void> main() async {
     trackingConsent: TrackingConsent.granted,
     nativeCrashReportEnabled: true,
     loggingConfiguration: LoggingConfiguration(),
-    tracingConfiguration: TracingConfiguration(),
+    //tracingConfiguration: TracingConfiguration(),
     rumConfiguration:
         RumConfiguration(applicationId: 'ee8d9e09-6a24-4396-8d80-c9e07508d1d6'),
   );
@@ -94,8 +94,8 @@ class _SplashScreenState extends State<SplashScreen> {
         String? id = FirebaseAuth.instance.currentUser?.uid;
         myLogger.addAttribute('hostname', id!);
 
-        myLogger.info(
-            "Logged in user: ${FirebaseAuth.instance.currentUser?.uid} ");
+        myLogger
+            .info("Logged in user: ${FirebaseAuth.instance.currentUser?.uid} ");
 
         Get.to(const HomePage());
       } else {

@@ -92,7 +92,7 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
       loggedInUser = UserModel.fromMap(value.data());
 
       if (mounted) {
-        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           if (mounted) {
             setState(() {
               key = 1;
@@ -146,7 +146,7 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
       loggedInUser = UserModel.fromMap(value.data());
 
       if (mounted) {
-        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           if (mounted) {
             setState(() {
               key = 1;
@@ -248,8 +248,6 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
             return const Text("Empty List Error");
           } else {
             final data = snapshot.requireData;
-
-
 
             getActivityListfromSnapshot(data);
 

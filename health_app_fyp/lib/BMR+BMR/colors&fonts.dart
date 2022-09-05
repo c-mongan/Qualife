@@ -3,16 +3,15 @@
 import 'package:flutter/material.dart';
 
 const Color AppBarColor = Color(0xffFF2400);
-const ActiveCardColor = Color(0xffFF2400);
-const InactiveCardColor = Color(0xff246EE9);
-const BottomButtonColor = Color(0xffFF2400);
-const BottomReturnButtonColor = Color(0xff246EE9);
+const ActiveCardColor = Color.fromARGB(255, 62, 180, 137);
+const InactiveCardColor = Color.fromARGB(255, 0, 0, 0);
+const BottomButtonColor = Color.fromARGB(255, 62, 180, 137);
+const BottomReturnButtonColor = Color.fromARGB(255, 0, 0, 0);
 
 const RoyalBlue = Color.fromARGB(255, 36, 110, 233);
 const ScarletRed = Color.fromARGB(255, 255, 0, 0);
 const StrikingPink = Color.fromARGB(255, 255, 197, 243);
 const MintGreen = Color.fromARGB(255, 62, 180, 137);
-
 
 const DeepSeaBlue = Color.fromARGB(255, 0, 0, 255);
 const BrightSkyBlue = Color.fromARGB(255, 0, 255, 255);
@@ -27,8 +26,6 @@ const BrightCyan = Color.fromARGB(255, 0, 255, 255);
 const BrightMagenta = Color.fromARGB(255, 255, 0, 255);
 const BrightWhite = Color.fromARGB(255, 255, 255, 255);
 const BrightBlack = Color.fromARGB(255, 0, 0, 0);
-
-  
 
 const textStyle1 = TextStyle(
   color: Colors.white,

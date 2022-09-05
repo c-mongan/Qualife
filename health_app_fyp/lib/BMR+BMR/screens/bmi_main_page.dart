@@ -240,8 +240,8 @@ class _BMITDEEState extends State<BMITDEE> {
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: Color(0xff246EE9),
-                          thumbColor: Color(0xff246EE9),
-                          overlayColor: Colors.indigo.shade300,
+                          // thumbColor: Color(0xff246EE9),
+                          // overlayColor: Colors.indigo.shade300,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 15.0),
                           overlayShape: const RoundSliderOverlayShape(
@@ -260,7 +260,7 @@ class _BMITDEEState extends State<BMITDEE> {
                           },
                           min: 80.0,
                           max: 240.0,
-                          inactiveColor: Color(0xffFF2400),
+                          // inactiveColor: Color(0xffFF2400),
                         ),
                       )
                     ],

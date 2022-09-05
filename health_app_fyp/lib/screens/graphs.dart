@@ -9,7 +9,6 @@ import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -84,7 +83,7 @@ class _GraphPageState extends State<CheckInGraph> {
 
       // check whether the state object is in tree
       getBMIDataFromFireStore().then((results) {
-        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           if (mounted) {
             setState(() {
               key = 1;

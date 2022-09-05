@@ -713,8 +713,8 @@ class _SecondPageState extends State<SecondPage> {
                 children: <Widget>[
                   Expanded(
                       flex: 2,
-                      child: RaisedButton(
-                        color: Colors.grey,
+                      child: TextButton(
+                        //  child: Colors.grey,
                         onPressed: () {
                           {
                             bodyLogger.addAttribute('hostname', uid);

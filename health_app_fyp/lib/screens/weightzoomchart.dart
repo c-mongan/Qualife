@@ -109,7 +109,7 @@ class _RangeSelectorZoomingPageState extends SampleViewState
       if (mounted) {
         // check whether the state object is in tree
         getDataFromFireStore().then((results) {
-          SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
           });
         });
