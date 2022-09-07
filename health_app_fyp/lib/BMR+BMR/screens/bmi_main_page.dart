@@ -239,7 +239,10 @@ class _BMITDEEState extends State<BMITDEE> {
                       ),
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Color(0xff246EE9),
+                          //activeTrackColor: Color(0xff246EE9),
+
+                          activeTrackColor: Color.fromARGB(255, 255, 255, 255),
+
                           // thumbColor: Color(0xff246EE9),
                           // overlayColor: Colors.indigo.shade300,
                           thumbShape: const RoundSliderThumbShape(

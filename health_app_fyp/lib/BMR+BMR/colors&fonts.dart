@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 
 const Color AppBarColor = Color(0xffFF2400);
-const ActiveCardColor = Color.fromARGB(255, 62, 180, 137);
+const ActiveCardColor = Color.fromARGB(255, 122, 133, 129);
 const InactiveCardColor = Color.fromARGB(255, 0, 0, 0);
-const BottomButtonColor = Color.fromARGB(255, 62, 180, 137);
+const BottomButtonColor = Color.fromARGB(255, 119, 126, 123);
 const BottomReturnButtonColor = Color.fromARGB(255, 0, 0, 0);
 
 const RoyalBlue = Color.fromARGB(255, 36, 110, 233);

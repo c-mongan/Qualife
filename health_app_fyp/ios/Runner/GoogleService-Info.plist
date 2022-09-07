@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>375124338310-b4eiplpflerqtms3od3ct0jtj55ibu55.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.375124338310-b4eiplpflerqtms3od3ct0jtj55ibu55</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>375124338310-uvfdoqto5h3o1krrisdobrlojo39uvrb.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAtGV_un75x1YA8G9Spey5JlE3orK9eAEA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>375124338310</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.datadog.qualife</string>
+	<key>PROJECT_ID</key>
+	<string>healthappfyp-cf6ae</string>
+	<key>STORAGE_BUCKET</key>
+	<string>healthappfyp-cf6ae.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:375124338310:ios:94e1c237f8c2379a0dd307</string>
+</dict>
+</plist>
