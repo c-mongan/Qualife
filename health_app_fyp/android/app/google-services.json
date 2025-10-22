@@ -1,44 +1,26 @@
 {
   "project_info": {
-    "project_number": "375124338310",
-    "project_id": "healthappfyp-cf6ae",
-    "storage_bucket": "healthappfyp-cf6ae.appspot.com"
+    "project_number": "969909064177",
+    "project_id": "qualife-3b515",
+    "storage_bucket": "qualife-3b515.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:375124338310:android:dc3c6d6141cdec490dd307",
+        "mobilesdk_app_id": "1:969909064177:android:9937ebaefd1a67f580b450",
         "android_client_info": {
           "package_name": "com.example.health_app_fyp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "375124338310-uvfdoqto5h3o1krrisdobrlojo39uvrb.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.health_app_fyp",
-            "certificate_hash": "6e5248b2e96aaa1aeee9d2d0e7d4ef3344834903"
-          }
-        },
-        {
-          "client_id": "375124338310-0sll33n8rmi68uvb0pf2jpq51mgrujq5.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCOpXpouQDbHI9zE55fX7PRkdHqmMKeU80"
+          "current_key": "AIzaSyDNaYgyZCm2voeoTtEl4JuVR0B99HkpjRQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "375124338310-0sll33n8rmi68uvb0pf2jpq51mgrujq5.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
