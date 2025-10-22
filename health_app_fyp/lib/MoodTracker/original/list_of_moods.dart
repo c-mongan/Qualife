@@ -277,7 +277,7 @@ class _MyTestState extends State<ListMoods> {
       curve: Curves.bounceIn,
       children: [
         SpeedDialChild(
-          child: const Icon(MdiIcons.plus, color: Colors.white),
+          child: Icon(MdiIcons.plus, color: Colors.white),
           backgroundColor: Colors.green,
           onTap: () async {
            
@@ -288,7 +288,7 @@ class _MyTestState extends State<ListMoods> {
           labelBackgroundColor: Colors.green,
         ),
         SpeedDialChild(
-          child: const Icon(MdiIcons.minus, color: Colors.white),
+          child: Icon(MdiIcons.minus, color: Colors.white),
           backgroundColor: Colors.red,
           onTap: () async {
             getNumOfMoods().then((count) => count).then((count) {

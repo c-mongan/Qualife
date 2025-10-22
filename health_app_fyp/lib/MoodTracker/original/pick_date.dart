@@ -145,7 +145,7 @@ class MyAppState extends State<PickDateMoodTracker> {
         curve: Curves.bounceIn,
         children: [
           SpeedDialChild(
-            child: const Icon(MdiIcons.calendar, color: Colors.white),
+            child: Icon(MdiIcons.calendar, color: Colors.white),
             backgroundColor: Colors.green,
             onTap: () {
               Get.to(MoodActivitySelect(selectedDate: selectedDate));
