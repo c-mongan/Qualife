@@ -341,7 +341,7 @@ Color setColorValue(double result) {
           curve: Curves.bounceIn,
           children: [
             SpeedDialChild(
-              child: const Icon(MdiIcons.barcodeScan, color: Colors.white),
+              child: Icon(MdiIcons.barcodeScan, color: Colors.white),
               backgroundColor: Colors.green,
               onTap: () async {
                 // // bool a;
@@ -356,7 +356,7 @@ Color setColorValue(double result) {
               labelBackgroundColor: Colors.green,
             ),
             SpeedDialChild(
-              child: const Icon(MdiIcons.minus, color: Colors.white),
+              child: Icon(MdiIcons.minus, color: Colors.white),
               backgroundColor: Colors.red,
               onTap: () async {
                 deleteLastFood();
