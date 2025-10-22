@@ -1,0 +1,95 @@
+rules_version = '2';
+
+// Firestore Security Rules for Qualife Health App
+// 
+// PRODUCTION RULES - Use these for deployment
+// These rules ensure users can only access their own data
+//
+// Deploy with: firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check document ownership
+    function isOwner(userIdField) {
+      return request.auth != null && request.auth.uid == resource.data[userIdField];
+    }
+    
+    // Helper to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Users collection - users can only read/write their own document
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // UserData collection - user-owned documents
+    match /UserData/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // BMI tracking - user-owned documents
+    match /BMI/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // TDEE (Total Daily Energy Expenditure) - user-owned documents
+    match /TDEE/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Remaining calories tracking - user-owned documents
+    match /remainingCalories/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Daily check-in data - user-owned documents
+    match /DailyCheckIn/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Mood tracking - user-owned documents
+    match /MoodTracking/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Activity tracking - user-owned documents
+    match /ActivityTracking/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Sleep tracking - user-owned documents
+    match /SleepTracking/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Temporary food tracking - user-owned documents
+    match /TempFood/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Calorie count tracking - user-owned documents
+    match /CalorieCount/{docId} {
+      allow read, write: if isOwner('userID');
+    }
+    
+    // Deny all other collections by default (security-first approach)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// DEVELOPMENT RULES (use temporarily for testing)
+// Uncomment and deploy ONLY for local development, then switch back to production rules
+//
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if request.auth != null;
+//     }
+//   }
+// }
