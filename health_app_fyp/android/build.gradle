@@ -1,15 +1,17 @@
+import com.android.build.gradle.LibraryExtension
+
 buildscript {
 
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.9.25'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+    classpath 'com.android.tools.build:gradle:8.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.gms:google-services:4.4.2'
     
     }
 }
@@ -22,11 +24,19 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-    project.evaluationDependsOn(':app')
+subprojects { subproject ->
+    subproject.buildDir = "${rootProject.buildDir}/${subproject.name}"
+    subproject.evaluationDependsOn(':app')
+
+    subproject.plugins.withId('com.android.library') {
+        if (subproject.name == 'flutter_barcode_scanner') {
+            subproject.extensions.configure(LibraryExtension) { ext ->
+                ext.namespace = 'com.amolg.flutterbarcodescanner'
+            }
+        }
+    }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
 }
