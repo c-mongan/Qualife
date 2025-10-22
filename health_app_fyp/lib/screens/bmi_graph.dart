@@ -247,7 +247,7 @@ class _GraphPageState extends State<GraphPage> {
                                     decimalPlaces: 1,
                                   ),
                                   series: <
-                                      ChartSeries<_bmi_ChartData, DateTime>>[
+                                      CartesianSeries<_bmi_ChartData, DateTime>>[
                                     LineSeries<_bmi_ChartData, DateTime>(
                                         dataSource: chartData,
                                         enableTooltip: true,

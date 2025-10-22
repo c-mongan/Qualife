@@ -175,8 +175,6 @@ class _bmiZoomChartChartState extends SampleViewState
                   isVisible: false,
                   minimum: DateTime.fromMillisecondsSinceEpoch(1483315200000),
                   maximum: DateTime.fromMillisecondsSinceEpoch(1514678400000),
-                  visibleMinimum: rangeController.start,
-                  visibleMaximum: rangeController.end,
                   rangeController: rangeController),
               primaryYAxis: NumericAxis(
                 labelPosition: ChartDataLabelPosition.inside,
