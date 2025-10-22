@@ -55,6 +55,8 @@ macos/Flutter/flutter_export_environment.sh
 
 # Plugin example (exclude bundled example project)
 plugins/flutter_barcode_scanner/example/
+# Ignore vendored plugin directory (using pub.dev dependency)
+plugins/flutter_barcode_scanner/
 
 # Plugin build/IDE artifacts
 plugins/flutter_barcode_scanner/.dart_tool/
