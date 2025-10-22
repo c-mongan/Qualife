@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -10,8 +9,7 @@ import 'package:health_app_fyp/screens/daily_check_in.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:health_app_fyp/widgets/logout_button.dart';
 import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
-import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+// Removed unused imports (intl, charts, datadog) to fix lint warnings.
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
@@ -38,36 +36,41 @@ class _HomePageState extends State<HomePage> {
   int key = 0;
 
   Future<Timestamp> getLastDailyCheckInDay() async {
-    String Exc = "Error";
-
     try {
       final calsdate = await FirebaseFirestore.instance
           .collection('DailyCheckIn')
           .orderBy('DateTime')
           .limit(1)
           .where("userID", isEqualTo: uid)
-          .where('DateTime',
-              isGreaterThanOrEqualTo: DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 0, 0))
-          .where('DateTime',
-              isLessThanOrEqualTo: DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 23, 59, 59))
+          .where(
+            'DateTime',
+            isGreaterThanOrEqualTo: DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              0,
+              0,
+            ),
+          )
+          .where(
+            'DateTime',
+            isLessThanOrEqualTo: DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              23,
+              59,
+              59,
+            ),
+          )
           .get();
-      for (var cals in calsdate.docs) {
-        print(cals.data().toString() + "ERROR");
-        Timestamp time;
-        time = calsdate.docs[0].get("DateTime");
-
-        print(time.toString() + "ERROR");
-
-        return time;
+      if (calsdate.docs.isNotEmpty) {
+        return calsdate.docs.first.get('DateTime') as Timestamp;
       }
-
-      print(Exc);
       return Timestamp(0, 0);
-    } catch (Exc) {
-      print(Exc);
-      rethrow;
+    } catch (e) {
+      debugPrint('getLastDailyCheckInDay error: $e');
+      return Timestamp(0, 0);
     }
   }
 
@@ -86,8 +89,6 @@ class _HomePageState extends State<HomePage> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<Timestamp> getLastCalsRemainingDay() async {
-    String Exc = "Error";
-
     try {
       final calsdate = await FirebaseFirestore.instance
           .collection('remainingCalories')
@@ -95,24 +96,17 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: uid)
           .get();
-      for (var cals in calsdate.docs) {
-        Timestamp time;
-        time = calsdate.docs[0].get("DateTime");
-
-        String calsLeftDay = dayCals.toString();
-
-        return time;
+      if (calsdate.docs.isNotEmpty) {
+        return calsdate.docs.first.get('DateTime') as Timestamp;
       }
       return Timestamp(0, 0);
-    } catch (Exc) {
-      rethrow;
+    } catch (e) {
+      debugPrint('getLastCalsRemainingDay error: $e');
+      return Timestamp(0, 0);
     }
   }
 
   Future<double> getTdeeVal() async {
-    double Exc = 0;
-    double t2 = 0;
-
     try {
       final tdeevals = await FirebaseFirestore.instance
           .collection('TDEE')
@@ -120,14 +114,13 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: uid)
           .get();
-      for (var tdeeval in tdeevals.docs) {
-        double tdee = tdeevals.docs[0].get("tdee");
-
-        return tdee;
+      if (tdeevals.docs.isNotEmpty) {
+        return (tdeevals.docs.first.get('tdee') as num).toDouble();
       }
-      return t2;
-    } catch (Exc) {
-      rethrow;
+      return 0;
+    } catch (e) {
+      debugPrint('getTdeeVal error: $e');
+      return 0;
     }
   }
 
@@ -184,7 +177,7 @@ class _HomePageState extends State<HomePage> {
   // }
 
   Future<double> getLastWeight() async {
-    String Exc = "Error";
+  // Retrieve latest weight difference entry.
 
     try {
       final latestDailyCheckInDoc = await FirebaseFirestore.instance
@@ -193,7 +186,7 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var weight in latestDailyCheckInDoc.docs) {
+      for (var _ in latestDailyCheckInDoc.docs) {
         lastWeight = latestDailyCheckInDoc.docs[0].get("WeightDifference");
 
         double firestoreLastWeight = lastWeight;
@@ -556,34 +549,53 @@ class _HomePageState extends State<HomePage> {
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return const Text('Something went wrong');
+              return Text(
+                'Error loading weight changes: ${snapshot.error}',
+                style: const TextStyle(color: Colors.white),
+              );
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text("Loading");
+              return const Text(
+                "Loading last check-in...",
+                style: TextStyle(color: Colors.white),
+              );
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Text(
+                'No check-ins yet. Tap Check In to create your first entry.',
+                style: TextStyle(color: Colors.white),
+              );
             }
 
             return ListView(
               physics: const NeverScrollableScrollPhysics(),
               children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
+                final raw = document.data();
+                if (raw == null) {
+                  return const ListTile(
+                    title: Text(
+                      'Missing weight data.',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+                Map<String, dynamic> data = raw as Map<String, dynamic>;
+                final num diff = data['WeightDifference'] ?? 0;
+                final bool diffIsInt = isInteger(diff);
                 return ListTile(
                   title: const Text("Your weight has fluctuated by:",
                       style: TextStyle(color: Colors.white, fontSize: 20)),
-                  trailing: isInteger(data['WeightDifference']) == true
-                      ? Text(
-                          "${data['WeightDifference'].toStringAsFixed(0)} kg",
-                          style: TextStyle(
-                              color: setColorValue(_weight),
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold))
-                      : Text(
-                          "${data['WeightDifference'].toStringAsFixed(2)} kg",
-                          style: TextStyle(
-                              color: setColorValue(_weight),
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold)),
+                  trailing: Text(
+                    diffIsInt
+                        ? "${diff.toInt()} kg"
+                        : "${(diff is double ? diff : diff.toDouble()).toStringAsFixed(2)} kg",
+                    style: TextStyle(
+                        color: setColorValue(_weight),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             );
@@ -621,28 +633,37 @@ class _HomePageState extends State<HomePage> {
         stream: moodPieChartStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Text("something went wrong");
+            return Text(
+              "Error loading mood data: ${snapshot.error}",
+              style: const TextStyle(color: Colors.white),
+            );
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
-
-          if (snapshot.data == null) {
-            return const Text("Empty List Error");
-          } else {
-            final data = snapshot.requireData;
-
-            getMoodsListfromSnapshot(data);
-
-            getLatestMood();
-
-            if (moodNameText != "") {
-              return pieChartMood();
-            } else {
-              return const Text("No moods logged yet",
-                  style: TextStyle(fontSize: 15, color: Colors.white));
-            }
+          if (!snapshot.hasData) {
+            return const Text(
+              "No mood data found. Log a mood in Daily Check In to see stats.",
+              style: TextStyle(color: Colors.white),
+            );
           }
+          final docs = (snapshot.data as dynamic)?.docs;
+          if (docs == null || docs.isEmpty) {
+            return const Text(
+              "No moods logged yet. Use the Check In button to add your first mood.",
+              style: TextStyle(fontSize: 15, color: Colors.white),
+            );
+          }
+          final data = snapshot.requireData;
+          getMoodsListfromSnapshot(data);
+          getLatestMood();
+          if (moodNameText.isNotEmpty) {
+            return pieChartMood();
+          }
+          return const Text(
+            "No moods logged yet. Use the Check In button to add your first mood.",
+            style: TextStyle(fontSize: 15, color: Colors.white),
+          );
         });
   }
 
@@ -712,12 +733,12 @@ class _HomePageState extends State<HomePage> {
       stream: calsRemainingStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return const Text('Something went wrong');
+          return Text(
+            'Error loading calories: ${snapshot.error}',
+            style: const TextStyle(color: Colors.white),
+          );
         }
-
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // return NeumorphicProgressIndicator(
-          //     indicatorColor: Colors.indigo);
           return SizedBox(
               height: 45,
               child: Row(
@@ -730,12 +751,26 @@ class _HomePageState extends State<HomePage> {
                 ],
               ));
         }
-
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Text(
+            'No calorie data yet. Complete the TDEE setup to initialize your daily allowance.',
+            style: TextStyle(color: Colors.white),
+          );
+        }
         return ListView(
+          physics: const NeverScrollableScrollPhysics(),
           children: snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-
+            final raw = document.data();
+            if (raw == null) {
+              return const ListTile(
+                title: Text(
+                  'Calorie entry missing data.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+            Map<String, dynamic> data = raw as Map<String, dynamic>;
+            final num calsNum = data['Cals'] ?? 0;
             return ListTile(
                 title: RichText(
               textAlign: TextAlign.center,
@@ -744,9 +779,10 @@ class _HomePageState extends State<HomePage> {
                     text: "You have ",
                     style: TextStyle(color: Colors.white, fontSize: 20)),
                 TextSpan(
-                    text: data[('Cals')].toStringAsFixed(0),
+                    text: (calsNum is double ? calsNum : calsNum.toDouble())
+                        .toStringAsFixed(0),
                     style: TextStyle(
-                        color: setColorValue(data[('Cals')]),
+                        color: setColorValue(calsNum.toDouble()),
                         fontSize: 20,
                         fontWeight: FontWeight.bold)),
                 const TextSpan(
@@ -1027,8 +1063,6 @@ class _HomePageState extends State<HomePage> {
   String activityNameText = "";
 
   Future<double> getbmiScore() async {
-    String Exc = "Error";
-
     try {
       final bmiData = await FirebaseFirestore.instance
           .collection('BMI')
@@ -1036,7 +1070,7 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var name in bmiData.docs) {
+      for (var _ in bmiData.docs) {
         bmiScore = bmiData.docs[0].get("bmiScore");
 
         double gotbmiScore = bmiScore;
@@ -1048,8 +1082,8 @@ class _HomePageState extends State<HomePage> {
       }
 
       return bmiScore;
-    } catch (Exc) {
-      print(Exc);
+    } catch (e) {
+      print(e);
       rethrow;
     }
   }
@@ -1071,8 +1105,6 @@ class _HomePageState extends State<HomePage> {
       .snapshots();
 
   Future<String> getBMITextResult() async {
-    String Exc = "Error";
-
     try {
       final latestBmiResult = await FirebaseFirestore.instance
           .collection('BMI')
@@ -1080,7 +1112,7 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var bmiInterpretation in latestBmiResult.docs) {
+      for (var _ in latestBmiResult.docs) {
         bmiResultText = latestBmiResult.docs[0].get("result");
 
         String FirestoreBmiTxtResult = bmiResultText;
@@ -1092,14 +1124,12 @@ class _HomePageState extends State<HomePage> {
         return FirestoreBmiTxtResult;
       }
       return bmiResultText;
-    } catch (Exc) {
+    } catch (e) {
       rethrow;
     }
   }
 
   Future<String> getLatestMood() async {
-    String Exc = "Error";
-
     try {
       final latestMoodName = await FirebaseFirestore.instance
           .collection('MoodTracking')
@@ -1107,8 +1137,7 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-
-      for (var moodName in latestMoodName.docs) {
+      for (var _ in latestMoodName.docs) {
         moodNameText = latestMoodName.docs[0].get("Mood");
 
         String firestoreMoodText = moodNameText;
@@ -1119,8 +1148,8 @@ class _HomePageState extends State<HomePage> {
       }
 
       return moodNameText;
-    } catch (Exc) {
-      print(Exc);
+    } catch (e) {
+      print(e);
       rethrow;
     }
   }

@@ -10,7 +10,7 @@ import 'package:vertical_weight_slider/vertical_weight_slider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../MoodTracker/moodcard.dart';
 import '../model/user_model.dart';
-import 'package:duration_picker/duration_picker.dart';
+// import 'package:duration_picker/duration_picker.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../widgets/nuemorphic_button.dart';
 import 'package:health_app_fyp/MoodTracker/models.dart';
@@ -283,15 +283,23 @@ class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
                         const SizedBox(
                           height: 45,
                         ),
-                        DurationPicker(
+                        // DurationPicker widget temporarily disabled due to package compatibility
+                        Container(
                           height: 250,
                           width: 250,
-                          duration: _duration,
-                          onChange: (val) {
-                            setState(() => _duration = val);
-                          },
-                          snapToMins: 5.0,
+                          child: Center(
+                            child: Text('Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours'),
+                          ),
                         ),
+                        // DurationPicker(
+                        //   height: 250,
+                        //   width: 250,
+                        //   duration: _duration,
+                        //   onChange: (val) {
+                        //     setState(() => _duration = val);
+                        //   },
+                        //   snapToMins: 5.0,
+                        // ),
                         // Text((_duration.inHours).toStringAsFixed(2) +
                         //     " hours"),
                         const SizedBox(

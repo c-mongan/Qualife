@@ -1,4 +1,5 @@
 import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // for platform guard
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,6 +17,33 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   //form key
   final _formKey = GlobalKey<FormState>();
+
+  /*
+  FIRESTORE PERMISSION-DENIED QUICK GUIDE:
+  Ensure Firestore rules allow the authenticated user to read/write their own docs.
+  Example permissive (development only) rules:
+  rules_version = '2';
+  service cloud.firestore { match /databases/{database}/documents { match /{document=**} { allow read, write: if request.auth != null; } } }
+
+  Example scoped production pattern for user-owned collections:
+  service cloud.firestore { match /databases/{db}/documents {
+    match /users/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
+    match /UserData/{docId} { allow read, write: if request.auth != null && request.auth.uid == resource.data.userID; }
+    match /BMI/{docId} { allow read, write: if request.auth != null && request.auth.uid == resource.data.userID; }
+    match /TDEE/{docId} { allow read, write: if request.auth != null && request.auth.uid == resource.data.userID; }
+    match /remainingCalories/{docId} { allow read, write: if request.auth != null && request.auth.uid == resource.data.userID; }
+    match /DailyCheckIn/{docId} { allow read, write: if request.auth != null && request.auth.uid == resource.data.userID; }
+    match /MoodTracking/{docId} { allow read, write: if request.auth != null && request.auth.uid == resource.data.userID; }
+    // Add similar matches for ActivityTracking, SleepTracking etc.
+  }}
+
+  INVALID-CREDENTIAL NOTES:
+  Firebase returns invalid-credential for:
+    * Wrong password
+    * Malformed email/password credential
+    * Expired credential/session
+  We show a consolidated message guiding user to retry or reset password.
+  */
 
   //editing controller
   final TextEditingController emailController = TextEditingController();
@@ -76,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (!regex.hasMatch(value)) {
             return ("Password must be at least 6 characters in length");
           }
+          return null; // Added to satisfy validator contract
         },
         onSaved: (value) {
           passwordController.text = value!;
@@ -257,16 +286,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   myLogger.addAttribute('hostname', uid),
 
                   //Associates the RUM with the user
-                  DatadogSdk.instance.setUserInfo(
-                    id: FirebaseAuth.instance.currentUser?.uid,
-                    email: FirebaseAuth.instance.currentUser?.email,
-                  ),
+                  // Datadog user association (skip on web where plugin web implementation may be incomplete)
+                  if (!kIsWeb)
+                    DatadogSdk.instance.setUserInfo(
+                      id: FirebaseAuth.instance.currentUser?.uid,
+                      email: FirebaseAuth.instance.currentUser?.email,
+                    ),
                   //Login Success message
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomePage())),
                   //Navigates the user to Home Screen
                 });
       } on FirebaseAuthException catch (error) {
+        // Log the actual error code and message for debugging
+        print('FirebaseAuthException code: ${error.code}');
+        print('FirebaseAuthException message: ${error.message}');
+        
         switch (error.code) {
           case "invalid-email":
             errorMessage = "Your email address appears to be invalid.";
@@ -274,7 +309,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 "User Email:  $email, ");
             break;
           case "wrong-password":
-            errorMessage = "Your password is incorrect.";
+          case "invalid-credential":
+            // invalid-credential can also mean malformed/expired credential; most common for email/password is wrong password
+            errorMessage = "Incorrect password or expired credential. Try again or reset your password.";
 
             myLogger.error("Login Error: $errorMessage "
                 "User Email:  $email, ");
@@ -301,10 +338,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 "User Email:  $email, ");
             break;
           default:
-            errorMessage = "An unexpected Error has occurred.";
+            errorMessage = "Error: ${error.code} - ${error.message}";
             myLogger.error("Login Error: $errorMessage "
                 "User Email:  $email, ");
         }
+        Fluttertoast.showToast(msg: errorMessage!);
+      } catch (e) {
+        // Catch any other errors
+        print('Unexpected error during login: $e');
+        errorMessage = "An unexpected error occurred: $e";
         Fluttertoast.showToast(msg: errorMessage!);
       }
     }
