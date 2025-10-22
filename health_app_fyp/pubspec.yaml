@@ -47,8 +47,7 @@ dependencies:
   font_awesome_flutter: ^10.9.1
   syncfusion_flutter_sliders: ^31.1.19
   http: ^1.5.0
-  flutter_barcode_scanner:
-    path: plugins/flutter_barcode_scanner
+  flutter_barcode_scanner: ^2.0.0
   firebase_database: ^12.0.3
   flutter_speed_dial: ^7.0.0
   sqflite: ^2.4.2
