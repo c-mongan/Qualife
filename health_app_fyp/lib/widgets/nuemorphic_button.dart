@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as colors;
+import 'package:health_app_fyp/theme/app_theme.dart';
 
 class NeumorphicButton extends StatefulWidget {
   final Widget child;
@@ -16,7 +17,7 @@ class NeumorphicButton extends StatefulWidget {
     this.padding = const EdgeInsets.all(12.5),
     required this.onPressed,
   })  : blurOffset = Offset(bevel / 2, bevel / 2),
-        color = colors.Colors.black,
+        color = AppTheme.surfaceLight,
         super(key: key);
 
   @override

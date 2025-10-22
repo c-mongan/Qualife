@@ -8,8 +8,8 @@ import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/daily_check_in.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 import 'package:health_app_fyp/widgets/logout_button.dart';
-import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
-// Removed unused imports (intl, charts, datadog) to fix lint warnings.
+import 'package:health_app_fyp/theme/app_theme.dart';
+import 'package:health_app_fyp/widgets/section_card.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
@@ -75,7 +75,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   double lastWeight = 0;
-
   double _weight = 0;
 
   void setLastWeight() async {
@@ -85,7 +84,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   String dayCals = "";
-
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<Timestamp> getLastCalsRemainingDay() async {
@@ -136,49 +134,7 @@ class _HomePageState extends State<HomePage> {
         );
   }
 
-  void checkDay(showCheckIn) {
-    // getLastCalsRemainingDay().then((time) {
-    //   isAfterToday(time);
-
-    //   if (isAfterToday(time)) {
-    //     getTdeeVal().then((tdee) {
-    //       print("Its before today");
-
-    //       FirebaseFirestore.instance.collection('endDayOfCalories').add({
-    //         'userID': uid,
-    //         'Cals': tdee,
-    //         'DateTime': time,
-    //       });
-
-    //   showCheckInButton(tempdate);
-    // });
-  }
-
-  // Future<String> showCheckInButton() async {
-  //   getLastDailyCheckInDay().then((time) {
-  //     DateTime lastdate =
-  //         DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch);
-
-  //     print(lastdate.day.toString());
-
-  //     final today = DateTime.now();
-
-  //     print(today.day.toString());
-
-  //     if (lastdate.day == today.day) {
-  //       return "false";
-  //     } else if (lastdate.day != today.day) {
-  //       return "true";
-  //     }
-  //   });
-
-  //   print("error ");
-  //   return "error";
-  // }
-
   Future<double> getLastWeight() async {
-  // Retrieve latest weight difference entry.
-
     try {
       final latestDailyCheckInDoc = await FirebaseFirestore.instance
           .collection('DailyCheckIn')
@@ -188,12 +144,8 @@ class _HomePageState extends State<HomePage> {
           .get();
       for (var _ in latestDailyCheckInDoc.docs) {
         lastWeight = latestDailyCheckInDoc.docs[0].get("WeightDifference");
-
         double firestoreLastWeight = lastWeight;
-
         setLastWeight();
-
-        // print(lastWeight);
         return firestoreLastWeight;
       }
       return lastWeight;
@@ -204,37 +156,34 @@ class _HomePageState extends State<HomePage> {
 
   ListTile getWeightChanges() {
     return ListTile(
-        title: RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(children: <TextSpan>[
-        const TextSpan(
-            text: "Your weight has fluctuated by: ",
-            style: TextStyle(color: Colors.white, fontSize: 20)),
-        TextSpan(
-            text: _weight.toStringAsFixed(2) + "kg",
-            style: TextStyle(
-                color: setColorValue(_weight),
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-        const TextSpan(
-            text: " since your last check-in.",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            )),
-      ]),
-    ));
+      title: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          children: <TextSpan>[
+            const TextSpan(
+                text: "Your weight has fluctuated by: ",
+                style: TextStyle(color: Colors.white, fontSize: 20)),
+            TextSpan(
+                text: "${_weight.toStringAsFixed(2)}kg",
+                style: TextStyle(
+                    color: setColorValue(_weight),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
+            const TextSpan(
+                text: " since your last check-in.",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                )),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
-
-    // bool showCheckIn = false;
-
-    // showCheckInButton();
-
-    //checkDay(showCheckIn);
 
     getRecentDailyCheckIn();
 
@@ -245,34 +194,10 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-// final myLogger = DatadogSdk.instance.createLogger(
-//   LoggingConfiguration({
-//     loggerName: 'Additional logger'
-//   })
-// );
-
-// myLogger.info('Info from my additional logger.');
-
-//    ddLogger = DdLogs(loggerName: 'orders');
-// // optionally set a value for HOST
-// // ddLogger.addAttribute('hostname', <DEVICE IDENTIFIER>);
-
-// ddLogger.addTag('restaurant_type', 'pizza');
-// ddLogger.removeTag('restaurant_type');
-
-// // add attribute to every log
-// ddLogger.addAttribute('toppings', 'extra_cheese');
-
-// // add atttributes to some logs
-// ddLogger.log('time to cook pizza', Level.FINE, attributes: {
-//   'durationInMilliseconds': timer.elapsedMilliseconds,
-// });
-
       getLastWeight().then((value) => setState(() => _weight = value));
       setColorValue(_weight);
 
       if (mounted) {
-        // check whether the state object is in tree
         getDataFromFireStore().then((results) {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
@@ -286,288 +211,268 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
-        key: Key(HomePage.id),
-        onVisibilityChanged: (VisibilityInfo info) {
-          bool isVisible = info.visibleFraction != 0;
-          asyncMethod(isVisible);
-        },
-        child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Home'),
-              elevation: 0,
-              backgroundColor: Colors.black,
+      key: Key(HomePage.id),
+      onVisibilityChanged: (info) {
+        bool isVisible = info.visibleFraction != 0;
+        asyncMethod(isVisible);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Dashboard', style: AppTheme.textTheme.headlineMedium),
+          elevation: 0,
+          backgroundColor: AppTheme.primaryDark,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined),
+              onPressed: () {
+                // Future: notifications
+              },
             ),
-            bottomNavigationBar: CustomisedNavigationBar(),
-            body: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                  Colors.black,
-                  Colors.grey,
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-                child: SingleChildScrollView(
-                    // <-- wrap this around
-                    child: Column(children: <Widget>[
-                  Center(
+          ],
+        ),
+        bottomNavigationBar: CustomisedNavigationBar(),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: AppTheme.backgroundGradient,
+            ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header / Welcome Card
+                Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  child: Card(
+                    elevation: AppTheme.elevationMid,
+                    color: AppTheme.surfaceLight,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusL),
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(AppTheme.spacingL),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          SizedBox(
-                            height: 25,
-                            child: Text(
-                              "Welcome ${loggedInUser.firstName}!",
-                              style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
+                          Text(
+                            "Welcome, ${loggedInUser.firstName}!",
+                            style: AppTheme.textTheme.headlineLarge,
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const SizedBox(
-                            height: 25,
+                          const SizedBox(height: AppTheme.spacingM),
+                          Text(
+                            "${loggedInUser.firstName} ${loggedInUser.secondName}",
+                            style: AppTheme.textTheme.bodyLarge,
                           ),
                           Text(
-                              "Your Name: ${loggedInUser.firstName} ${loggedInUser.secondName}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              )),
-                          Text("Your E-mail: ${loggedInUser.email}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              )),
-                          const SizedBox(
-                            height: 25,
+                            "Your E-mail: ${loggedInUser.email}",
+                            style: AppTheme.textTheme.bodyMedium,
                           ),
-                          // if (showCheckInButton() == "true") ...[
-
+                          const SizedBox(height: AppTheme.spacingM),
+                          // Daily Check-In Stream
                           StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('DailyCheckIn')
-                                  .where('DateTime',
-                                      isGreaterThanOrEqualTo: DateTime(
-                                          DateTime.now().year,
-                                          DateTime.now().month,
-                                          DateTime.now().day,
-                                          0,
-                                          0))
-                                  .where('DateTime',
-                                      isLessThanOrEqualTo: DateTime(
-                                          DateTime.now().year,
-                                          DateTime.now().month,
-                                          DateTime.now().day,
-                                          23,
-                                          59,
-                                          59))
-                                  .where("userID", isEqualTo: uid)
-                                  // .where("DateTime", isGreaterThan: dateToday)
-                                  .limit(1)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData &&
-                                    snapshot.data!.docs.length == 1) {
-                                  // return const Text(
-                                  //   ("Daily Check-in completed!"),
-                                  //   style: TextStyle(
-                                  //     //  fontSize: 15.0,
-                                  //     color: Colors.white,
-                                  //     fontWeight: FontWeight.bold,
-                                  //   ),
-                                  // );
-
-                                  return Text(
-                                    snapshot.data!.docs.length.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 50.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.transparent,
+                            stream: FirebaseFirestore.instance
+                                .collection('DailyCheckIn')
+                                .where(
+                                  'DateTime',
+                                  isGreaterThanOrEqualTo: DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    0,
+                                    0,
+                                  ),
+                                )
+                                .where(
+                                  'DateTime',
+                                  isLessThanOrEqualTo: DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    23,
+                                    59,
+                                    59,
+                                  ),
+                                )
+                                .where("userID", isEqualTo: uid)
+                                .limit(1)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData &&
+                                  snapshot.data!.docs.length == 1) {
+                                // Already checked in today -> show transparent placeholder
+                                return Text(
+                                  snapshot.data!.docs.length.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 1,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.transparent,
+                                  ),
+                                );
+                              } else if (snapshot.hasData ||
+                                  snapshot.data?.docs.length == 0) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: AppTheme.spacingM),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Get.to(const DailyCheckInPage());
+                                    },
+                                    icon: const Icon(
+                                      Icons.check_circle_outline,
+                                      size: 24,
                                     ),
-                                  );
-                                } else if (snapshot.hasData ||
-                                    snapshot.data?.docs.length == 0) {
-                                  return NeumorphicButton(
-                                    child: const Text('Check In',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15)),
+                                    label: Text(
+                                      'Complete Daily Check-In',
+                                      style: AppTheme.textTheme.labelLarge,
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppTheme.accentSecondary,
+                                      minimumSize:
+                                          const Size(double.infinity, 56),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            AppTheme.radiusM),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else if (snapshot.data?.docs.isEmpty ?? true) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: AppTheme.spacingM),
+                                  child: ElevatedButton.icon(
                                     onPressed: () {
                                       Get.to(const DailyCheckInPage());
                                     },
-                                  );
-                                } else if (snapshot.data?.docs.isEmpty ??
-                                    true) {
-                                  return NeumorphicButton(
-                                    child: const Text('Check In',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15)),
-                                    onPressed: () {
-                                      Get.to(const DailyCheckInPage());
-                                    },
-                                  );
-                                } else {
-                                  return CircularProgressIndicator();
-                                }
-                              })
-
-                          // NeumorphicButton(
-                          //   child: const Text('Check In',
-                          //       style: TextStyle(
-                          //           color: Colors.white, fontSize: 15)),
-                          //   onPressed: () {
-                          //     Get.to(const DailyCheckInPage());
-                          //   },
-
-                          //     //   ] else if (showCheckInButton() == "false") ...[
-                          //     //     const SizedBox(
-                          //     //       height: 25,
-                          //     //       child: Text("You have checked In"),
-                          //     //     ),
-                          //     //   ],
-                          //   )
-                          // )
+                                    icon: const Icon(
+                                      Icons.check_circle_outline,
+                                      size: 24,
+                                    ),
+                                    label: Text(
+                                      'Complete Daily Check-In',
+                                      style: AppTheme.textTheme.labelLarge,
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppTheme.accentSecondary,
+                                      minimumSize:
+                                          const Size(double.infinity, 56),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            AppTheme.radiusM),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return const CircularProgressIndicator();
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  const Divider(
-                    color: Colors.grey,
-                    thickness: 2,
-                  ),
-                  Center(
-                      child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(children: [
-                            SizedBox(
-                                height: 80.0, child: caloriesRemainingTile()),
-                            const Divider(
-                              color: Colors.grey,
-                              thickness: 2,
-                            ),
+                ),
+                Divider(
+                  color: AppTheme.surfaceElevated,
+                  thickness: 1,
+                  height: AppTheme.spacingL,
+                ),
+                // Dashboard Section Cards
+                Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  child: Column(
+                    children: [
+                      // Calories Remaining
+                      SectionCard(
+                        title: 'Calories Remaining',
+                        margin: EdgeInsets.zero,
+                        child: SizedBox(
+                          height: 80.0,
+                          child: Center(child: caloriesRemainingTile()),
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingM),
+                      // BMI
+                      SectionCard(
+                        title: 'Body Mass Index',
+                        margin: EdgeInsets.zero,
+                        child: Column(
+                          children: [
                             bmiResultIndication(),
+                            const SizedBox(height: AppTheme.spacingM),
                             SizedBox(height: 100, child: bmiSlider()),
-                            const SizedBox(height: 20),
-                            const Divider(
-                              color: Colors.grey,
-                              thickness: 2,
-                            ),
-
-                            // getWeightDifference(),
-
-                            // const Divider(
-                            //   color: Colors.grey,
-                            //   thickness: 2,
-                            // ),
-                            SizedBox(
-                              height: 40,
-                              child: ListTile(
-                                  title: RichText(
-                                textAlign: TextAlign.center,
-                                text: const TextSpan(children: <TextSpan>[
-                                  TextSpan(
-                                      text: "Mood Tracker",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20)),
-                                ]),
-                              )),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                Center(
-                                  child: moodPieChart(),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            const Divider(
-                              color: Colors.grey,
-                              thickness: 2,
-                            ),
-                            // SizedBox(
-                            //   height: 40,
-                            //   child: ListTile(
-                            //       title: RichText(
-                            //     textAlign: TextAlign.center,
-                            //     text: const TextSpan(children: <TextSpan>[
-                            //       TextSpan(
-                            //           text:
-                            //               "Activities Logged in the last 7 days",
-                            //           style: TextStyle(
-                            //               color: Colors.white, fontSize: 20)),
-                            //     ]),
-                            //   )),
-                            // ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                Center(
-                                    //  child: activityPieChart(),
-                                    ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            const SizedBox(
-                              height: 20,
-                            ),
-
-                            LogOutButton(
-                              onPressed: () {
-                                logout(context);
-                              },
-                              child: const Text(
-                                "Log Out",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                            )
-                          ])))
-                ])))));
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingM),
+                      // Mood Tracker
+                      SectionCard(
+                        title: 'Mood Tracker',
+                        margin: EdgeInsets.zero,
+                        child: Column(
+                          children: [
+                            Center(child: moodPieChart()),
+                            const SizedBox(height: AppTheme.spacingM),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingM),
+                      // Weight Changes
+                      SectionCard(
+                        title: 'Weight Changes',
+                        margin: EdgeInsets.zero,
+                        child: getWeightDifference(),
+                      ),
+                      const SizedBox(height: AppTheme.spacingL),
+                      // Logout
+                      LogOutButton(
+                        onPressed: () {
+                          logout(context);
+                        },
+                        child: const Text(
+                          "Log Out",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   SizedBox getWeightDifference() {
     return SizedBox(
-        height: 60.0,
-        child: StreamBuilder<QuerySnapshot>(
-          stream: weightStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return Text(
-                'Error loading weight changes: ${snapshot.error}',
-                style: const TextStyle(color: Colors.white),
-              );
-            }
+      height: 60.0,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: weightStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text(
+              'Error loading weight changes: ${snapshot.error}',
+              style: const TextStyle(color: Colors.white),
+            );
+          }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text(
-                "Loading last check-in...",
-                style: TextStyle(color: Colors.white),
-              );
-            }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text(
+              "Loading last check-in...",
+              style: TextStyle(color: Colors.white),
+            );
+          }
 
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Text(
-                'No check-ins yet. Tap Check In to create your first entry.',
-                style: TextStyle(color: Colors.white),
-              );
-            }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Text(
+              'No check-ins yet. Tap Check In to create your first entry.',
+              style: TextStyle(color: Colors.white),
+            );
+          }
 
             return ListView(
               physics: const NeverScrollableScrollPhysics(),
@@ -599,72 +504,49 @@ class _HomePageState extends State<HomePage> {
                 );
               }).toList(),
             );
-          },
-        ));
+        },
+      ),
+    );
   }
-
-  // SfCartesianChart bmiOverTimeGraph() {
-  //   return SfCartesianChart(
-  //       title: ChartTitle(
-  //           text: 'BMI over time',
-  //           textStyle: const TextStyle(color: Colors.white, fontSize: 20)),
-  //       legend:
-  //           Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
-  //       primaryXAxis: DateTimeAxis(
-  //         edgeLabelPlacement: EdgeLabelPlacement.shift,
-  //         dateFormat: DateFormat('dd/MM'),
-  //         intervalType: DateTimeIntervalType.days,
-  //         interval: 14,
-  //       ),
-  //       primaryYAxis: NumericAxis(),
-  //       series: <ChartSeries<_ChartData, DateTime>>[
-  //         LineSeries<_ChartData, DateTime>(
-  //             dataSource: chartData,
-  //             width: 2,
-  //             name: "BMI",
-  //             markerSettings: const MarkerSettings(isVisible: true),
-  //             xValueMapper: (_ChartData data, _) => data.x,
-  //             yValueMapper: (_ChartData data, _) => data.y),
-  //       ]);
-  // }
 
   StreamBuilder<Object> moodPieChart() {
     return StreamBuilder<Object>(
-        stream: moodPieChartStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text(
-              "Error loading mood data: ${snapshot.error}",
-              style: const TextStyle(color: Colors.white),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData) {
-            return const Text(
-              "No mood data found. Log a mood in Daily Check In to see stats.",
-              style: TextStyle(color: Colors.white),
-            );
-          }
-          final docs = (snapshot.data as dynamic)?.docs;
-          if (docs == null || docs.isEmpty) {
-            return const Text(
-              "No moods logged yet. Use the Check In button to add your first mood.",
-              style: TextStyle(fontSize: 15, color: Colors.white),
-            );
-          }
-          final data = snapshot.requireData;
-          getMoodsListfromSnapshot(data);
-          getLatestMood();
-          if (moodNameText.isNotEmpty) {
-            return pieChartMood();
-          }
+      stream: moodPieChartStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text(
+            "Error loading mood data: ${snapshot.error}",
+            style: const TextStyle(color: Colors.white),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData) {
+          return const Text(
+            "No mood data found. Log a mood in Daily Check In to see stats.",
+            style: TextStyle(color: Colors.white),
+          );
+        }
+        final docs = (snapshot.data as dynamic)?.docs;
+        if (docs == null || docs.isEmpty) {
           return const Text(
             "No moods logged yet. Use the Check In button to add your first mood.",
             style: TextStyle(fontSize: 15, color: Colors.white),
           );
-        });
+        }
+        final data = snapshot.requireData;
+        getMoodsListfromSnapshot(data);
+        getLatestMood();
+        if (moodNameText.isNotEmpty) {
+          return pieChartMood();
+        }
+        return const Text(
+          "No moods logged yet. Use the Check In button to add your first mood.",
+          style: TextStyle(fontSize: 15, color: Colors.white),
+        );
+      },
+    );
   }
 
   SfSliderTheme bmiSlider() {
@@ -701,31 +583,37 @@ class _HomePageState extends State<HomePage> {
 
   ListTile bmiResultIndication() {
     return ListTile(
-        title: RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(children: <TextSpan>[
-        const TextSpan(
-            text: "Your BMI Score of ",
-            style: TextStyle(color: Colors.white, fontSize: 20)),
-        TextSpan(
-            text: bmiScore.toStringAsFixed(1),
-            style: TextStyle(
-                color: activeColor, fontSize: 20, fontWeight: FontWeight.bold)),
-        const TextSpan(
-            text: " indicates that you are ",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            )),
-        TextSpan(
-            text: bmiResultText,
-            style: TextStyle(
-              color: activeColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            )),
-      ]),
-    ));
+      title: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          children: <TextSpan>[
+            const TextSpan(
+                text: "Your BMI Score of ",
+                style: TextStyle(color: Colors.white, fontSize: 20)),
+            TextSpan(
+                text: bmiScore.toStringAsFixed(1),
+                style: TextStyle(
+                    color: activeColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
+            const TextSpan(
+                text: " indicates that you are ",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                )),
+            TextSpan(
+              text: bmiResultText,
+              style: TextStyle(
+                color: activeColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   StreamBuilder<QuerySnapshot<Object?>> caloriesRemainingTile() {
@@ -740,16 +628,17 @@ class _HomePageState extends State<HomePage> {
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SizedBox(
-              height: 45,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: NeumorphicProgressIndicator(
-                      indicatorColor: Colors.indigo,
-                    ),
+            height: 45,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: NeumorphicProgressIndicator(
+                    indicatorColor: Colors.indigo,
                   ),
-                ],
-              ));
+                ),
+              ],
+            ),
+          );
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Text(
@@ -772,27 +661,33 @@ class _HomePageState extends State<HomePage> {
             Map<String, dynamic> data = raw as Map<String, dynamic>;
             final num calsNum = data['Cals'] ?? 0;
             return ListTile(
-                title: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(children: <TextSpan>[
-                const TextSpan(
-                    text: "You have ",
-                    style: TextStyle(color: Colors.white, fontSize: 20)),
-                TextSpan(
-                    text: (calsNum is double ? calsNum : calsNum.toDouble())
-                        .toStringAsFixed(0),
-                    style: TextStyle(
+              title: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: <TextSpan>[
+                    const TextSpan(
+                        text: "You have ",
+                        style: TextStyle(color: Colors.white, fontSize: 20)),
+                    TextSpan(
+                      text: (calsNum is double ? calsNum : calsNum.toDouble())
+                          .toStringAsFixed(0),
+                      style: TextStyle(
                         color: setColorValue(calsNum.toDouble()),
                         fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-                const TextSpan(
-                    text: " calories remaining for today ",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    )),
-              ]),
-            ));
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: " calories remaining for today ",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }).toList(),
         );
       },
@@ -807,19 +702,18 @@ class _HomePageState extends State<HomePage> {
           return const Text('Something went wrong');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // return NeumorphicProgressIndicator(
-          //     indicatorColor: Colors.indigo);
           return SizedBox(
-              height: 45,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: NeumorphicProgressIndicator(
-                      indicatorColor: Colors.indigo,
-                    ),
+            height: 45,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: NeumorphicProgressIndicator(
+                    indicatorColor: Colors.indigo,
                   ),
-                ],
-              ));
+                ),
+              ],
+            ),
+          );
         }
 
         return ListView(
@@ -828,31 +722,27 @@ class _HomePageState extends State<HomePage> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             return ListTile(
-                leading: DisplayMoodIcon(
-                  image: data['Icon'],
+              leading: DisplayMoodIcon(
+                image: data['Icon'],
+              ),
+              isThreeLine: true,
+              title: Text(
+                data['Mood'],
+                style: const TextStyle(
+                  fontSize: 15.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
-                isThreeLine: true,
-                title: Text(
-                  data['Mood'],
-                  style: const TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              subtitle: Text(
+                "${data['Activities'].toString().substring(1, data['Activities'].toString().length - 1)}             ${data['DateOfMood']} ${data['TimeOfMood']}",
+                style: const TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
-                subtitle: Text(
-                  data['Activities'].toString().substring(
-                          1, data['Activities'].toString().length - 1) +
-                      "             " +
-                      data['DateOfMood'] +
-                      " " +
-                      data['TimeOfMood'],
-                  style: const TextStyle(
-                    fontSize: 10.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ));
+              ),
+            );
           }).toList(),
         );
       },
@@ -867,14 +757,9 @@ class _HomePageState extends State<HomePage> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-      // showCheckInButton();
-
-      // checkDay(showCheckIn);
-
       if (mounted) {
         getLastWeight().then((value) => setState(() => _weight = value));
         setColorValue(_weight);
-        //getWeightChanges();
         getDataFromFireStore().then((results) {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             setState(() {});
@@ -885,14 +770,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   var today = DateTime.now();
-
   List<Mood> _moods = [];
-
   List<_ChartData> chartData = <_ChartData>[];
 
   Map<String, double> getMoodData() {
     Map<String, double> catMap = {};
-
     for (var item in _moods) {
       if (catMap.containsKey(item.mood) == false) {
         catMap[item.mood] = 1;
@@ -938,22 +820,24 @@ class _HomePageState extends State<HomePage> {
       ringStrokeWidth: 32,
       chartLegendSpacing: 32,
       chartValuesOptions: const ChartValuesOptions(
-          decimalPlaces: 0,
-          showChartValuesOutside: true,
-          showChartValuesInPercentage: true,
-          showChartValueBackground: true,
-          showChartValues: true,
-          chartValueStyle:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        decimalPlaces: 0,
+        showChartValuesOutside: true,
+        showChartValuesInPercentage: true,
+        showChartValueBackground: true,
+        showChartValues: true,
+        chartValueStyle:
+            TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+      ),
       centerText: 'Moods',
       legendOptions: const LegendOptions(
-          showLegendsInRow: false,
-          showLegends: true,
-          legendShape: BoxShape.rectangle,
-          legendTextStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          )),
+        showLegendsInRow: false,
+        showLegends: true,
+        legendShape: BoxShape.rectangle,
+        legendTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
     );
   }
 
@@ -964,10 +848,14 @@ class _HomePageState extends State<HomePage> {
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get();
     List<_ChartData> list = snapShotsValue.docs
-        .map((e) => _ChartData(
+        .map(
+          (e) => _ChartData(
             x: DateTime.fromMillisecondsSinceEpoch(
-                e.data()['bmiTime'].millisecondsSinceEpoch),
-            y: e.data()['bmiScore']))
+              e.data()['bmiTime'].millisecondsSinceEpoch,
+            ),
+            y: e.data()['bmiScore'],
+          ),
+        )
         .toList();
     if (mounted) {
       setState(() {
@@ -1040,7 +928,6 @@ class _HomePageState extends State<HomePage> {
       _moods = [];
       for (int i = 0; i < snapshot.docs.length; i++) {
         var a = snapshot.docs[i];
-
         Mood emotion = Mood.fromJson(a.data());
         _moods.add(emotion);
       }
@@ -1072,15 +959,12 @@ class _HomePageState extends State<HomePage> {
           .get();
       for (var _ in bmiData.docs) {
         bmiScore = bmiData.docs[0].get("bmiScore");
-
         double gotbmiScore = bmiScore;
-
         setState(() {
           gotbmiScore = bmiScore;
         });
         return gotbmiScore;
       }
-
       return bmiScore;
     } catch (e) {
       print(e);
@@ -1088,7 +972,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  //DISPLAYS LATEST TDEE
   final Stream<QuerySnapshot> bmiResultStream = FirebaseFirestore.instance
       .collection('BMI')
       .orderBy("bmiTime")
@@ -1096,7 +979,6 @@ class _HomePageState extends State<HomePage> {
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
 
-  //DISPLAYS LATEST Calorie Deductions
   final Stream<QuerySnapshot> calsRemainingStream = FirebaseFirestore.instance
       .collection('remainingCalories')
       .orderBy("DateTime")
@@ -1114,13 +996,9 @@ class _HomePageState extends State<HomePage> {
           .get();
       for (var _ in latestBmiResult.docs) {
         bmiResultText = latestBmiResult.docs[0].get("result");
-
         String FirestoreBmiTxtResult = bmiResultText;
-
         setBMIResult();
-
         setColorSlider(FirestoreBmiTxtResult);
-
         return FirestoreBmiTxtResult;
       }
       return bmiResultText;
@@ -1139,14 +1017,10 @@ class _HomePageState extends State<HomePage> {
           .get();
       for (var _ in latestMoodName.docs) {
         moodNameText = latestMoodName.docs[0].get("Mood");
-
         String firestoreMoodText = moodNameText;
-
         setMoodResult();
-
         return firestoreMoodText;
       }
-
       return moodNameText;
     } catch (e) {
       print(e);
@@ -1183,25 +1057,19 @@ class _HomePageState extends State<HomePage> {
     if (result == "Overweight") {
       activeColor = Colors.yellow;
       inactiveColor = Colors.yellow;
-      result = "Overweight";
     } else if (result == "Underweight") {
-      activeColor = Color(0xffFF2400);
-      inactiveColor = Color(0xffFF2400);
-      result = "Underweight";
+      activeColor = const Color(0xffFF2400);
+      inactiveColor = const Color(0xffFF2400);
     } else if (result == "Healthy") {
       activeColor = Colors.green;
       inactiveColor = Colors.green;
-      result = "Healthy";
     } else if (result == "Obese") {
       activeColor = const Color(0xffFF2400);
       inactiveColor = const Color(0xffFF2400);
-
-      result = "Obese";
     }
   }
 
   isMoodsEmpty(Stream<QuerySnapshot> moodstream) {
-    // ignore: unrelated_type_equality_checks
     if (moodCardStream.isEmpty == true) {
       return true;
     } else {
@@ -1210,7 +1078,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Class for chart data source, this can be modified based on the data in Firestore
 class _ChartData {
   _ChartData({this.x, this.y});
   final DateTime? x;
@@ -1225,13 +1092,8 @@ class bmiData {
 
 class Mood {
   late String mood;
-
-  Mood({
-    required this.mood,
-  });
-
+  Mood({required this.mood});
   factory Mood.fromJson(Map<String, dynamic> json) {
-    //urlToImage: json['urlToImage'] as String, -> urlToImage: json['urlToImage'] ?? "",
     return Mood(
       mood: json['Mood'] ?? "",
     );
@@ -1254,14 +1116,14 @@ class CustomListTile extends StatelessWidget {
   final Widget trailingIcon;
   final Function() onTap;
   final Color color;
-  const CustomListTile(
-      {required this.text,
-      required this.leadingIcon,
-      required this.trailingIcon,
-      required this.onTap,
-      this.color = const Color(0xFF4338CA),
-      Key? key})
-      : super(key: key);
+  const CustomListTile({
+    required this.text,
+    required this.leadingIcon,
+    required this.trailingIcon,
+    required this.onTap,
+    this.color = const Color(0xFF4338CA),
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1270,7 +1132,7 @@ class CustomListTile extends StatelessWidget {
         leading: leadingIcon,
         title: Text(
           text,
-          textScaleFactor: 1,
+          textScaler: const TextScaler.linear(1),
         ),
         trailing: trailingIcon,
         selected: false,
@@ -1281,20 +1143,3 @@ class CustomListTile extends StatelessWidget {
     );
   }
 }
-
-
-
-// ListTileTheme(
-//       child: ListTile(
-//         leading: Icon(Icons.monetization_on),
-//         title: Text(
-//           'My Cards',
-//           textScaleFactor: 1,
-//         ),
-//         trailing: Icon(Icons.chevron_right),
-//         selected: false,
-//         onTap: () {},
-//       ),
-//       textColor: Color(0xFF4338CA),
-//       iconColor: Color(0xFF4338CA),
-//     )

@@ -7,6 +7,7 @@ import 'package:health_app_fyp/screens/home_page.dart';
 
 import '../MoodTracker/original/list_of_moods.dart';
 import '../OpenFoodFacts/calorie_tracker_list.dart';
+import 'package:health_app_fyp/theme/app_theme.dart';
 
 class CustomisedNavigationBar extends StatelessWidget {
   CustomisedNavigationBar({
@@ -15,65 +16,104 @@ class CustomisedNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      color: Colors.grey,
-      child: SizedBox(
-        height: 70,
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          IconButton(
-            onPressed: () {
-              Get.to(const HomePage());
-            },
-            icon: const Icon(
-              Icons.home_outlined,
-              size: 30,
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.primaryMid,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(AppTheme.radiusL),
+          topRight: Radius.circular(AppTheme.radiusL),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: AppTheme.elevationHigh,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingS,
+            vertical: AppTheme.spacingS,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildNavItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
+                label: 'Home',
+                onTap: () => Get.to(const HomePage()),
+              ),
+              _buildNavItem(
+                icon: Icons.monitor_weight_outlined,
+                activeIcon: Icons.monitor_weight,
+                label: 'BMI',
+                onTap: () => Get.to(const BMITDEE()),
+              ),
+              _buildNavItem(
+                icon: Icons.restaurant_outlined,
+                activeIcon: Icons.restaurant,
+                label: 'Food',
+                onTap: () => Get.to(const BarcodeScanner()),
+              ),
+              _buildNavItem(
+                icon: Icons.mood_outlined,
+                activeIcon: Icons.mood,
+                label: 'Mood',
+                onTap: () => Get.to(const ListMoods()),
+              ),
+              _buildNavItem(
+                icon: Icons.bedtime_outlined,
+                activeIcon: Icons.bedtime,
+                label: 'Sleep',
+                onTap: () => Get.to(const ListSleep()),
+              ),
+              _buildNavItem(
+                icon: Icons.analytics_outlined,
+                activeIcon: Icons.analytics,
+                label: 'Stats',
+                onTap: () => Get.to(const GraphsHome()),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-              // color: Colors.red,
-            ),
+  Widget _buildNavItem({
+    required IconData icon,
+    required IconData activeIcon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingS),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 26,
+                color: AppTheme.textSecondary,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: AppTheme.textTheme.labelSmall?.copyWith(
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
-          IconButton(
-            onPressed: () {
-              Get.to(const BMITDEE());
-            },
-            icon: const Icon(
-              Icons.monitor_weight_outlined,
-              size: 30,
-              // color: Colors.blue,
-            ),
-          ),
-          IconButton(
-              icon: const Icon(
-                Icons.food_bank_outlined,
-                size: 30,
-              ),
-              onPressed: () {
-                Get.to(const BarcodeScanner());
-              }),
-          IconButton(
-              icon: const Icon(
-                Icons.mood,
-                size: 30,
-              ),
-              onPressed: () {
-                Get.to(const ListMoods());
-              }),
-          IconButton(
-              icon: const Icon(
-                Icons.bedroom_child_outlined,
-                size: 30,
-              ),
-              onPressed: () {
-                Get.to(const ListSleep());
-              }),
-          IconButton(
-              icon: const Icon(
-                Icons.analytics_outlined,
-                size: 30,
-              ),
-              onPressed: () {
-                Get.to(const GraphsHome());
-              }),
-        ]),
+        ),
       ),
     );
   }

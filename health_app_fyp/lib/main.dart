@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/screens/home_page.dart';
 import 'package:health_app_fyp/screens/login_screen.dart';
+import 'package:health_app_fyp/theme/app_theme.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
 
       title: 'Health App',
 
-      theme: ThemeData(primarySwatch: Colors.red),
+      theme: AppTheme.theme,
       // home: const LoginScreen(),
       home: SplashScreen(),
     );
@@ -111,35 +112,62 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-            colors: [Colors.black, Colors.grey],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(1.0, 0.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
+        decoration: BoxDecoration(
+          gradient: AppTheme.backgroundGradient,
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                  height: 200,
-                  child: Image.asset(
-                    "assets/LOGO1.png",
-                    fit: BoxFit.contain,
-                  )),
-              // Image.asset("assets/LOGO1.png"),
-              SizedBox(
-                height: 20.0,
+              // Logo with subtle scale animation
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.8, end: 1.0),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutBack,
+                builder: (context, scale, child) {
+                  return Transform.scale(
+                    scale: scale,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXL),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppTheme.surfaceLight.withOpacity(0.3),
+                  ),
+                  child: SizedBox(
+                    height: 180,
+                    width: 180,
+                    child: Image.asset(
+                      "assets/LOGO1.png",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(height: AppTheme.spacingXL),
+              // App name
               Text(
                 "Qualife",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+                style: AppTheme.textTheme.displayLarge,
+              ),
+              const SizedBox(height: AppTheme.spacingS),
+              Text(
+                "Your wellness companion",
+                style: AppTheme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: AppTheme.spacingXXL),
+              // Loading indicator
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppTheme.accentPrimary,
+                  ),
+                ),
               ),
             ],
           ),
