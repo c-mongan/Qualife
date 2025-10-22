@@ -32,7 +32,6 @@
 /build/
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
@@ -44,3 +43,35 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+lib/firebase_options.dart
+
+# Flutter ephemeral (iOS/macOS)
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Flutter/flutter_export_environment.sh
+macos/Flutter/Generated.xcconfig
+macos/Flutter/ephemeral/
+macos/Flutter/flutter_export_environment.sh
+
+# Plugin example (exclude bundled example project)
+plugins/flutter_barcode_scanner/example/
+
+# Plugin build/IDE artifacts
+plugins/flutter_barcode_scanner/.dart_tool/
+plugins/flutter_barcode_scanner/.idea/
+plugins/flutter_barcode_scanner/android/.gradle/
+plugins/flutter_barcode_scanner/example/.flutter-plugins-dependencies
+
+# Workspace noise
+macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Logs
+flutter_run*.log
+
+# Local environment
+**/local.properties
+
+# Exclude auxiliary docs/scripts (CV curation)
+ARCHITECTURE.md
+UNBLOCKING_STEPS.md
+mac-free-space.sh
