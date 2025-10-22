@@ -225,7 +225,7 @@ class _MyTestState extends State<ListSleep> {
       curve: Curves.bounceIn,
       children: [
         SpeedDialChild(
-          child: const Icon(MdiIcons.plus, color: Colors.white),
+          child: Icon(MdiIcons.plus, color: Colors.white),
           backgroundColor: Colors.green,
           onTap: () async {
             // await Navigator.push(
@@ -238,7 +238,7 @@ class _MyTestState extends State<ListSleep> {
           labelBackgroundColor: Colors.green,
         ),
         SpeedDialChild(
-          child: const Icon(MdiIcons.minus, color: Colors.white),
+          child: Icon(MdiIcons.minus, color: Colors.white),
           backgroundColor: Colors.red,
           onTap: () async {
             getNumOfSleep().then((count) => count).then((count) {

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:duration_picker/duration_picker.dart';
+// import 'package:duration_picker/duration_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -83,15 +83,24 @@ class _SleepDurationSelectState extends State<SleepDurationSelect> {
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
 
-                DurationPicker(
+                // DurationPicker widget temporarily disabled due to package compatibility
+                Container(
                   height: 250,
                   width: 250,
-                  duration: _duration,
-                  onChange: (val) {
-                    setState(() => _duration = val);
-                  },
-                  snapToMins: 5.0,
+                  child: Center(
+                    child: Text('Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours',
+                        style: TextStyle(color: Colors.white)),
+                  ),
                 ),
+                // DurationPicker(
+                //   height: 250,
+                //   width: 250,
+                //   duration: _duration,
+                //   onChange: (val) {
+                //     setState(() => _duration = val);
+                //   },
+                //   snapToMins: 5.0,
+                // ),
 
                 const SizedBox(height: 20),
                 GestureDetector(
