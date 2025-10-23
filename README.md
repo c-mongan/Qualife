@@ -4,7 +4,6 @@
   <img src="health_app_fyp/assets/LOGO1.png" alt="Qualife Logo" width="200"/>
 </p>
 
-> **Note:** For proper image display on GitHub, ensure the CV_README.md is placed in the repository root, or update image paths accordingly.
 
 <p align="center">
   <strong>A cross-platform wellness companion that empowers users to track, analyze, and improve their quality of life through data-driven insights.</strong>
@@ -397,16 +396,11 @@ User opens app → Splash Screen → Check auth state
 ## 👨‍💻 Developer
 
 **Conor Mongan**  
-Final Year Computer Science Student  
 [GitHub](https://github.com/c-mongan) | [Email](mailto:monganconor1@gmail.com)
 
 ---
 
-## 📄 License
 
-This project is developed as a Final Year Project for educational purposes.
-
----
 
 ## 🙏 Acknowledgments
 
