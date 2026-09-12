@@ -1,51 +1,98 @@
-# Qualife Health App
+# Qualife Flutter application
 
-Qualife is a holistic wellness companion built in Flutter to help users track daily check-ins, mood, activity, nutrition, and sleep. The app integrates Firebase for authentication and persistence, and leverages Syncfusion widgets for rich data visualisation.
+<p align="center">
+  <img src="assets/LOGO1.png" alt="Qualife logo" width="180">
+</p>
 
----
+This directory contains the Flutter/Firebase prototype for Qualife, a personal
+wellbeing journal covering mood, activity, sleep, food, weight, BMI, estimated
+calorie needs, and trend charts.
 
-## UX & UI Enhancement Plan
+> [!IMPORTANT]
+> Start with the [project README](../README.md). It contains the feature matrix,
+> architecture, Firebase data model, setup requirements, known release
+> blockers, privacy warning, and recommended repair order.
 
-This plan captures the upcoming visual refresh aimed at making the experience calmer, clearer, and more cohesive across platforms.
+## Quick start
 
-### 1. Design System Refresh (Day 0.5)
-- Introduce a dedicated `app_theme.dart` with shared colors, typography, and shapes inspired by soft wellness palettes.
-- Add Google Fonts (e.g., `Poppins` for display, `Inter` for body text) to improve readability and character.
-- Define reusable spacing, elevation, and radius tokens to tighten layout consistency.
-
-### 2. Entry Flow Polish (Day 0.5)
-- Redesign the splash screen with a gentle animated gradient and refined logo treatment.
-- Rebuild the login screen using elevated cards, accent headers, and error feedback aligned with the new theme.
-- Add supportive copy for first-time users and smooth button states (pressed, loading).
-
-### 3. Core Dashboard Glow-Up (Day 0.5)
-- Update the home dashboard to use card-based sections, wider breathing room, and hierarchy for critical stats.
-- Refresh the daily check-in CTA using a modern filled button with subtle motion.
-- Align the mood and calorie charts with the new palette, ensuring accessible contrast.
-
-### 4. Navigation & Components (Day 0.25)
-- Restyle the bottom navigation bar with rounded corners, translucency, and clear active states.
-- Harmonise the custom neumorphic button with the global theme, reducing shadow harshness.
-- Audit form fields and dialogs across the app to apply shared input styles and padding.
-
-### 5. Validation & Handoff (Day 0.25)
-- Run `flutter analyze` and key widget tests to confirm no regressions.
-- Capture before/after screenshots for splash, login, and home to document the improvements.
-- Summarise outstanding stretch ideas (e.g., dark mode, accessibility review) for the backlog.
-
-Estimated total effort: ~2 days of focused implementation and validation.
-
----
-
-## Getting Started
-
-The project uses the standard Flutter tooling:
+Android and iOS use Firebase's bundled native configuration:
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-Ensure Firebase is configured with the project credentials in `lib/firebase_options.dart` before running on device or simulator.
+Replace `android/app/google-services.json` or
+`ios/Runner/GoogleService-Info.plist` with the matching file from your Firebase
+project before running that platform.
 
-For general Flutter documentation, refer to the [online docs](https://flutter.dev/docs).
+Web has no committed Firebase configuration. Supply its four required
+`FirebaseOptions` values at compile time:
+
+```bash
+flutter run -d chrome \
+  --dart-define=FIREBASE_WEB_API_KEY=... \
+  --dart-define=FIREBASE_WEB_APP_ID=... \
+  --dart-define=FIREBASE_WEB_MESSAGING_SENDER_ID=... \
+  --dart-define=FIREBASE_WEB_PROJECT_ID=...
+```
+
+`FIREBASE_WEB_AUTH_DOMAIN` and `FIREBASE_WEB_STORAGE_BUCKET` are optional
+additional defines. Keep environment-specific values out of source control.
+If a required value is absent, the app shows its Firebase initialization
+failure screen rather than attempting to use an incomplete configuration.
+
+| Platform | Firebase startup status |
+|---|---|
+| Android | Supported with `android/app/google-services.json` |
+| iOS | Supported with `ios/Runner/GoogleService-Info.plist` |
+| Web | Supported when the required `FIREBASE_WEB_*` defines are supplied |
+| macOS | Unsupported until a macOS Firebase app and native configuration are added |
+| Windows/Linux | Not configured or supported |
+
+Telemetry is compile-time opt-in and is disabled by default. A normal
+`flutter run` does not initialize Datadog, install its navigation observer, or
+send Datadog logs, RUM, or crash reports. For an explicitly approved
+observability build:
+
+```bash
+flutter run --dart-define=ENABLE_TELEMETRY=true
+```
+
+This is a build-wide switch, not in-app consent. Enabled builds send only
+coarse event names such as `auth.login_failed` and `food.entry_saved`.
+Datadog is never given a user ID or email, and event attributes do not include
+mood, activities, barcodes, food names, BMI, weight, calorie values/targets, or
+health classifications. Initialization failure falls back to starting the app
+without telemetry.
+
+## Privacy
+
+- Telemetry is off unless `ENABLE_TELEMETRY=true` is supplied at build/run
+  time; no persisted user-consent control currently exists.
+- Firebase still stores the wellbeing data required by app features. Datadog
+  receives no raw health or account values from the application logger.
+- Console logging of raw health records and values has been removed from
+  `lib/`; remaining diagnostics are coarse operation or initialization names.
+- Do not enable telemetry for a release unless the build-level approval,
+  Datadog retention/access settings, and applicable privacy notice have been
+  reviewed.
+
+## Checks
+
+```bash
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test
+```
+
+The current repository is a prototype. Telemetry now defaults off and its
+application events are data-minimised, but Firebase data governance, account
+export/deletion, and production privacy review remain incomplete. Do not use it
+for real sensitive health information or medical decisions.
+
+## Supporting notes
+
+- [UX/UI enhancement guide](UX_UI_ENHANCEMENT_GUIDE.md)
+- [UX/UI migration notes](MIGRATION_NOTES.md)
+- [Widget audit](WIDGET_AUDIT.md)

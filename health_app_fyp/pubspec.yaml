@@ -45,14 +45,13 @@ dependencies:
   fluttertoast: ^8.2.4
   fl_chart: ^1.1.0
     #Package used for Data Visualisation
-  font_awesome_flutter: ^10.9.1
+  font_awesome_flutter: ^11.0.0
   syncfusion_flutter_sliders: ^31.1.19
   http: ^1.5.0
   flutter_barcode_scanner: ^2.0.0
   firebase_database: ^12.0.3
   flutter_speed_dial: ^7.0.0
   sqflite: ^2.4.2
-  material_design_icons_flutter: ^7.0.7296
   path_provider: ^2.1.5
   syncfusion_flutter_charts: ^31.1.19
   openfoodfacts: ^3.26.0

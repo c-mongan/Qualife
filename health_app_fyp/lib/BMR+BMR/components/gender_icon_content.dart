@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../colors&fonts.dart';
 
 class GenderIconContent extends StatelessWidget {
- 
   const GenderIconContent(
       {required this.sex,
       required this.label,
       required this.color,
       labelColor});
   final String label;
-  final IconData sex;
+  final FaIconData sex;
   final Color color;
 
   @override
@@ -18,7 +18,7 @@ class GenderIconContent extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(
+        FaIcon(
           sex,
           size: 50.0,
           color: color,

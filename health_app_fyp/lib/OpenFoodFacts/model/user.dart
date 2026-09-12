@@ -1,6 +1,3 @@
-import 'package:openfoodfacts/model/NutrientLevels.dart';
-import 'package:openfoodfacts/model/Nutriments.dart';
-import 'package:openfoodfacts/model/UserAgent.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 
 class User {

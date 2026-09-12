@@ -253,8 +253,8 @@ class _FirstTDEEState extends State<FirstTDEE> {
                                   );
                                 });
                           },
-                          icon: const Icon(
-                            FontAwesomeIcons.infoCircle,
+                          icon: const FaIcon(
+                            FontAwesomeIcons.circleInfo,
                             color: Colors.grey,
                           )),
                     ],

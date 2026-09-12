@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_app_fyp/BMR+BMR/components/container_card.dart';
 import 'package:health_app_fyp/screens/home_page.dart';
+import 'package:health_app_fyp/services/telemetry.dart';
 import '../../widgets/customnavbar.dart';
 import '../colors&fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,8 +40,6 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
-  var bodyLogger = DatadogSdk.instance
-      .createLogger(LoggingConfiguration(loggerName: "bodyLogger"));
   ActivityLevel selectedLevel = ActivityLevel.level_0;
   WeightGoal selectedGoal = WeightGoal.keep;
   double endTDEE = 0;
@@ -248,8 +246,8 @@ class _SecondPageState extends State<SecondPage> {
                                   );
                                 });
                           },
-                          icon: const Icon(
-                            FontAwesomeIcons.infoCircle,
+                          icon: const FaIcon(
+                            FontAwesomeIcons.circleInfo,
                             color: Colors.grey,
                           )),
                     ],
@@ -717,21 +715,7 @@ class _SecondPageState extends State<SecondPage> {
                         //  child: Colors.grey,
                         onPressed: () {
                           {
-                            bodyLogger.addAttribute('hostname', uid);
-                            bodyLogger.addAttribute(
-                                'bmi_score', widget.bmiResult);
-
-                            bodyLogger.addAttribute(
-                                'bmi_indication', widget.resultText);
-                            bodyLogger.addAttribute(
-                                'recommended_calories', endTDEE);
-                            bodyLogger.addAttribute('body_goal', selectedGoal);
-
-                            bodyLogger.info(
-                                'User : ${loggedInUser.uid} logged a BMI of ${widget.bmiResult} which indicates they are ${widget.resultText}');
-
-                            bodyLogger.info(
-                                'User : ${loggedInUser.uid} has a new recommended daily calorie intake of $endTDEE kcal');
+                            AppTelemetry.info(TelemetryEvent.bodyMetricsSaved);
                             //CREATING A TDEE ENTRY FOR TIMESTAMP PURPOSES
                             Navigator.pop(context);
                             FirebaseFirestore.instance.collection('TDEE').add({

@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:health_app_fyp/services/telemetry.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 // import 'package:flutter_material_pickers/helpers/show_number_picker.dart';
 import 'package:health_app_fyp/BMR+BMR/components/buttons.dart';
 
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 
 import '../BMR+BMR/colors&fonts.dart';
@@ -48,7 +47,8 @@ Future<int?> showMaterialNumberPicker({
                           ? () {
                               setState(() {
                                 currentValue = currentValue - step;
-                                if (currentValue < minNumber) currentValue = minNumber;
+                                if (currentValue < minNumber)
+                                  currentValue = minNumber;
                               });
                             }
                           : null,
@@ -59,7 +59,8 @@ Future<int?> showMaterialNumberPicker({
                           ? () {
                               setState(() {
                                 currentValue = currentValue + step;
-                                if (currentValue > maxNumber) currentValue = maxNumber;
+                                if (currentValue > maxNumber)
+                                  currentValue = maxNumber;
                               });
                             }
                           : null,
@@ -97,17 +98,14 @@ class BarcodeScanSecond extends StatefulWidget {
 
 class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
   String _scannedBarcode = 'Unknown';
+  String? _errorMessage;
+  bool _isSaving = false;
 
-  final foodTrackerLogger = DatadogSdk.instance.createLogger(
-    LoggingConfiguration(loggerName: 'Calorie Tracker Logger'),
-  );
   // DatabaseManager helper = DatabaseManager();
   @override
   void initState() {
     super.initState();
-
     runBarcodeScanner();
-    getFoodName();
   }
 
   Future<double> getTdeeVal() async {
@@ -120,7 +118,6 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           .get();
       if (tdeevals.docs.isNotEmpty) {
         final doc = tdeevals.docs.first;
-        print(doc.data());
         final value = doc.get("tdee");
         if (value is num) {
           return value.toDouble();
@@ -128,8 +125,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
         return double.tryParse(value.toString()) ?? t2;
       }
       return t2;
-    } catch (error) {
-      print(error);
+    } catch (_) {
       rethrow;
     }
   }
@@ -144,14 +140,11 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           .get();
       if (calsvals.docs.isNotEmpty) {
         final doc = calsvals.docs.first;
-        print(doc.data());
         tempText2 = doc.get("Cals").toString();
-        print(tempText2);
         return tempText2;
       }
       return tempText2;
-    } catch (error) {
-      print(error);
+    } catch (_) {
       rethrow;
     }
   }
@@ -166,40 +159,33 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
           .get();
       if (calsdate.docs.isNotEmpty) {
         final doc = calsdate.docs.first;
-        print(doc.data());
         return doc.get("DateTime") as Timestamp;
       }
       return Timestamp(0, 0);
-    } catch (error) {
-      print(error);
+    } catch (_) {
       rethrow;
     }
   }
 
-  final Stream<QuerySnapshot> foodStream = FirebaseFirestore.instance
-      .collection('Food')
-      .orderBy("DateTime")
-      .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-      .snapshots();
-
-  final Stream<QuerySnapshot> lastfoodStream = FirebaseFirestore.instance
-      .collection('TempFood')
-      .orderBy("DateTime")
-      .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-      .snapshots();
+  Stream<QuerySnapshot> get lastfoodStream {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return const Stream<QuerySnapshot>.empty();
+    return FirebaseFirestore.instance
+        .collection('TempFood')
+        .orderBy("DateTime")
+        .limitToLast(1)
+        .where('userID', isEqualTo: user.uid)
+        .snapshots();
+  }
 
   String? Name;
   String? ingredientsT;
   double? servCalorie;
   String foodNameTxt = "Item Unknown";
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String get uid => FirebaseAuth.instance.currentUser?.uid ?? '';
   int servings = 1;
   int servingSize = 0;
   DateTime inputTime = DateTime.now();
-
-  final today = DateTime.now().day;
 
   List fields = [];
 
@@ -212,146 +198,111 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> scanBarcode() async {
-    String barcodeScanRes;
-
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw StateError('Please sign in before adding food.');
+      }
+      final barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancel", true, ScanMode.BARCODE);
-      // ignore: avoid_print
-      print(barcodeScanRes);
+      if (barcodeScanRes == '-1') {
+        if (mounted) Navigator.pop(context);
+        return;
+      }
+      if (mounted) setState(() => _scannedBarcode = barcodeScanRes);
+
+      final configuration = ProductQueryConfiguration(
+        barcodeScanRes,
+        version: ProductQueryVersion.v3,
+        language: OpenFoodFactsLanguage.ENGLISH,
+        fields: [ProductField.ALL],
+      );
+      final result = await OpenFoodAPIClient.getProductV3(configuration);
+      if (!mounted) return;
+      final product = result.product;
+      if (product == null ||
+          result.result?.id == ProductResultV3.resultProductNotFound) {
+        AppTelemetry.info(TelemetryEvent.foodLookupNotFound);
+        throw StateError('Food not found. Try another barcode.');
+      }
+
+      Name = product.productName?.trim();
+      if (Name == null || Name!.isEmpty) {
+        throw StateError('This food has no product name.');
+      }
+
+      ingredientsT = product.ingredientsText;
+
+      final nutriments = product.nutriments;
+      final double? energyKcalPer100g = nutriments?.getValue(
+        Nutrient.energyKCal,
+        PerSize.oneHundredGrams,
+      );
+      final double? energyKjPer100g = nutriments?.getValue(
+        Nutrient.energyKJ,
+        PerSize.oneHundredGrams,
+      );
+      final double? energy100gKcal = energyKcalPer100g ??
+          (energyKjPer100g != null ? energyKjPer100g / 4.184 : null);
+
+      servCalorie = nutriments?.getValue(
+        Nutrient.energyKCal,
+        PerSize.oneHundredGrams,
+      );
+      servCalorie ??= energy100gKcal;
+      if (servCalorie == null || !servCalorie!.isFinite) {
+        throw StateError('Calorie information is unavailable for this food.');
+      }
+
+      final inputTime = DateTime.now();
+
+      if (!mounted) return;
+      await FirebaseFirestore.instance.collection('TempFood').add({
+        'Food Name': Name,
+        'DateTime': inputTime,
+        'CaloriesPerServing': servCalorie!.toStringAsFixed(2),
+        'userID': user.uid
+      });
+      foodNameTxt = Name!;
+      AppTelemetry.info(TelemetryEvent.foodEntrySaved);
+
+      if (mounted) {
+        setState(() {
+          found = true;
+        });
+      }
     } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _scannedBarcode = barcodeScanRes;
-    });
-
-    String barcode = barcodeScanRes;
-
-    // request a product from the OpenFoodFacts database
-
-    final configuration = ProductQueryConfiguration(
-      barcode,
-      version: ProductQueryVersion.v3,
-      language: OpenFoodFactsLanguage.ENGLISH,
-      fields: [ProductField.ALL],
-    );
-    final ProductResultV3 result =
-        await OpenFoodAPIClient.getProductV3(configuration);
-
-    final product = result.product;
-    final notFound =
-        product == null || result.result?.id == ProductResultV3.resultProductNotFound;
-
-    if (notFound) {
-      print(
-          "Error retreiving the product with barcode : $barcode If the barcode number here matches the one on your food item , the item may not exist in the database. Please visit openfoodfacts.org ");
-
-      foodTrackerLogger
-          .warn('Food item with barcode $barcode not found in database');
-
-      foodNameTxt = 'error';
-      found = false;
-      return;
-    }
-
-    found = true;
-
-    Name = product.productName ??
-        "ERROR: Item Data Exists In Database But Name Not Found!";
-    if (product.productName == null) {
-      foodTrackerLogger.warn('Food item with barcode $barcode has no name');
-    }
-
-    ingredientsT = product.ingredientsText;
-
-    final nutriments = product.nutriments;
-    final double? energyKcalPer100g = nutriments?.getValue(
-      Nutrient.energyKCal,
-      PerSize.oneHundredGrams,
-    );
-    final double? energyKjPer100g = nutriments?.getValue(
-      Nutrient.energyKJ,
-      PerSize.oneHundredGrams,
-    );
-    final double? energy100gKcal =
-        energyKcalPer100g ?? (energyKjPer100g != null ? energyKjPer100g / 4.184 : null);
-
-    servCalorie = nutriments?.getValue(
-      Nutrient.energyKCal,
-      PerSize.serving,
-    );
-    servCalorie ??= energy100gKcal;
-
-    final String? servingSize = product.servingSize;
-    final double? servingQuantity = product.servingQuantity;
-    final double? fat100g = nutriments?.getValue(
-      Nutrient.fat,
-      PerSize.oneHundredGrams,
-    );
-    final double? saltServing = nutriments?.getValue(
-      Nutrient.salt,
-      PerSize.serving,
-    );
-    final double? fatServing = nutriments?.getValue(
-      Nutrient.fat,
-      PerSize.serving,
-    );
-
-    final String uid = FirebaseAuth.instance.currentUser!.uid;
-    final DateTime inputTime = DateTime.now();
-
-    print(Name);
-    print(ingredientsT);
-    if (energy100gKcal != null) {
-      print(energy100gKcal.toStringAsFixed(2));
-    }
-    print(servingSize);
-    print(servingQuantity);
-    print(fat100g);
-    print(saltServing);
-    print(fatServing);
-
-    FirebaseFirestore.instance.collection('TempFood').add({
-      'Food Name': Name,
-      'DateTime': inputTime,
-      'CaloriesPerServing': servCalorie?.toStringAsFixed(2),
-      'userID': uid
-    });
-    foodTrackerLogger.addAttribute('hostname', uid);
-    foodTrackerLogger
-        .info('Food item :$Name with barcode $barcode added to database');
-
-    if (Name != null) {
-      foodTrackerLogger.addAttribute('item_name', Name!);
-    }
-    foodTrackerLogger.addAttribute('item_barcode', barcode);
-    if (servCalorie != null) {
-      foodTrackerLogger.addAttribute('calories_per_serving', servCalorie!);
-    }
-
-    print("Temp food added");
-
-    getFoodName().then((gotFoodName) {
-      foodNameTxt = gotFoodName;
-      print("getFoodName method called");
-    });
-
-    if (foodNameTxt.isNotEmpty) {
-      found = true;
+      _showError('Unable to open the barcode scanner.');
+    } catch (error) {
+      _showError(_friendlyError(error));
     }
   }
 
   Future<void> runBarcodeScanner() async {
-    scanBarcode();
+    await scanBarcode();
   }
+
+  String _friendlyError(Object error) {
+    if (error is StateError) return error.message;
+    return 'Could not load this food. Check your connection and try again.';
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    setState(() {
+      _errorMessage = message;
+      found = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
+      }
+    });
+  }
+
+  bool _sameCalendarDate(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 
   void exitscreen(bool reload) {
     Navigator.pop(context, reload);
@@ -375,7 +326,9 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                     colors: [
                   Colors.black,
                   Colors.grey,
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter)),
             child: Builder(builder: (BuildContext context) {
               return SingleChildScrollView(
                   // <-- wrap this around
@@ -396,8 +349,10 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                 subtitle: found == false
                                     ? const Text("")
                                     : Text(_scannedBarcode),
-                                leading: Icon(MdiIcons.barcodeScan,
-                                    size: 50.0),
+                                leading: const Icon(
+                                  Icons.qr_code_scanner,
+                                  size: 50.0,
+                                ),
                               ),
                             ),
                           ),
@@ -478,16 +433,21 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                               // side: const BorderSide(
                                               //     width: 2,
                                               //     color: Colors.blueGrey),
-                                                  style: ButtonStyle(
-              padding: MaterialStateProperty.all(
-                EdgeInsets.symmetric(vertical: 14),
-              ),
-              backgroundColor:
-                  MaterialStateProperty.all(Theme.of(context).primaryColor),
-              shape: MaterialStateProperty.all(
-                StadiumBorder(),
-              ),
-            ),
+                                              style: ButtonStyle(
+                                                padding:
+                                                    MaterialStateProperty.all(
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 14),
+                                                ),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        Theme.of(context)
+                                                            .primaryColor),
+                                                shape:
+                                                    MaterialStateProperty.all(
+                                                  StadiumBorder(),
+                                                ),
+                                              ),
                                               onPressed: () =>
                                                   showMaterialNumberPicker(
                                                       context: context,
@@ -522,7 +482,7 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                                               // borderSide: const BorderSide(
                                               //     width: 2,
                                               //     color: Colors.blueGrey),
-                                              
+
                                               child: Text(
                                                   servingSize.toString() + "g"),
                                               onPressed: () =>
@@ -545,135 +505,100 @@ class _BarcodeScanSecondState extends State<BarcodeScanSecond> {
                           Button(
                               edges: const EdgeInsets.all(0.0),
                               color: Colors.white,
-                              text: const Text('Enter food', style: textStyle2),
-                              onTap: () {
-                                double totalCals =
-                                    servCalorie! / 100 * servingSize * servings;
-
-                                getFoodName().then((gotFoodName) {
-                                  foodNameTxt = gotFoodName;
-                                });
-
-                                FirebaseFirestore.instance
-                                    .collection('Food')
-                                    .add({
-                                  'Food Name': foodNameTxt,
-                                  'userID': uid,
-                                  'NumberOfServings': servings,
-                                  'CaloriesPer100gServing':
-                                      servCalorie?.toStringAsFixed(2),
-                                  'ServingSize': servingSize,
-                                  'TotalCaloriesAdded': totalCals,
-                                  'DateTime': inputTime,
-                                });
-
-                                getLastCalsRemainingDay().then((time) {
-                                  DateTime tempdate =
-                                      DateTime.fromMicrosecondsSinceEpoch(
-                                          time.microsecondsSinceEpoch);
-
-                                  if (tempdate.day != today) {
-                                    getTdeeVal().then((tdee) {
-                                      servings - 1;
-                                      double totalCals = servings *
-                                          servCalorie! /
-                                          100 *
-                                          servingSize;
-                                      double totalDeducts = tdee - totalCals;
-//Allows us to see how many of our users are overconsuming calories
-                                      if (totalDeducts < 0) {
-                                        foodTrackerLogger.addAttribute(
-                                            'hostname', uid);
-                                        foodTrackerLogger.addAttribute(
-                                            'calories_overconsumed',
-                                            totalDeducts);
-                                        foodTrackerLogger.addAttribute(
-                                            'hostname', uid);
-                                        foodTrackerLogger.warn(
-                                            "User $uid has exceeded their daily recommended calorie intake by $totalDeducts calories today");
-                                      }
-                                      FirebaseFirestore.instance
-                                          .collection('remainingCalories')
-                                          .add({
-                                        'userID': uid,
-                                        'Cals': totalDeducts,
-                                        'DateTime': inputTime,
-                                      });
-                                    });
-                                  } else {
-                                    getDailyCalsRemaining().then((calsLeft) {
-                                      double num = double.parse(calsLeft);
-
-                                      servings - 1;
-
-                                      double totalCals = servings *
-                                          servCalorie! /
-                                          100 *
-                                          servingSize;
-                                      double totalDeducts = num - totalCals;
-//Allows us to see how many of our users are overconsuming calories
-                                      if (totalDeducts < 0) {
-                                        foodTrackerLogger.addAttribute(
-                                            'hostname', uid);
-                                        foodTrackerLogger.addAttribute(
-                                            'calories_overconsumed',
-                                            totalDeducts);
-                                        foodTrackerLogger.addAttribute(
-                                            'hostname', uid);
-                                        foodTrackerLogger.warn(
-                                            "User $uid has exceeded their daily recommended calorie intake by $totalDeducts calories today");
-                                      }
-
-                                      FirebaseFirestore.instance
-                                          .collection('remainingCalories')
-                                          .add({
-                                        'userID': uid,
-                                        'Cals': totalDeducts,
-                                        'DateTime': inputTime,
-                                      });
-                                    });
-                                  }
-                                });
-                                bool reload = true;
-                                exitscreen(reload);
-                              })
+                              text: Text(_isSaving ? 'Saving…' : 'Enter food',
+                                  style: textStyle2),
+                              onTap: _saveFood)
                         ]))
               ]));
             })));
   }
 
-  //THIS METHOD IS FOR GETTING FOOD NAME INTO A STRING , FROM TEMPFOOOD
-  Future<String> getFoodName() async {
+  Future<void> _saveFood() async {
+    if (_isSaving) return;
+    final user = FirebaseAuth.instance.currentUser;
+    final caloriesPer100g = servCalorie;
+    final name = Name?.trim();
+    if (user == null) {
+      _showError('Please sign in before adding food.');
+      return;
+    }
+    if (!found || name == null || name.isEmpty || caloriesPer100g == null) {
+      _showError(
+          _errorMessage ?? 'Scan a food with calorie information first.');
+      return;
+    }
+    if (servingSize <= 0) {
+      _showError('Select a serving size greater than zero.');
+      return;
+    }
+
+    setState(() => _isSaving = true);
     try {
-      final foodname = await FirebaseFirestore.instance
-          .collection('TempFood')
-          .orderBy("DateTime")
+      final now = DateTime.now();
+      final totalCalories = caloriesPer100g / 100 * servingSize * servings;
+      final firestore = FirebaseFirestore.instance;
+      final latestBalanceQuery = await firestore
+          .collection('remainingCalories')
+          .orderBy('DateTime')
           .limitToLast(1)
-          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('userID', isEqualTo: user.uid)
           .get();
-      if (foodname.docs.isNotEmpty) {
-        final doc = foodname.docs.first;
-        foodNameTxt = doc.get("Food Name");
-        return foodNameTxt.toString();
+      final tdee = await getTdeeVal();
+      double startingBalance = tdee;
+      if (latestBalanceQuery.docs.isNotEmpty) {
+        final latest = latestBalanceQuery.docs.first;
+        final timestamp = latest.get('DateTime');
+        if (timestamp is Timestamp &&
+            _sameCalendarDate(timestamp.toDate(), now)) {
+          final value = latest.get('Cals');
+          startingBalance = value is num
+              ? value.toDouble()
+              : double.tryParse(value.toString()) ?? tdee;
+        }
       }
-      return foodNameTxt;
-    } catch (error) {
-      print(error);
-      rethrow;
+
+      final dayKey =
+          '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+      final balanceRef =
+          firestore.collection('remainingCalories').doc('${user.uid}_$dayKey');
+      final foodRef = firestore.collection('Food').doc();
+
+      await firestore.runTransaction((transaction) async {
+        final currentBalance = await transaction.get(balanceRef);
+        final currentValue = currentBalance.data()?['Cals'];
+        final base = currentValue is num
+            ? currentValue.toDouble()
+            : double.tryParse(currentValue?.toString() ?? '') ??
+                startingBalance;
+        transaction.set(foodRef, {
+          'Food Name': name,
+          'userID': user.uid,
+          'NumberOfServings': servings,
+          'CaloriesPer100gServing': caloriesPer100g.toStringAsFixed(2),
+          'ServingSize': servingSize,
+          'TotalCaloriesAdded': totalCalories,
+          'DateTime': now,
+          'balanceDocumentId': balanceRef.id,
+        });
+        transaction.set(balanceRef, {
+          'userID': user.uid,
+          'Cals': base - totalCalories,
+          'DateTime': now,
+        });
+      });
+
+      if (!mounted) return;
+      exitscreen(true);
+    } catch (_) {
+      _showError('Could not save this food. Nothing was changed. Try again.');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
 //   void deductCal(String tdee, double energy100gKcal, uid, inputTime) {
 //     double result = double.parse(tdee);
 //     double calRemaining = result - energy100gKcal;
-
-// //Allows us to see how many of our users are overconsuming calories
-//     if (calRemaining < 0) {
-//         foodTrackerLogger.addAttribute('hostname', uid);
-//             foodTrackerLogger.addAttribute('calories_overconsumed', totalDeducts);
-//       foodTrackerLogger.info(
-//           "User $uid has exceeded their daily recommended calorie intake by $calRemaining calories today");
-//     }
 
 //     FirebaseFirestore.instance.collection('remainingCalories').add({
 //       'userID': uid,

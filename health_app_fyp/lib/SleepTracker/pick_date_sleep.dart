@@ -6,7 +6,6 @@ import 'package:health_app_fyp/MoodTracker/original/pick_date.dart';
 import 'package:health_app_fyp/MoodTracker/original/pick_mood.dart';
 import 'package:health_app_fyp/SleepTracker/pick_sleep.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../widgets/customnavbar.dart';
@@ -145,7 +144,7 @@ class MyAppState extends State<PickDateSleepTracker> {
         curve: Curves.bounceIn,
         children: [
           SpeedDialChild(
-            child: Icon(MdiIcons.calendar, color: Colors.white),
+            child: const Icon(Icons.calendar_today, color: Colors.white),
             backgroundColor: Colors.green,
             onTap: () {
               Get.to(SleepDurationSelect(selectedDate: selectedDate));

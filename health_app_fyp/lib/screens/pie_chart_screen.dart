@@ -7,7 +7,6 @@ import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 import 'package:health_app_fyp/screens/display_mood_pie_chart.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
 
-
 import '../MoodTracker/moodcard.dart';
 
 class PieChartSelect extends StatefulWidget {
@@ -123,7 +122,6 @@ class _PieChartSelectState extends State<PieChartSelect> {
                                             moods[index].iselected = true;
                                             ontapcount = ontapcount + 1;
                                             moodValue = moods[index].moodValue;
-                                            print(mood);
                                           }),
                                         }
                                       else if (moods[index].iselected)

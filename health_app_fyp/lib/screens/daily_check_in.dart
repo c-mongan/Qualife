@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../MoodTracker/moodcard.dart';
-import '../model/user_model.dart';
 // import 'package:duration_picker/duration_picker.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../widgets/nuemorphic_button.dart';
@@ -26,14 +25,10 @@ class DailyCheckInPage extends StatefulWidget {
   _DailyCheckInPageState createState() => _DailyCheckInPageState();
 }
 
-User? user = FirebaseAuth.instance.currentUser;
-UserModel loggedInUser = UserModel();
-
-double oldweight = 0;
-
 class _DailyCheckInPageState extends State<DailyCheckInPage> {
   late WeightSliderController _controller;
   double _weight = 60.0;
+  bool _isSubmitting = false;
 
   Duration _duration = const Duration(hours: 8, minutes: 0);
 
@@ -45,28 +40,42 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
   DateTime picked = DateTime.now();
   var newString = '';
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
   num? moodValue;
 
   @override
   void initState() {
     super.initState();
 
-    getLastWeight().then((value) => setState(() => _weight = value));
-
-    //setLastWeight();
     _controller = WeightSliderController(
         initialWeight: _weight, minWeight: 0, interval: 0.1);
+    _loadInitialData();
+  }
 
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
+  Future<void> _loadInitialData() async {
+    final currentUser = user;
+    if (currentUser == null) {
+      return;
+    }
 
-      setState(() {});
-    });
+    try {
+      final loadedWeight = await getLastWeight();
+      if (!mounted) {
+        return;
+      }
+
+      _controller.dispose();
+      _controller = WeightSliderController(
+          initialWeight: loadedWeight, minWeight: 0, interval: 0.1);
+      setState(() {
+        _weight = loadedWeight;
+      });
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to load check-in data: $error')),
+        );
+      }
+    }
   }
 
   @override
@@ -95,7 +104,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
   String? datetime;
   int? currentindex;
   TimeOfDay selectedTime = TimeOfDay.now();
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String get uid => FirebaseAuth.instance.currentUser?.uid ?? '';
   int servings = 1;
   DateTime inputTime = DateTime.now();
 
@@ -124,37 +133,107 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
     Activity('assets/clean.png', 'Cleaning', false)
   ];
 
-  void setLastWeight() async {
-    getLastWeight().then((firestoreLastWeightText) {
-      lastWeight = firestoreLastWeightText;
-    });
+  Future<double> getLastWeight() async {
+    final latestDailyCheckInDoc = await FirebaseFirestore.instance
+        .collection('DailyCheckIn')
+        .orderBy('DateTime')
+        .limitToLast(1)
+        .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
+    if (latestDailyCheckInDoc.docs.isEmpty) {
+      return _weight;
+    }
+
+    return (latestDailyCheckInDoc.docs.first.get("Weight") as num).toDouble();
   }
 
-  double lastWeight = 0;
+  Future<void> _submitCheckIn() async {
+    if (_isSubmitting) {
+      return;
+    }
+    if (mood == null || moodValue == null || image == null || list.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "Select a mood and at least one activity before checking in.");
+      return;
+    }
+    if (!_weight.isFinite || _weight <= 0 || _duration.inMinutes <= 0) {
+      Fluttertoast.showToast(msg: "Enter a valid weight and sleep duration.");
+      return;
+    }
 
-  Future<double> getLastWeight() async {
-    String Exc = "Error";
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      Fluttertoast.showToast(msg: "You must be signed in to check in.");
+      return;
+    }
 
+    setState(() => _isSubmitting = true);
     try {
-      final latestDailyCheckInDoc = await FirebaseFirestore.instance
-          .collection('DailyCheckIn')
-          .orderBy('DateTime')
-          .limitToLast(1)
-          .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-          .get();
-      for (var weight in latestDailyCheckInDoc.docs) {
-        lastWeight = latestDailyCheckInDoc.docs[0].get("Weight");
+      final previousWeight = await getLastWeight();
+      final firestore = FirebaseFirestore.instance;
+      final batch = firestore.batch();
+      final checkInTime = DateTime.now();
+      final day = DateFormat('yyyy-MM-dd').parse(checkInTime.toString());
+      final sleepDuration =
+          double.parse((_duration.inMinutes / 60).toStringAsFixed(1));
+      final formattedMinute = NumberFormat("00").format(selectedTime.minute);
+      final time = "${selectedTime.hour}:$formattedMinute";
+      final moodEntryRef = firestore.collection('MoodTracking').doc();
 
-        double firestoreLastWeight = lastWeight;
-
-        setLastWeight();
-
-        print(lastWeight);
-        return firestoreLastWeight;
+      batch.set(firestore.collection('DailyCheckIn').doc(), {
+        'userID': currentUser.uid,
+        'DateTime': checkInTime,
+        'Mood': moodValue,
+        'Sleep': sleepDuration,
+        'Weight': _weight,
+        'WeightDifference': _weight - previousWeight,
+      });
+      batch.set(moodEntryRef, {
+        'userID': currentUser.uid,
+        'DateOfMood': selectedDate,
+        'TimeOfMood': time,
+        'Mood': mood,
+        'Activities': List.of(list),
+        'DateTime': day,
+        'Icon': image,
+        'MoodValue': moodValue,
+        'moodEntryId': moodEntryRef.id,
+      });
+      for (final activity in list) {
+        batch.set(firestore.collection('ActivityTracking').doc(), {
+          'userID': currentUser.uid,
+          'DateOfActivity': checkInTime,
+          'TimeOfActivity': time,
+          'Mood': mood,
+          'Activity': activity,
+          'DateTime': day,
+          'Icon': image,
+          'MoodValue': moodValue,
+          'moodEntryId': moodEntryRef.id,
+        });
       }
-      return lastWeight;
-    } catch (Exc) {
-      rethrow;
+      batch.set(firestore.collection('SleepTracking').doc(), {
+        'userID': currentUser.uid,
+        'DateOfSleep': selectedDate,
+        'TimeOfSleep': time,
+        'SleepTime': day,
+        'SleepDuration': sleepDuration,
+      });
+
+      await batch.commit();
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Check-in failed: $error')),
+      );
+      return;
+    }
+
+    if (mounted) {
+      Get.to(const homePage.HomePage());
     }
   }
 
@@ -169,19 +248,16 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var cals in calsdate.docs) {
-        print(cals.data());
         Timestamp time;
         time = calsdate.docs[0].get("DateTime");
 
         var tempText2;
         String calsLeftDay = tempText2.toString();
-        print(calsLeftDay);
 
         return time;
       }
       return Timestamp(0, 0);
-    } catch (Exc) {
-      print(Exc);
+    } catch (_) {
       rethrow;
     }
   }
@@ -288,7 +364,8 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                           height: 250,
                           width: 250,
                           child: Center(
-                            child: Text('Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours'),
+                            child: Text(
+                                'Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours'),
                           ),
                         ),
                         // DurationPicker(
@@ -381,7 +458,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                                           ontapcount + 1;
                                                       moodValue = moods[index]
                                                           .moodValue;
-                                                      print(mood);
                                                     }),
                                                   }
                                                 else if (moods[index].iselected)
@@ -390,6 +466,9 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                                       moods[index].iselected =
                                                           false;
                                                       ontapcount = 0;
+                                                      mood = null;
+                                                      image = null;
+                                                      moodValue = null;
                                                     })
                                                   }
                                               }),
@@ -443,9 +522,6 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                                                 setState(() {
                                                   act[index].selected = true;
 
-                                                  print(act[index].name);
-                                                  print(act[index].selected);
-
                                                   list.add(act[index].name);
                                                 }),
                                             }),
@@ -461,99 +537,7 @@ class _DailyCheckInPageState extends State<DailyCheckInPage> {
                               child: const Text('Check In',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15)),
-                              onPressed: () {
-                                // getLastDailyCheckInDay().then((time) {
-                                //   DateTime tempdate =
-                                //       DateTime.fromMicrosecondsSinceEpoch(
-                                //           time.microsecondsSinceEpoch);
-
-                                //   final today = DateTime.now().day;
-
-                                //   if (tempdate.day == today) {
-                                //     Fluttertoast.showToast(
-                                //         msg:
-                                //             "You have already checked in today!",
-                                //         toastLength: Toast.LENGTH_SHORT,
-                                //         gravity: ToastGravity.BOTTOM,
-                                //         timeInSecForIosWeb: 1,
-                                //         backgroundColor: Colors.black,
-                                //         textColor: Colors.white,
-                                //         fontSize: 16.0);
-                                //   } else
-                                if (mood != null && list.isNotEmpty) {
-                                  getLastWeight().then((value) =>
-                                      setState(() => oldweight = value));
-                                }
-
-                                double difference = _weight - oldweight;
-
-                                FirebaseFirestore.instance
-                                    .collection('DailyCheckIn')
-                                    .add({
-                                  'userID': loggedInUser.uid,
-                                  'DateTime': DateTime.now(),
-                                  'Mood': moodValue,
-                                  'Sleep': double.parse(
-                                      (_duration.inMinutes / 60)
-                                          .toStringAsFixed(1)),
-                                  'Weight': _weight,
-                                  'WeightDifference': difference,
-                                });
-
-                                NumberFormat formatter = NumberFormat("00");
-                                String formatted =
-                                    formatter.format(selectedTime.minute);
-                                String time =
-                                    ((selectedTime.hour.toString() + ":") +
-                                        formatted);
-                                if (mood != null && list.isNotEmpty) {
-                                  FirebaseFirestore.instance
-                                      .collection('MoodTracking')
-                                      .add({
-                                    'userID': uid,
-                                    'DateOfMood': selectedDate,
-                                    // ignore: sdk_version_constructor_tearoffs
-                                    'TimeOfMood': time,
-                                    'Mood': mood,
-                                    'Activities': list,
-                                    'DateTime': DateFormat('yyyy-MM-dd')
-                                        .parse(DateTime.now().toString()),
-                                    'Icon': image,
-                                    'MoodValue': moodValue
-                                  });
-
-                                  for (int i = 0; i < list.length; i++) {
-                                    FirebaseFirestore.instance
-                                        .collection('ActivityTracking')
-                                        .add({
-                                      'userID': uid,
-                                      'DateOfActivity': DateTime.now(),
-                                      'TimeOfActivity': time,
-                                      'Mood': mood,
-                                      'Activity': list[i],
-                                      'DateTime': DateFormat('yyyy-MM-dd')
-                                          .parse(DateTime.now().toString()),
-                                      'Icon': image,
-                                      'MoodValue': moodValue
-                                    });
-
-                                    FirebaseFirestore.instance
-                                        .collection('SleepTracking')
-                                        .add({
-                                      'userID': uid,
-                                      'DateOfSleep': selectedDate,
-                                      'TimeOfSleep': time,
-                                      'SleepTime': DateFormat('yyyy-MM-dd')
-                                          .parse(DateTime.now().toString()),
-                                      'SleepDuration': double.parse(
-                                          (_duration.inMinutes / 60)
-                                              .toStringAsFixed(1)),
-                                    });
-
-                                    Get.to(const homePage.HomePage());
-                                  }
-                                }
-                              }
+                              onPressed: _submitCheckIn
 
                               //         SizedBox(height: 20),
 
