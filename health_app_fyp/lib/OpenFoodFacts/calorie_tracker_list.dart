@@ -7,7 +7,6 @@ import 'package:health_app_fyp/OpenFoodFacts/track_a_food.dart';
 import 'package:health_app_fyp/model/user_data.dart';
 import 'package:health_app_fyp/widgets/nuemorphic_button.dart';
 import 'package:health_app_fyp/widgets/widgets.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../widgets/customnavbar.dart';
@@ -35,11 +34,12 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
     pastMonth = DateTime.now().day - 30;
 
     end = DateTime.now().day - 1;
-    checkDay();
+    if (FirebaseAuth.instance.currentUser != null) {
+      checkDay();
+    }
   }
 
-
-Color setColorValue(double result) {
+  Color setColorValue(double result) {
     if (result < 0) {
       return Colors.red;
     } else if (result > 0) {
@@ -50,7 +50,7 @@ Color setColorValue(double result) {
     return Colors.transparent;
   }
 
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String get uid => FirebaseAuth.instance.currentUser?.uid ?? '';
   String dayCals = "";
 
   String? filter = "";
@@ -66,16 +66,16 @@ Color setColorValue(double result) {
     debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');
   }
 
-  final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+  Stream<QuerySnapshot> get stream => FirebaseFirestore.instance
       .collection('Food')
       .orderBy("DateTime")
       .where('DateTime', isGreaterThanOrEqualTo: start)
       .where('DateTime', isLessThanOrEqualTo: end)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: uid)
       .snapshots();
 
 //DISPLAYS ALL SCANNED FOODS FROM TODAY
-  final Stream<QuerySnapshot> foodStreamToday = FirebaseFirestore.instance
+  Stream<QuerySnapshot> get foodStreamToday => FirebaseFirestore.instance
       .collection('Food')
       .orderBy("DateTime")
       .where('DateTime',
@@ -84,41 +84,41 @@ Color setColorValue(double result) {
       .where('DateTime',
           isLessThanOrEqualTo: DateTime(DateTime.now().year,
               DateTime.now().month, DateTime.now().day, 23, 59, 59))
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: uid)
       .snapshots();
 
   //DISPLAYS ALL SCANNED FOODS FROM THE WEEK
-  final Stream<QuerySnapshot> foodStreamWeek = FirebaseFirestore.instance
+  Stream<QuerySnapshot> get foodStreamWeek => FirebaseFirestore.instance
       .collection('Food')
       .orderBy("DateTime")
       .where('DateTime', isGreaterThanOrEqualTo: start)
       .where('DateTime', isLessThanOrEqualTo: pastWeek)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: uid)
       .snapshots();
 
   //DISPLAYS ALL SCANNED FOODS FROM THE MONTH
-  final Stream<QuerySnapshot> foodStreamMonth = FirebaseFirestore.instance
+  Stream<QuerySnapshot> get foodStreamMonth => FirebaseFirestore.instance
       .collection('Food')
       .orderBy("DateTime")
       .where('DateTime', isGreaterThanOrEqualTo: start)
       .where('DateTime', isLessThanOrEqualTo: pastMonth)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: uid)
       .snapshots();
 
 //DISPLAYS LATEST TDEE
-  final Stream<QuerySnapshot> tdeeStream = FirebaseFirestore.instance
+  Stream<QuerySnapshot> get tdeeStream => FirebaseFirestore.instance
       .collection('TDEE')
       .orderBy("tdeeTime")
       .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: uid)
       .snapshots();
 
   //DISPLAYS LATEST Calorie Deductions
-  final Stream<QuerySnapshot> CalsStream = FirebaseFirestore.instance
+  Stream<QuerySnapshot> get CalsStream => FirebaseFirestore.instance
       .collection('remainingCalories')
       .orderBy("DateTime")
       .limitToLast(1)
-      .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('userID', isEqualTo: uid)
       .snapshots();
 
   DateTime dateTimeText = DateTime.now();
@@ -137,7 +137,7 @@ Color setColorValue(double result) {
         dateTimeText = datetime.docs[0].get("DateTime");
       }
       return dateTimeText.toString();
-    } catch (Exc) {
+    } catch (_) {
       rethrow;
     }
   }
@@ -155,7 +155,7 @@ Color setColorValue(double result) {
           .where('DateTime',
               isLessThanOrEqualTo: DateTime(DateTime.now().year,
                   DateTime.now().month, DateTime.now().day, 23, 59, 59))
-          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('userID', isEqualTo: uid)
           .get();
 
       int count = documents.size;
@@ -177,7 +177,7 @@ Color setColorValue(double result) {
             isLessThanOrEqualTo: DateTime(DateTime.now().year,
                 DateTime.now().month, DateTime.now().day, 23, 59, 59))
         .limitToLast(1)
-        .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('userID', isEqualTo: uid)
         .get();
     QueryDocumentSnapshot doc = querySnap.docs[
         0]; // Assumption: the query returns only one document, THE doc you are looking for.
@@ -239,10 +239,9 @@ Color setColorValue(double result) {
                                 title: Text(
                               data[('Cals')].toStringAsFixed(0) +
                                   " kcal remaining today",
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 30.0,
-                                color: setColorValue(
-                                    data[('Cals')]),
+                                color: setColorValue(data[('Cals')]),
                                 fontWeight: FontWeight.w600,
                               ),
                             ));
@@ -341,7 +340,7 @@ Color setColorValue(double result) {
           curve: Curves.bounceIn,
           children: [
             SpeedDialChild(
-              child: Icon(MdiIcons.barcodeScan, color: Colors.white),
+              child: const Icon(Icons.qr_code_scanner, color: Colors.white),
               backgroundColor: Colors.green,
               onTap: () async {
                 // // bool a;
@@ -356,10 +355,10 @@ Color setColorValue(double result) {
               labelBackgroundColor: Colors.green,
             ),
             SpeedDialChild(
-              child: Icon(MdiIcons.minus, color: Colors.white),
+              child: const Icon(Icons.remove, color: Colors.white),
               backgroundColor: Colors.red,
               onTap: () async {
-                deleteLastFood();
+                await deleteLastFood();
               },
               label: 'Delete Last Entry',
               labelStyle: const TextStyle(fontWeight: FontWeight.w500),
@@ -415,32 +414,38 @@ Color setColorValue(double result) {
     }
   }
 
-  void checkDay() {
-    DateTime inputTime = DateTime.now();
-    final today = DateTime.now().day;
-
-    getLastCalsRemainingDay().then((time) {
-      DateTime tempdate =
-          DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch);
-
-      if (tempdate.day != today) {
-        getTdeeVal().then((tdee) {
-          double totalDeducts = tdee - 0;
-
-          FirebaseFirestore.instance.collection('remainingCalories').add({
-            'userID': uid,
-            'Cals': totalDeducts,
-            'DateTime': inputTime,
-          });
-
-          //   FirebaseFirestore.instance.collection('endDayOfCalories').add({
-          //     'userID': uid,
-          //     'Cals': tdee,
-          //     'DateTime': time,
-          //   });
-        });
+  Future<void> checkDay() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final now = DateTime.now();
+      final time = await getLastCalsRemainingDay();
+      final previous = time.toDate();
+      if (!_sameCalendarDate(previous, now)) {
+        final tdee = await getTdeeVal();
+        final dayKey =
+            '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+        await FirebaseFirestore.instance
+            .collection('remainingCalories')
+            .doc('${user.uid}_$dayKey')
+            .set({
+          'userID': user.uid,
+          'Cals': tdee,
+          'DateTime': now,
+        }, SetOptions(merge: true));
       }
-    });
+    } catch (_) {
+      _showError('Could not refresh today’s calorie balance.');
+    }
+  }
+
+  bool _sameCalendarDate(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<double> getLastLoggedFoodCalories() async {
@@ -467,7 +472,6 @@ Color setColorValue(double result) {
       }
       return t2;
     } catch (Exc) {
-      print(Exc);
       rethrow;
     }
   }
@@ -495,41 +499,67 @@ Color setColorValue(double result) {
     }
   }
 
-  void deleteLastFood() {
-    DateTime inputTime = DateTime.now();
+  Future<void> deleteLastFood() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _showError('Please sign in before deleting food.');
+      return;
+    }
+    try {
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+      final foods = await FirebaseFirestore.instance
+          .collection('Food')
+          .orderBy('DateTime')
+          .where('DateTime', isGreaterThanOrEqualTo: startOfDay)
+          .where('DateTime', isLessThan: endOfDay)
+          .where('userID', isEqualTo: user.uid)
+          .limitToLast(1)
+          .get();
+      if (foods.docs.isEmpty) {
+        _showError('There are no food entries to delete today.');
+        return;
+      }
 
-    getLastLoggedFoodCalories().then((totalcals) {
-      print(totalcals.toString() + "result");
+      final food = foods.docs.first;
+      final tdee = await getTdeeVal();
+      final latestBalance = await getLatestNetCalories();
+      final dayKey =
+          '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
 
-      getLatestNetCalories().then((latestnetcals) {
-        print(latestnetcals.toString() + "result");
-
-        double removeLastFoodsCalories = totalcals + latestnetcals;
-
-        getNumOfFoodsToday().then((count) {
-          if (count > 0) {
-            removeLastFood();
-          } else {
-            print("No Foods Left In List");
-          }
-
-          getTdeeVal().then((tdee) {
-            if (removeLastFoodsCalories > tdee) {
-              FirebaseFirestore.instance.collection('remainingCalories').add({
-                'userID': uid,
-                'Cals': tdee,
-                'DateTime': inputTime,
-              });
-            } else {
-              FirebaseFirestore.instance.collection('remainingCalories').add({
-                'userID': uid,
-                'Cals': removeLastFoodsCalories,
-                'DateTime': inputTime,
-              });
-            }
-          });
-        });
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final currentFood = await transaction.get(food.reference);
+        if (!currentFood.exists) {
+          return;
+        }
+        final foodData = currentFood.data();
+        final caloriesValue = foodData?['TotalCaloriesAdded'];
+        if (caloriesValue is! num) {
+          throw StateError('Food entry has no calorie total');
+        }
+        final balanceId =
+            foodData?['balanceDocumentId']?.toString() ?? '${user.uid}_$dayKey';
+        final balanceRef = FirebaseFirestore.instance
+            .collection('remainingCalories')
+            .doc(balanceId);
+        final balance = await transaction.get(balanceRef);
+        final stored = balance.data()?['Cals'];
+        final current = stored is num ? stored.toDouble() : latestBalance;
+        final restored = (current + caloriesValue.toDouble())
+            .clamp(double.negativeInfinity, tdee);
+        transaction.delete(food.reference);
+        transaction.set(
+            balanceRef,
+            {
+              'userID': user.uid,
+              'Cals': restored,
+              'DateTime': now,
+            },
+            SetOptions(merge: true));
       });
-    });
+    } catch (_) {
+      _showError('Could not delete the food entry. Nothing was changed.');
+    }
   }
 }

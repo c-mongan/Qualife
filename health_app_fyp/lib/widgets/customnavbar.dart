@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:health_app_fyp/BMR+BMR/screens/bmi_main_page.dart';
 import 'package:health_app_fyp/SleepTracker/list_of_sleep_time.dart';
 import 'package:health_app_fyp/screens/graphs_land_page.dart';
@@ -43,39 +42,33 @@ class CustomisedNavigationBar extends StatelessWidget {
             children: [
               _buildNavItem(
                 icon: Icons.home_outlined,
-                activeIcon: Icons.home,
                 label: 'Home',
-                onTap: () => Get.to(const HomePage()),
+                onTap: () => _replaceWith(context, const HomePage()),
               ),
               _buildNavItem(
                 icon: Icons.monitor_weight_outlined,
-                activeIcon: Icons.monitor_weight,
                 label: 'BMI',
-                onTap: () => Get.to(const BMITDEE()),
+                onTap: () => _replaceWith(context, const BMITDEE()),
               ),
               _buildNavItem(
                 icon: Icons.restaurant_outlined,
-                activeIcon: Icons.restaurant,
                 label: 'Food',
-                onTap: () => Get.to(const BarcodeScanner()),
+                onTap: () => _replaceWith(context, const BarcodeScanner()),
               ),
               _buildNavItem(
                 icon: Icons.mood_outlined,
-                activeIcon: Icons.mood,
                 label: 'Mood',
-                onTap: () => Get.to(const ListMoods()),
+                onTap: () => _replaceWith(context, const ListMoods()),
               ),
               _buildNavItem(
                 icon: Icons.bedtime_outlined,
-                activeIcon: Icons.bedtime,
                 label: 'Sleep',
-                onTap: () => Get.to(const ListSleep()),
+                onTap: () => _replaceWith(context, const ListSleep()),
               ),
               _buildNavItem(
                 icon: Icons.analytics_outlined,
-                activeIcon: Icons.analytics,
                 label: 'Stats',
-                onTap: () => Get.to(const GraphsHome()),
+                onTap: () => _replaceWith(context, const GraphsHome()),
               ),
             ],
           ),
@@ -86,7 +79,6 @@ class CustomisedNavigationBar extends StatelessWidget {
 
   Widget _buildNavItem({
     required IconData icon,
-    required IconData activeIcon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -115,6 +107,12 @@ class CustomisedNavigationBar extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _replaceWith(BuildContext context, Widget page) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => page),
     );
   }
 }

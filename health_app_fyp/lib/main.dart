@@ -1,23 +1,40 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/screens/home_page.dart';
 import 'package:health_app_fyp/screens/login_screen.dart';
+import 'package:health_app_fyp/services/telemetry.dart';
 import 'package:health_app_fyp/theme/app_theme.dart';
-import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  HttpOverrides.global = MyHttpOverrides();
+  Object? firebaseInitializationError;
+  try {
+    await Firebase.initializeApp(
+      options: kIsWeb ? _webFirebaseOptions : null,
+    );
+  } catch (error) {
+    firebaseInitializationError = error;
+    debugPrint('Firebase initialization failed.');
+  }
+
+  var appStarted = false;
+  void startApp() {
+    if (appStarted) return;
+    appStarted = true;
+    runApp(MyApp(firebaseInitializationError: firebaseInitializationError));
+  }
+
+  if (!telemetryEnabled) {
+    startApp();
+    return;
+  }
 
   final configuration = DdSdkConfiguration(
     clientToken: 'pubf95e31114c49951733bdcbd1df890da1',
@@ -26,90 +43,125 @@ Future<void> main() async {
     trackingConsent: TrackingConsent.granted,
     nativeCrashReportEnabled: true,
     loggingConfiguration: LoggingConfiguration(),
-    //tracingConfiguration: TracingConfiguration(),
     rumConfiguration:
         RumConfiguration(applicationId: 'ee8d9e09-6a24-4396-8d80-c9e07508d1d6'),
   );
 
-  await DatadogSdk.runApp(configuration, () async {
-    runApp(GetMaterialApp(
-        home: const MyApp(),
-
-//This tracks the changes in users navigation
-        navigatorObservers: [
-          DatadogNavigationObserver(datadogSdk: DatadogSdk.instance),
-        ],
-        debugShowCheckedModeBanner: false));
-  });
-}
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+  try {
+    await DatadogSdk.runApp(configuration, () async => startApp());
+  } catch (_) {
+    debugPrint('Telemetry initialization failed.');
+    startApp();
   }
 }
 
+FirebaseOptions get _webFirebaseOptions {
+  const apiKey = String.fromEnvironment('FIREBASE_WEB_API_KEY');
+  const appId = String.fromEnvironment('FIREBASE_WEB_APP_ID');
+  const messagingSenderId =
+      String.fromEnvironment('FIREBASE_WEB_MESSAGING_SENDER_ID');
+  const projectId = String.fromEnvironment('FIREBASE_WEB_PROJECT_ID');
+  const authDomain = String.fromEnvironment('FIREBASE_WEB_AUTH_DOMAIN');
+  const storageBucket = String.fromEnvironment('FIREBASE_WEB_STORAGE_BUCKET');
+
+  if (apiKey.isEmpty ||
+      appId.isEmpty ||
+      messagingSenderId.isEmpty ||
+      projectId.isEmpty) {
+    throw StateError('Missing required Firebase web configuration.');
+  }
+
+  return FirebaseOptions(
+    apiKey: apiKey,
+    appId: appId,
+    messagingSenderId: messagingSenderId,
+    projectId: projectId,
+    authDomain: authDomain.isEmpty ? null : authDomain,
+    storageBucket: storageBucket.isEmpty ? null : storageBucket,
+  );
+}
+
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, this.firebaseInitializationError}) : super(key: key);
+
+  final Object? firebaseInitializationError;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-
       title: 'Health App',
-
       theme: AppTheme.theme,
-      // home: const LoginScreen(),
-      home: SplashScreen(),
+      navigatorObservers: telemetryEnabled
+          ? [DatadogNavigationObserver(datadogSdk: DatadogSdk.instance)]
+          : const [],
+      home: firebaseInitializationError == null
+          ? const AuthGate()
+          : const FirebaseInitializationFailure(),
     );
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class FirebaseInitializationFailure extends StatelessWidget {
+  const FirebaseInitializationFailure({Key? key}) : super(key: key);
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppTheme.spacingXL),
+          child: Text(
+            'Qualife could not connect to Firebase. '
+            'Check this platform\'s Firebase configuration and restart the app.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class AuthGate extends StatefulWidget {
+  const AuthGate({Key? key}) : super(key: key);
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  late final StreamSubscription<User?> _authSubscription;
+  User? _user;
+  bool _hasAuthState = false;
+
   @override
   void initState() {
     super.initState();
-
-    displaySplash();
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen(
+          _handleAuthState,
+        );
   }
 
-  displaySplash() {
-    Timer(const Duration(seconds: 2), () async {
-      if (FirebaseAuth.instance.currentUser != null) {
-        //Associates the RUM with the user
-        DatadogSdk.instance.setUserInfo(
-          id: FirebaseAuth.instance.currentUser?.uid,
-          email: FirebaseAuth.instance.currentUser?.email,
-        );
-
-        final myLogger = DatadogSdk.instance.createLogger(
-          LoggingConfiguration(loggerName: "Logins", printLogsToConsole: true),
-        );
-
-        String? id = FirebaseAuth.instance.currentUser?.uid;
-        myLogger.addAttribute('hostname', id!);
-
-        myLogger
-            .info("Logged in user: ${FirebaseAuth.instance.currentUser?.uid} ");
-
-        Get.to(const HomePage());
-      } else {
-        Get.to(const LoginScreen());
-      }
+  void _handleAuthState(User? user) {
+    if (!mounted) return;
+    setState(() {
+      _user = user;
+      _hasAuthState = true;
     });
   }
 
   @override
+  void dispose() {
+    _authSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_hasAuthState) {
+      return _user == null ? const LoginScreen() : const HomePage();
+    }
+
     return Material(
       child: Container(
         decoration: BoxDecoration(

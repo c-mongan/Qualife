@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'container_card.dart';
 
@@ -34,7 +35,7 @@ class RoundedIconButton extends StatelessWidget {
     required this.action,
     required this.color,
   });
-  final IconData icon;
+  final FaIconData icon;
 
   //final Function action;
   final void Function()? action;
@@ -51,7 +52,7 @@ class RoundedIconButton extends StatelessWidget {
             child: SizedBox(
               width: 50,
               height: 50,
-              child: Icon(icon),
+              child: FaIcon(icon),
             ),
             //onLongPress: action,
             onTap: action),

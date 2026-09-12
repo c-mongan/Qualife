@@ -64,8 +64,7 @@ class _DisplayPieChartState extends State<DisplayPieChart> {
       }
 
       return activityNameText;
-    } catch (Exc) {
-      print(Exc);
+    } catch (_) {
       rethrow;
     }
   }

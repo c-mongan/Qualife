@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
@@ -16,7 +15,6 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../model/user_model.dart';
 import '../widgets/neumorphic_indicater.dart';
-import 'login_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,13 +25,13 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-User? user = FirebaseAuth.instance.currentUser;
 UserModel loggedInUser = UserModel();
 
 bool? showCheckIn;
 
 class _HomePageState extends State<HomePage> {
   int key = 0;
+  bool _dashboardLoadInProgress = false;
 
   Future<Timestamp> getLastDailyCheckInDay() async {
     try {
@@ -68,23 +66,16 @@ class _HomePageState extends State<HomePage> {
         return calsdate.docs.first.get('DateTime') as Timestamp;
       }
       return Timestamp(0, 0);
-    } catch (e) {
-      debugPrint('getLastDailyCheckInDay error: $e');
+    } catch (_) {
+      debugPrint('Daily check-in lookup failed.');
       return Timestamp(0, 0);
     }
   }
 
-  double lastWeight = 0;
   double _weight = 0;
 
-  void setLastWeight() async {
-    getLastWeight().then((firestoreLastWeightText) {
-      lastWeight = firestoreLastWeightText;
-    });
-  }
-
   String dayCals = "";
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String get uid => FirebaseAuth.instance.currentUser?.uid ?? '';
 
   Future<Timestamp> getLastCalsRemainingDay() async {
     try {
@@ -98,8 +89,8 @@ class _HomePageState extends State<HomePage> {
         return calsdate.docs.first.get('DateTime') as Timestamp;
       }
       return Timestamp(0, 0);
-    } catch (e) {
-      debugPrint('getLastCalsRemainingDay error: $e');
+    } catch (_) {
+      debugPrint('Calorie ledger lookup failed.');
       return Timestamp(0, 0);
     }
   }
@@ -116,8 +107,8 @@ class _HomePageState extends State<HomePage> {
         return (tdeevals.docs.first.get('tdee') as num).toDouble();
       }
       return 0;
-    } catch (e) {
-      debugPrint('getTdeeVal error: $e');
+    } catch (_) {
+      debugPrint('Calorie target lookup failed.');
       return 0;
     }
   }
@@ -142,14 +133,12 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var _ in latestDailyCheckInDoc.docs) {
-        lastWeight = latestDailyCheckInDoc.docs[0].get("WeightDifference");
-        double firestoreLastWeight = lastWeight;
-        setLastWeight();
-        return firestoreLastWeight;
+      if (latestDailyCheckInDoc.docs.isNotEmpty) {
+        return (latestDailyCheckInDoc.docs.first.get("WeightDifference") as num)
+            .toDouble();
       }
-      return lastWeight;
-    } catch (Exc) {
+      return 0;
+    } catch (_) {
       rethrow;
     }
   }
@@ -184,28 +173,54 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _loadDashboard();
+  }
 
-    getRecentDailyCheckIn();
+  Future<void> _loadDashboard() async {
+    if (_dashboardLoadInProgress) {
+      return;
+    }
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      return;
+    }
 
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
-
-      getLastWeight().then((value) => setState(() => _weight = value));
-      setColorValue(_weight);
-
-      if (mounted) {
-        getDataFromFireStore().then((results) {
-          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-            setState(() {});
-          });
-        });
-        setPage();
+    _dashboardLoadInProgress = true;
+    try {
+      final results = await Future.wait<dynamic>([
+        FirebaseFirestore.instance
+            .collection("users")
+            .doc(currentUser.uid)
+            .get(),
+        getLastWeight(),
+        getDataFromFireStore(),
+        getbmiScore(),
+        getBMITextResult(),
+        getLatestMood(),
+      ]);
+      if (!mounted) {
+        return;
       }
-    });
+      setState(() {
+        loggedInUser = UserModel.fromMap(
+          (results[0] as DocumentSnapshot<Map<String, dynamic>>).data(),
+        );
+        _weight = results[1] as double;
+        chartData = results[2] as List<_ChartData>;
+        bmiScore = results[3] as double;
+        bmiResultText = results[4] as String;
+        moodNameText = results[5] as String;
+        setColorSlider(bmiResultText);
+      });
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to refresh dashboard: $error')),
+        );
+      }
+    } finally {
+      _dashboardLoadInProgress = false;
+    }
   }
 
   @override
@@ -234,9 +249,9 @@ class _HomePageState extends State<HomePage> {
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              gradient: AppTheme.backgroundGradient,
-            ),
+          decoration: BoxDecoration(
+            gradient: AppTheme.backgroundGradient,
+          ),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -429,7 +444,7 @@ class _HomePageState extends State<HomePage> {
                       // Logout
                       LogOutButton(
                         onPressed: () {
-                          logout(context);
+                          logout();
                         },
                         child: const Text(
                           "Log Out",
@@ -474,36 +489,36 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-            return ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                final raw = document.data();
-                if (raw == null) {
-                  return const ListTile(
-                    title: Text(
-                      'Missing weight data.',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
-                Map<String, dynamic> data = raw as Map<String, dynamic>;
-                final num diff = data['WeightDifference'] ?? 0;
-                final bool diffIsInt = isInteger(diff);
-                return ListTile(
-                  title: const Text("Your weight has fluctuated by:",
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                  trailing: Text(
-                    diffIsInt
-                        ? "${diff.toInt()} kg"
-                        : "${(diff is double ? diff : diff.toDouble()).toStringAsFixed(2)} kg",
-                    style: TextStyle(
-                        color: setColorValue(_weight),
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
+          return ListView(
+            physics: const NeverScrollableScrollPhysics(),
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              final raw = document.data();
+              if (raw == null) {
+                return const ListTile(
+                  title: Text(
+                    'Missing weight data.',
+                    style: TextStyle(color: Colors.white),
                   ),
                 );
-              }).toList(),
-            );
+              }
+              Map<String, dynamic> data = raw as Map<String, dynamic>;
+              final num diff = data['WeightDifference'] ?? 0;
+              final bool diffIsInt = isInteger(diff);
+              return ListTile(
+                title: const Text("Your weight has fluctuated by:",
+                    style: TextStyle(color: Colors.white, fontSize: 20)),
+                trailing: Text(
+                  diffIsInt
+                      ? "${diff.toInt()} kg"
+                      : "${(diff is double ? diff : diff.toDouble()).toStringAsFixed(2)} kg",
+                  style: TextStyle(
+                      color: setColorValue(_weight),
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
+              );
+            }).toList(),
+          );
         },
       ),
     );
@@ -750,23 +765,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void asyncMethod(bool isVisible) async {
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
-
-      if (mounted) {
-        getLastWeight().then((value) => setState(() => _weight = value));
-        setColorValue(_weight);
-        getDataFromFireStore().then((results) {
-          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-            setState(() {});
-          });
-        });
-      }
-    });
+    if (isVisible) {
+      await _loadDashboard();
+    }
   }
 
   var today = DateTime.now();
@@ -841,13 +842,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> getDataFromFireStore() async {
+  Future<List<_ChartData>> getDataFromFireStore() async {
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("BMI")
         .orderBy("bmiTime")
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .limitToLast(30)
         .get();
-    List<_ChartData> list = snapShotsValue.docs
+    return snapShotsValue.docs
         .map(
           (e) => _ChartData(
             x: DateTime.fromMillisecondsSinceEpoch(
@@ -857,32 +859,27 @@ class _HomePageState extends State<HomePage> {
           ),
         )
         .toList();
-    if (mounted) {
-      setState(() {
-        chartData = list;
-      });
-    }
-    setState(() {
-      chartData = list;
-    });
   }
 
   final Stream<QuerySnapshot> moodCardStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime", descending: true)
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .limit(10)
       .snapshots();
 
   final Stream<QuerySnapshot> weightStream = FirebaseFirestore.instance
       .collection('DailyCheckIn')
       .orderBy("DateTime", descending: true)
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .limit(1)
       .snapshots();
 
   final Stream<QuerySnapshot> moodPieChartStream = FirebaseFirestore.instance
       .collection('MoodTracking')
       .orderBy("DateTime")
       .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .limitToLast(30)
       .snapshots();
 
   Future<QuerySnapshot<Map<String, dynamic>>> getRecentDocs() async {
@@ -895,7 +892,8 @@ class _HomePageState extends State<HomePage> {
         .collection('ActivityTracking')
         .orderBy("DateTime")
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-        .where('createdAt', isLessThan: now, isGreaterThan: yesterday);
+        .where('createdAt', isLessThan: now, isGreaterThan: yesterday)
+        .limit(100);
 
     return query.get();
   }
@@ -910,9 +908,9 @@ class _HomePageState extends State<HomePage> {
         .collection('DailyCheckIn')
         .orderBy("DateTime")
         .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-        .where('DateTime', isLessThan: now, isGreaterThan: yesterday);
+        .where('DateTime', isLessThan: now, isGreaterThan: yesterday)
+        .limit(1);
 
-    print(query.get());
     return query.get();
   }
 
@@ -934,14 +932,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> setPage() async {
-    await getbmiScore();
-    await getBMITextResult();
-    await getLatestMood();
-    lastMoodCard();
-  }
-
-  double gotbmiScore = 0;
   double bmiScore = 0;
   Color activeColor = Colors.white;
   Color inactiveColor = Colors.white;
@@ -957,17 +947,11 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where('userID', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var _ in bmiData.docs) {
-        bmiScore = bmiData.docs[0].get("bmiScore");
-        double gotbmiScore = bmiScore;
-        setState(() {
-          gotbmiScore = bmiScore;
-        });
-        return gotbmiScore;
+      if (bmiData.docs.isNotEmpty) {
+        return (bmiData.docs.first.get("bmiScore") as num).toDouble();
       }
-      return bmiScore;
-    } catch (e) {
-      print(e);
+      return 0;
+    } catch (_) {
       rethrow;
     }
   }
@@ -994,14 +978,10 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var _ in latestBmiResult.docs) {
-        bmiResultText = latestBmiResult.docs[0].get("result");
-        String FirestoreBmiTxtResult = bmiResultText;
-        setBMIResult();
-        setColorSlider(FirestoreBmiTxtResult);
-        return FirestoreBmiTxtResult;
+      if (latestBmiResult.docs.isNotEmpty) {
+        return latestBmiResult.docs.first.get("result") as String;
       }
-      return bmiResultText;
+      return "";
     } catch (e) {
       rethrow;
     }
@@ -1015,29 +995,13 @@ class _HomePageState extends State<HomePage> {
           .limitToLast(1)
           .where("userID", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .get();
-      for (var _ in latestMoodName.docs) {
-        moodNameText = latestMoodName.docs[0].get("Mood");
-        String firestoreMoodText = moodNameText;
-        setMoodResult();
-        return firestoreMoodText;
+      if (latestMoodName.docs.isNotEmpty) {
+        return latestMoodName.docs.first.get("Mood") as String;
       }
-      return moodNameText;
-    } catch (e) {
-      print(e);
+      return "";
+    } catch (_) {
       rethrow;
     }
-  }
-
-  void setMoodResult() async {
-    getLatestMood().then((firestoreMoodText) {
-      moodNameText = firestoreMoodText;
-    });
-  }
-
-  void setBMIResult() async {
-    getBMITextResult().then((firestoreBmiTxtResult) {
-      bmiResultText = firestoreBmiTxtResult;
-    });
   }
 
   bool isInteger(num value) => (value % 1) == 0;
@@ -1104,9 +1068,8 @@ void callThisMethod(bool isVisible) {
   debugPrint('_HomeScreenState.callThisMethod: isVisible: $isVisible');
 }
 
-Future<void> logout(BuildContext context) async {
+Future<void> logout() async {
   await FirebaseAuth.instance.signOut();
-  Get.to(const LoginScreen());
   Fluttertoast.showToast(msg: "Logout Successful! ");
 }
 

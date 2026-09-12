@@ -1,12 +1,10 @@
-import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
-import 'package:flutter/foundation.dart' show kIsWeb; // for platform guard
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:health_app_fyp/screens/register_screen.dart';
+import 'package:health_app_fyp/services/telemetry.dart';
 
 import 'package:health_app_fyp/theme/app_theme.dart';
-import 'home_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -50,15 +48,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  var myLogger = DatadogSdk.instance.createLogger(
-    LoggingConfiguration(loggerName: "loginLogger"),
-  );
-
   //firebase
   final _auth = FirebaseAuth.instance;
 
   //error message
   String? errorMessage;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (value!.isEmpty) {
           return ("Please enter your Email");
         }
-        if (!RegExp(r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]+$").hasMatch(value)) {
+        if (!RegExp(r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]+$")
+            .hasMatch(value)) {
           return ("Please enter a valid Email");
         }
         return null;
@@ -117,9 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Modern login button
     final loginButton = ElevatedButton(
-      onPressed: () {
-        signIn(emailController.text, passwordController.text);
-      },
+      onPressed: () =>
+          signIn(emailController.text.trim(), passwordController.text),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppTheme.accentPrimary,
         minimumSize: const Size(double.infinity, 56),
@@ -221,7 +222,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const RegistrationScreen(),
+                                builder: (context) =>
+                                    const RegistrationScreen(),
                               ),
                             );
                           },
@@ -245,93 +247,49 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-// try {
-//   await FirebaseAuth.instance.signInWithEmailAndPassword(
-//     email: "barry.allen@example.com",
-//     password: "SuperSecretPassword!"
-//   );
-// } on FirebaseAuthException catch  (e) {
-//   print('Failed with error code: ${e.code}');
-//   print(e.message);
-
 //Login Method
 //Google async function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
-        await _auth
-            .signInWithEmailAndPassword(email: email, password: password)
-//If Login is a success we will pass it the UserID
-            .then((uid) => {
-                  Fluttertoast.showToast(msg: "Login Successful! "),
-
-                  myLogger.info(
-                      "Logged in user: ${FirebaseAuth.instance.currentUser?.uid}"),
-
-                  myLogger.addAttribute('hostname', uid),
-
-                  //Associates the RUM with the user
-                  // Datadog user association (skip on web where plugin web implementation may be incomplete)
-                  if (!kIsWeb)
-                    DatadogSdk.instance.setUserInfo(
-                      id: FirebaseAuth.instance.currentUser?.uid,
-                      email: FirebaseAuth.instance.currentUser?.email,
-                    ),
-                  //Login Success message
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const HomePage())),
-                  //Navigates the user to Home Screen
-                });
+        await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        Fluttertoast.showToast(msg: "Login Successful! ");
+        AppTelemetry.info(TelemetryEvent.authLoginSucceeded);
       } on FirebaseAuthException catch (error) {
-        // Log the actual error code and message for debugging
-        print('FirebaseAuthException code: ${error.code}');
-        print('FirebaseAuthException message: ${error.message}');
-        
         switch (error.code) {
           case "invalid-email":
             errorMessage = "Your email address appears to be invalid.";
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
             break;
           case "wrong-password":
           case "invalid-credential":
             // invalid-credential can also mean malformed/expired credential; most common for email/password is wrong password
-            errorMessage = "Incorrect password or expired credential. Try again or reset your password.";
-
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
+            errorMessage =
+                "Incorrect password or expired credential. Try again or reset your password.";
 
             break;
           case "user-not-found":
             errorMessage = "User with this email doesn't exist.";
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
             break;
           case "user-disabled":
             errorMessage = "User with this email has been disabled.";
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
             break;
           case "too-many-requests":
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
             errorMessage = "Too many requests";
             break;
           case "operation-not-allowed":
             errorMessage = "Signing in with Email and Password is not enabled.";
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
             break;
           default:
             errorMessage = "Error: ${error.code} - ${error.message}";
-            myLogger.error("Login Error: $errorMessage "
-                "User Email:  $email, ");
         }
+        AppTelemetry.error(TelemetryEvent.authLoginFailed);
         Fluttertoast.showToast(msg: errorMessage!);
       } catch (e) {
-        // Catch any other errors
-        print('Unexpected error during login: $e');
         errorMessage = "An unexpected error occurred: $e";
+        AppTelemetry.error(TelemetryEvent.authLoginFailed);
         Fluttertoast.showToast(msg: errorMessage!);
       }
     }

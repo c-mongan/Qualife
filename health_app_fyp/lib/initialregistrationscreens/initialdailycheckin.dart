@@ -149,11 +149,10 @@ class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
 
         // setLastWeight();
 
-        print(lastWeight);
         return firestoreLastWeight;
       }
       return lastWeight;
-    } catch (Exc) {
+    } catch (_) {
       rethrow;
     }
   }
@@ -169,19 +168,16 @@ class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
           .where("userID", isEqualTo: uid)
           .get();
       for (var cals in calsdate.docs) {
-        print(cals.data());
         Timestamp time;
         time = calsdate.docs[0].get("DateTime");
 
         var tempText2;
         String calsLeftDay = tempText2.toString();
-        print(calsLeftDay);
 
         return time;
       }
       return Timestamp(0, 0);
-    } catch (Exc) {
-      print(Exc);
+    } catch (_) {
       rethrow;
     }
   }
@@ -288,7 +284,8 @@ class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
                           height: 250,
                           width: 250,
                           child: Center(
-                            child: Text('Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours'),
+                            child: Text(
+                                'Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours'),
                           ),
                         ),
                         // DurationPicker(
@@ -381,7 +378,6 @@ class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
                                                           ontapcount + 1;
                                                       moodValue = moods[index]
                                                           .moodValue;
-                                                      print(mood);
                                                     }),
                                                   }
                                                 else if (moods[index].iselected)
@@ -442,9 +438,6 @@ class _InitialDailyCheckInState extends State<InitialDailyCheckIn> {
                                               else
                                                 setState(() {
                                                   act[index].selected = true;
-
-                                                  print(act[index].name);
-                                                  print(act[index].selected);
 
                                                   list.add(act[index].name);
                                                 }),

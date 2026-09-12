@@ -25,7 +25,6 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../BMR+BMR/colors&fonts.dart';
 import '../SyncFusion/sample_view.dart';
-import '../model/user_model.dart';
 import '../widgets/customnavbar.dart';
 import 'daily_check_in.dart';
 
@@ -92,23 +91,14 @@ class _bmiZoomChartChartState extends SampleViewState
       canShowMarker: false,
     );
 
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
-
-      if (mounted) {
-        // check whether the state object is in tree
-        getDataFromFireStore().then((results) {
-          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-            setState(() {});
-          });
+    if (FirebaseAuth.instance.currentUser != null) {
+      getDataFromFireStore().then((results) {
+        if (!mounted) return;
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          if (mounted) setState(() {});
         });
-        //setPage();
-      }
-    });
+      });
+    }
     for (int i = 0; i < 366; i++) {
       chartData.add(_ChartData(
           x: DateTime(2000, 01, 01).add(Duration(days: i)),

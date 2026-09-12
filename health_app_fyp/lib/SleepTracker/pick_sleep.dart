@@ -32,7 +32,7 @@ class _SleepDurationSelectState extends State<SleepDurationSelect> {
 
   int? currentindex;
   TimeOfDay selectedTime = TimeOfDay.now();
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  bool _isSaving = false;
 
   DateTime inputTime = DateTime.now();
 
@@ -83,13 +83,34 @@ class _SleepDurationSelectState extends State<SleepDurationSelect> {
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
 
-                // DurationPicker widget temporarily disabled due to package compatibility
-                Container(
+                SizedBox(
                   height: 250,
-                  width: 250,
-                  child: Center(
-                    child: Text('Duration Picker Disabled\n${_duration.inHours.toStringAsFixed(1)} hours',
-                        style: TextStyle(color: Colors.white)),
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _formatDuration(_duration),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 28),
+                      ),
+                      Slider(
+                        value: _duration.inMinutes.toDouble(),
+                        min: 30,
+                        max: 24 * 60,
+                        divisions: 47,
+                        label: _formatDuration(_duration),
+                        onChanged: (minutes) {
+                          setState(() {
+                            _duration = Duration(minutes: minutes.round());
+                          });
+                        },
+                      ),
+                      const Text(
+                        '30 minute increments',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ],
                   ),
                 ),
                 // DurationPicker(
@@ -104,28 +125,7 @@ class _SleepDurationSelectState extends State<SleepDurationSelect> {
 
                 const SizedBox(height: 20),
                 GestureDetector(
-                  onTap: () => {
-                    setState(() {
-                      NumberFormat formatter = NumberFormat("00");
-                      String formatted = formatter.format(selectedTime.minute);
-                      String time =
-                          ((selectedTime.hour.toString() + ":") + formatted);
-
-                      FirebaseFirestore.instance
-                          .collection('SleepTracking')
-                          .add({
-                        'userID': uid,
-                        'DateOfSleep': widget.selectedDate,
-                        'TimeOfSleep': time,
-                        'SleepDuration': double.parse(
-                            (_duration.inMinutes / 60).toStringAsFixed(1)),
-                        'SleepTime':
-                            DateFormat('yyyy-MM-dd').parse(widget.selectedDate),
-                      });
-
-                      Get.to(const ListSleep());
-                    })
-                  },
+                  onTap: _saveSleep,
                   child: Container(
                     height: 38.00,
                     width: 117.00,
@@ -173,10 +173,51 @@ class _SleepDurationSelectState extends State<SleepDurationSelect> {
       initialTime: selectedTime,
       initialEntryMode: TimePickerEntryMode.dial,
     );
+    if (!mounted) return;
     if (timeOfDay != null && timeOfDay != selectedTime) {
       setState(() {
         selectedTime = timeOfDay;
       });
     }
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    return '${hours}h ${minutes.toString().padLeft(2, '0')}m';
+  }
+
+  Future<void> _saveSleep() async {
+    if (_isSaving) return;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _showError('Please sign in before saving sleep.');
+      return;
+    }
+    setState(() => _isSaving = true);
+    try {
+      final formatter = NumberFormat("00");
+      final time =
+          '${selectedTime.hour}:${formatter.format(selectedTime.minute)}';
+      await FirebaseFirestore.instance.collection('SleepTracking').add({
+        'userID': user.uid,
+        'DateOfSleep': widget.selectedDate,
+        'TimeOfSleep': time,
+        'SleepDuration':
+            double.parse((_duration.inMinutes / 60).toStringAsFixed(1)),
+        'SleepTime': DateFormat('yyyy-MM-dd').parseStrict(widget.selectedDate),
+      });
+      if (mounted) Get.to(const ListSleep());
+    } catch (_) {
+      _showError('Could not save sleep. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }

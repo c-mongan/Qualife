@@ -2,12 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:health_app_fyp/initialregistrationscreens/initialbmi.dart';
 
-import '../../model/user_model.dart';
-import '../../services/database.dart';
-import 'home_page.dart';
+import '../model/user_model.dart';
+import '../services/database.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -34,6 +32,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final confirmPasswordEditingController = TextEditingController();
 
   @override
+  void dispose() {
+    firstNameEditingController.dispose();
+    secondNameEditingController.dispose();
+    emailEditingController.dispose();
+    passwordEditingController.dispose();
+    confirmPasswordEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     //First Name Field
     final firstNameField = TextFormField(
@@ -43,16 +51,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         validator: (value) {
           //Fire Base needs a minimum of 6 characters in a password to register a user
           RegExp regex = RegExp(r'^.{3,}$');
-          if (value!.isEmpty) {
+          if (value == null || value.trim().isEmpty) {
             return ("First Name is required for registration");
           }
-          if (!regex.hasMatch(value)) {
+          if (!regex.hasMatch(value.trim())) {
             return ("Enter a valid First Name (3 characters minimum)");
           }
           return null;
-        },
-        onSaved: (value) {
-          firstNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -72,13 +77,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         validator: (value) {
           //Fire Base needs a minimum of 6 characters in a password to register a user
 
-          if (value!.isEmpty) {
+          if (value == null || value.trim().isEmpty) {
             return ("Second Name is required for registration");
           }
           return null;
-        },
-        onSaved: (value) {
-          secondNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -96,19 +98,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         controller: emailEditingController,
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
-          if (value!.isEmpty) {
+          if (value == null || value.trim().isEmpty) {
             return ("Please enter your Email");
           }
           //reg expression for email validation
-          if (!RegExp("[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-              .hasMatch(value)) {
+          if (!RegExp(r'^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+              .hasMatch(value.trim())) {
             return ("Please enter a valid Email");
           }
 
           return null;
-        },
-        onSaved: (value) {
-          emailEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -128,15 +127,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         //Fire Base needs a minimum of 6 characters in a password to register a user
         validator: (value) {
           RegExp regex = RegExp(r'^.{6,}$');
-          if (value!.isEmpty) {
+          if (value == null || value.isEmpty) {
             return ("Password is required for Login");
           }
           if (!regex.hasMatch(value)) {
             return ("Password must be at least 6 characters in length");
           }
-        },
-        onSaved: (value) {
-          firstNameEditingController.text = value!;
+          return null;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -154,18 +151,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         controller: confirmPasswordEditingController,
         obscureText: true,
         validator: (value) {
-          if (confirmPasswordEditingController.text.length > 6 &&
-              passwordEditingController.text != value) {
+          if (value == null || value.isEmpty) {
+            return "Please confirm your password";
+          }
+          if (passwordEditingController.text != value) {
             return "Passwords do not match";
-
-            //   if (confirmPasswordEditingController.text.length !=
-            //   passwordEditingController.text) {
-            //    return "Passwords do not match";
           }
           return null;
-        },
-        onSaved: (value) {
-          confirmPasswordEditingController.text = value!;
         },
         textInputAction: TextInputAction.done, //As it is the last action
         decoration: InputDecoration(
@@ -189,7 +181,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               .size
               .width, //resizes button to width of fields
           onPressed: () {
-            signUp(emailEditingController.text, passwordEditingController.text);
+            signUp(
+              emailEditingController.text.trim(),
+              passwordEditingController.text,
+            );
           },
           child: const Text(
             "Sign Up",
@@ -289,26 +284,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void signUp(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {postDetailsToFirestore()})
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await postDetailsToFirestore();
+    } on FirebaseAuthException catch (error) {
+      Fluttertoast.showToast(
+        msg: error.message ?? 'Unable to create the account.',
+      );
+    } catch (error) {
+      Fluttertoast.showToast(msg: 'Unable to finish registration.');
     }
   }
 
-  postDetailsToFirestore() async {
+  Future<void> postDetailsToFirestore() async {
     //1) Calls our FireStore
     //2) Calls our 'User' model
     //3) Write the values
     //4) Send these values to the server
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    User? user = _auth.currentUser;
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw StateError('The newly registered Firebase user is unavailable.');
+    }
 
-    await DatabaseService(uid: user!.uid).updateUserData(
+    await DatabaseService(uid: user.uid).updateUserData(
       0,
       '',
       0,
@@ -340,7 +345,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     //   'DateTime': DateTime.now(),
     // });
 
-    Get.to( FirstBMI());
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => FirstBMI()),
+      (route) => false,
+    );
     // Navigator.pushAndRemoveUntil(
     //     context,
     //     MaterialPageRoute(builder: (context) => const HomeScreen()),

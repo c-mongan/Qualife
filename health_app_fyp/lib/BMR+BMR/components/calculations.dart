@@ -1,8 +1,9 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:health_app_fyp/BMR+BMR/screens/bmi_main_page.dart';
 import 'package:intl/intl.dart';
+
+import 'health_calculations.dart';
 
 class Calculator {
   Calculator(
@@ -28,19 +29,20 @@ class Calculator {
   }
 
   String calculateTDEE() {
-    if (gender == GenderType.male) {
-      _tdee = 9.99 * weight + 6.25 * height - 4.92 * age + 5;
-
-      return _tdee.toStringAsFixed(0);
-    } else {
-      _tdee = 9.99 * weight + 6.25 * height - 4.92 * age - 161;
-
-      return _tdee.toStringAsFixed(0);
-    }
+    _tdee = calculateBasalMetabolicRate(
+      heightCentimetres: height,
+      weightKilograms: weight,
+      ageYears: age,
+      gender: gender == GenderType.male ? BmrGender.male : BmrGender.female,
+    );
+    return _tdee.toStringAsFixed(0);
   }
 
   String calculateBMI() {
-    _bmi = weight / pow((height / 100), 2);
+    _bmi = calculateBodyMassIndex(
+      heightCentimetres: height,
+      weightKilograms: weight,
+    );
 
     setBmiTime(bmiTime);
     String result = getResult();
@@ -56,24 +58,10 @@ class Calculator {
   }
 
   String getResult() {
-    if (_bmi >= 30) {
-      return 'Obese';
-    } else if (_bmi >= 25) {
-      return 'Overweight';
-    } else if (_bmi > 18.0) {
-      return 'Healthy';
-    } else {
-      return 'Underweight';
-    }
+    return classifyBodyMassIndex(_bmi);
   }
 
   String getInterpretation() {
-    if (_bmi < 18.5) {
-      return 'Your BMI score is too low.';
-    } else if (_bmi >= 25.0) {
-      return 'You BMI score is too high.';
-    } else {
-      return 'You have a healthy BMI score.';
-    }
+    return interpretBodyMassIndex(_bmi);
   }
 }

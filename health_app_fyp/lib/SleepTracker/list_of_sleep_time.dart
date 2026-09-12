@@ -9,7 +9,6 @@ import 'package:health_app_fyp/MoodTracker/original/pick_date.dart';
 import 'package:health_app_fyp/SleepTracker/pick_date_sleep.dart';
 import 'package:health_app_fyp/model/user_data.dart';
 import 'package:health_app_fyp/widgets/customnavbar.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ListSleep extends StatefulWidget {
@@ -61,12 +60,9 @@ class _MyTestState extends State<ListSleep> {
           .get();
       for (var date in datetime.docs) {
         dateTimeText = datetime.docs[0].get("SleepTime");
-
-        print(dateTimeText);
       }
       return dateTimeText.toString();
-    } catch (Exc) {
-      print(Exc);
+    } catch (_) {
       rethrow;
     }
   }
@@ -83,11 +79,8 @@ class _MyTestState extends State<ListSleep> {
 
       int count = documents.size;
 
-      print(count);
-
       return count;
-    } catch (Exc) {
-      print(Exc);
+    } catch (_) {
       rethrow;
     }
   }
@@ -225,7 +218,7 @@ class _MyTestState extends State<ListSleep> {
       curve: Curves.bounceIn,
       children: [
         SpeedDialChild(
-          child: Icon(MdiIcons.plus, color: Colors.white),
+          child: const Icon(Icons.add, color: Colors.white),
           backgroundColor: Colors.green,
           onTap: () async {
             // await Navigator.push(
@@ -238,7 +231,7 @@ class _MyTestState extends State<ListSleep> {
           labelBackgroundColor: Colors.green,
         ),
         SpeedDialChild(
-          child: Icon(MdiIcons.minus, color: Colors.white),
+          child: const Icon(Icons.remove, color: Colors.white),
           backgroundColor: Colors.red,
           onTap: () async {
             getNumOfSleep().then((count) => count).then((count) {

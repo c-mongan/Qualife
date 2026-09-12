@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:health_app_fyp/services/telemetry.dart';
 import 'package:health_app_fyp/MoodTracker/models.dart';
 import 'package:health_app_fyp/MoodTracker/moodIcon.dart';
 
@@ -35,7 +35,8 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
   num? moodValue;
   int? currentindex;
   TimeOfDay selectedTime = TimeOfDay.now();
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String get uid => FirebaseAuth.instance.currentUser?.uid ?? '';
+  bool _isSaving = false;
   int servings = 1;
   DateTime inputTime = DateTime.now();
 
@@ -147,7 +148,6 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
                                             moods[index].iselected = true;
                                             ontapcount = ontapcount + 1;
                                             moodValue = moods[index].moodValue;
-                                            print(mood);
                                           }),
                                         }
                                       else if (moods[index].iselected)
@@ -205,9 +205,6 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
                                     else
                                       setState(() {
                                         act[index].selected = true;
-
-                                        print(act[index].name);
-                                        print(act[index].selected);
 
                                         list.add(act[index].name);
                                         // Provider.of<MoodCard>(context,
@@ -267,7 +264,6 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
                   ),
                   onPressed: () {
                     _selectTime(context);
-                    print(widget.selectedDate);
                   },
                 ),
                 // SizedBox(height: 20),
@@ -276,62 +272,7 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
                   thickness: 2,
                 ),
                 GestureDetector(
-                  onTap: () => {
-                    setState(() {
-                      NumberFormat formatter = NumberFormat("00");
-                      String formatted = formatter.format(selectedTime.minute);
-                      String time =
-                          ((selectedTime.hour.toString() + ":") + formatted);
-
-                      if (mood != null && list.isNotEmpty) {
-                        FirebaseFirestore.instance
-                            .collection('MoodTracking')
-                            .add({
-                          'userID': uid,
-                          'DateOfMood': widget.selectedDate,
-                          'TimeOfMood': time,
-                          'Mood': mood,
-                          'Activities': list,
-                          'DateTime': DateFormat('yyyy-MM-dd')
-                              .parse(widget.selectedDate),
-                          'Icon': image,
-                          'MoodValue': moodValue
-                        });
-
-                        final moodTrackerLogger =
-                            DatadogSdk.instance.createLogger(
-                          LoggingConfiguration(
-                              loggerName: 'Mood Tracker Logger'),
-                        );
-
-                        moodTrackerLogger.addAttribute('hostname', uid);
-
-                        moodTrackerLogger.addAttribute('mood', mood!);
-                        moodTrackerLogger.addAttribute('activities', list);
-                        moodTrackerLogger.addAttribute(
-                            'dateofmood', widget.selectedDate);
-
-                        moodTrackerLogger.info(
-                            'The user reported the mood : "$mood" when doing the actvitity(s) : $list  on the date ${widget.selectedDate} ');
-
-                        for (int i = 0; i < list.length; i++) {
-                          FirebaseFirestore.instance
-                              .collection('ActivityTracking')
-                              .add({
-                            'userID': uid,
-                            'DateOfActivity': widget.selectedDate,
-                            'TimeOfActivity': time,
-                            'Mood': mood,
-                            'Activity': list[i],
-                            'DateTime': DateFormat('yyyy-MM-dd')
-                                .parse(widget.selectedDate),
-                            'Icon': image
-                          });
-                        }
-                        Get.to(const ListMoods());
-                      }
-                    }),
-                  },
+                  onTap: _saveMood,
                   child: Container(
                     height: 38.00,
                     width: 117.00,
@@ -379,10 +320,72 @@ class _MoodActivitySelectState extends State<MoodActivitySelect> {
       initialTime: selectedTime,
       initialEntryMode: TimePickerEntryMode.dial,
     );
+    if (!mounted) return;
     if (timeOfDay != null && timeOfDay != selectedTime) {
       setState(() {
         selectedTime = timeOfDay;
       });
     }
+  }
+
+  Future<void> _saveMood() async {
+    if (_isSaving) return;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _showError('Please sign in before saving a mood.');
+      return;
+    }
+    if (mood == null || list.isEmpty) {
+      _showError('Select a mood and at least one activity.');
+      return;
+    }
+    setState(() => _isSaving = true);
+    try {
+      final formatter = NumberFormat("00");
+      final time =
+          '${selectedTime.hour}:${formatter.format(selectedTime.minute)}';
+      final date = DateFormat('yyyy-MM-dd').parseStrict(widget.selectedDate);
+      final firestore = FirebaseFirestore.instance;
+      final moodRef = firestore.collection('MoodTracking').doc();
+      final batch = firestore.batch();
+      batch.set(moodRef, {
+        'userID': user.uid,
+        'DateOfMood': widget.selectedDate,
+        'TimeOfMood': time,
+        'Mood': mood,
+        'Activities': List.of(list),
+        'DateTime': date,
+        'Icon': image,
+        'MoodValue': moodValue,
+        'moodEntryId': moodRef.id,
+      });
+      for (final activity in list) {
+        final activityRef = firestore.collection('ActivityTracking').doc();
+        batch.set(activityRef, {
+          'userID': user.uid,
+          'DateOfActivity': widget.selectedDate,
+          'TimeOfActivity': time,
+          'Mood': mood,
+          'Activity': activity,
+          'DateTime': date,
+          'Icon': image,
+          'moodEntryId': moodRef.id,
+        });
+      }
+      await batch.commit();
+
+      AppTelemetry.info(TelemetryEvent.moodEntrySaved);
+      if (mounted) Get.to(const ListMoods());
+    } catch (_) {
+      _showError('Could not save this mood. Nothing was changed.');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }

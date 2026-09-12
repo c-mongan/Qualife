@@ -10,12 +10,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper function to check document ownership
-    function isOwner(userIdField) {
+    function ownsExistingDocument(userIdField) {
       return request.auth != null && request.auth.uid == resource.data[userIdField];
     }
-    
-    // Helper to check if user is authenticated
+
+    function ownsIncomingDocument(userIdField) {
+      return request.auth != null && request.auth.uid == request.resource.data[userIdField];
+    }
+
+    function ownershipIsUnchanged(userIdField) {
+      return request.resource.data[userIdField] == resource.data[userIdField];
+    }
+
     function isAuthenticated() {
       return request.auth != null;
     }
@@ -27,52 +33,101 @@ service cloud.firestore {
     
     // UserData collection - user-owned documents
     match /UserData/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // BMI tracking - user-owned documents
     match /BMI/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // TDEE (Total Daily Energy Expenditure) - user-owned documents
     match /TDEE/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Remaining calories tracking - user-owned documents
     match /remainingCalories/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Daily check-in data - user-owned documents
     match /DailyCheckIn/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Mood tracking - user-owned documents
     match /MoodTracking/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Activity tracking - user-owned documents
     match /ActivityTracking/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Sleep tracking - user-owned documents
     match /SleepTracking/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Temporary food tracking - user-owned documents
     match /TempFood/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
+    }
+
+    // Saved food entries - user-owned documents
+    match /Food/{docId} {
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Calorie count tracking - user-owned documents
     match /CalorieCount/{docId} {
-      allow read, write: if isOwner('userID');
+      allow create: if ownsIncomingDocument('userID');
+      allow read, delete: if ownsExistingDocument('userID');
+      allow update: if ownsExistingDocument('userID')
+                    && ownsIncomingDocument('userID')
+                    && ownershipIsUnchanged('userID');
     }
     
     // Deny all other collections by default (security-first approach)
